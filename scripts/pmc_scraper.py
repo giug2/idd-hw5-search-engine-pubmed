@@ -1,3 +1,10 @@
+'''
+Programma per recuperare articoli scientifici da https://pmc.ncbi.nlm.nih.gov/search/?filter=collections.open_access 
+In particolare si recuperano articoli: 
+  - disponibili in formato HTML 
+  - che contengono specifiche parole chiave nel titolo o nell'abstract.
+'''
+
 import requests
 import time
 import os
