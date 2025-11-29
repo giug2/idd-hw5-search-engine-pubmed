@@ -32,4 +32,4 @@ lucene/index/
 index/
 
 # Data to index (Documenti da indicizzare)
-pm_html_articles/
+/pm_html_articles/
