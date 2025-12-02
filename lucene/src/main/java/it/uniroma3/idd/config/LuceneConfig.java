@@ -39,11 +39,6 @@ public class LuceneConfig {
     @Value("${data.articles.path}")
     private String articlesPath;
 
-    @Getter
-    @Value("${data.tables.path}")
-    private String tablesPath;
-
-
     @Bean
     public Analyzer customAnalyzer() {
         return new Analyzer() {
@@ -68,12 +63,6 @@ public class LuceneConfig {
         perFieldAnalyzers.put("authors", simple);
         perFieldAnalyzers.put("paragraphs", standard);
         perFieldAnalyzers.put("articleAbstract", standard);
-
-        // Tables
-        perFieldAnalyzers.put("caption", simple);
-        perFieldAnalyzers.put("body", whitespace);
-        perFieldAnalyzers.put("footnotes", standard);
-        perFieldAnalyzers.put("references", standard);
 
         return new PerFieldAnalyzerWrapper(customAnalyzer(), perFieldAnalyzers);
     }

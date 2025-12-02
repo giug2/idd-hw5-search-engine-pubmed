@@ -58,14 +58,10 @@ public class SearchController {
                 case "authors":
                 case "paragraphs":
                 case "articleabstract":
-                case "caption":
-                case "body":
-                case "footnotes":
-                case "references":
                 case "publicationdate":
                     break;
                 default:
-                    model.addAttribute("error", "Campo non valido. Campi supportati: title, authors, paragraphs, articleAbstract, caption, body, footnotes, references, publicationDate");
+                    model.addAttribute("error", "Campo non valido. Campi supportati: title, authors, paragraphs, articleAbstract, publicationDate");
                     return "index";
             }
             
