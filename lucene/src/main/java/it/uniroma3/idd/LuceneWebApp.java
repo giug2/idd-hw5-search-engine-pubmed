@@ -10,3 +10,5 @@ public class LuceneWebApp {
         SpringApplication.run(LuceneWebApp.class, args);
     }
 }
+
+// mvn spring-boot:run
