@@ -2,7 +2,7 @@
 Quinto homework del corso di Ingegneria dei Dati dell'A.A. 2025/2026.  
 
 ## 🎯 Obiettivo 
-Il progetto contiene uno strumento che recupera articoli HTML dal sito [PubMed]([https://arxiv.org](https://pmc.ncbi.nlm.nih.gov/search/?filter=collections.open_access) e li organizza in un corpus analizzabile, includendo sia il testo principale sia le informazioni estratte dalle strutture interne dei documenti, come tabelle e immagini.  
+Il progetto contiene uno strumento che recupera articoli HTML dal sito [PubMed](https://pmc.ncbi.nlm.nih.gov/search/?filter=collections.open_access) e li organizza in un corpus analizzabile, includendo sia il testo principale sia le informazioni estratte dalle strutture interne dei documenti, come tabelle e immagini.  
 Lo strumento esegue automaticamente il download degli articoli che corrispondono alla query "ultra-processed foods AND cardiovascular risk" e li processa per isolare testi, sezioni, metadati e contenuti strutturati, permettendo così di costruire un insieme di documenti completo e utilizzabile per successive attività di ricerca o indicizzazione.
 
 ## 🛠️ Tecnologie
