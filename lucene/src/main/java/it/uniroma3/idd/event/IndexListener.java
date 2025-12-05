@@ -8,22 +8,37 @@ import org.springframework.stereotype.Component;
 import org.springframework.lang.NonNull;
 
 import java.nio.file.Paths;
+import java.nio.file.Path;
 
 @Component
 public class IndexListener implements ApplicationListener<IndexingCompleteEvent> {
 
     private final LuceneConfig luceneConfig;
+    private final StatsService statsService;
 
     @Autowired
-    public IndexListener(LuceneConfig luceneConfig) {
+    public IndexListener(LuceneConfig luceneConfig, StatsService statsService) {
         this.luceneConfig = luceneConfig;
+        this.statsService = statsService;
     }
+
     @Override
     public void onApplicationEvent(@NonNull IndexingCompleteEvent event) {
         System.err.println("------- AVVIO STATISTICHE ------");
-        StatsService statistiche = new StatsService();
-        statistiche.statsIndex(Paths.get(luceneConfig.getIndexDirectory()));
+
+        // Ottiene il Path per l'indice degli Articoli
+        Path articlesIndexPath = Paths.get(luceneConfig.getIndexDirectory());
+        
+        // Esegue le statistiche per gli Articoli
+        statsService.statsIndex(articlesIndexPath, "ARTICOLI"); 
+
+        // Ottiene il Path per l'indice delle Tabelle
+        // Usa il nuovo campo 'tableDirectory' della configurazione
+        Path tablesIndexPath = Paths.get(luceneConfig.getTableDirectory());
+        
+        // Esegue le statistiche per le Tabelle
+        statsService.statsIndex(tablesIndexPath, "TABELLE");
+        
         System.err.println("--------------------------------");
     }
 }
-

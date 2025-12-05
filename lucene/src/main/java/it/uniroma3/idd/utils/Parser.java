@@ -95,6 +95,7 @@ public class Parser {
         return articles;
     }
 
+    // Parser.java - tableParser() CORRETTO
     public List<Table> tableParser() {
         File dir = new File(luceneConfig.getTablePath());
         if (!dir.exists() || !dir.isDirectory()) {
@@ -102,13 +103,13 @@ public class Parser {
             return new ArrayList<>();
         }
 
-        File[] files = dir.listFiles();
+        File[] files = dir.listFiles((dir1, name) -> name.endsWith(".json"));
         if (files == null) {
             System.err.println("Error listing files in: " + dir.getAbsolutePath());
             return new ArrayList<>();
         }
 
-        System.out.println("Number of files in the directory: " + files.length);
+        System.out.println("Number of JSON files found: " + files.length);
         List<Table> tables = new ArrayList<>();
 
         for (File file : files) {
@@ -118,51 +119,63 @@ public class Parser {
 
                 //save the name of the file
                 String fileName = file.getName().replaceFirst("\\.json$", "");
+                
+                // 💡 DEBUG: Controlla se il nodo radice è un Array prima di iterare
+                if (!jsonNode.isArray()) {
+                    System.err.println("ERROR PARSING JSON: File " + file.getName() + " is NOT a JSON Array. Skipping.");
+                    continue; // Passa al file successivo
+                }
 
-                jsonNode.fields().forEachRemaining(entry -> {
-                    String id = entry.getKey();
-                    JsonNode tableNode = entry.getValue().get("table");
-                    String tableHtml = tableNode != null ? tableNode.asText("") : "";
+                int tablesInFile = 0;
+                for (JsonNode tableEntry : jsonNode) {
+                    
+                    // Costruiamo l'ID combinando paper_id e table_id
+                    String paperId = tableEntry.get("paper_id").asText();
+                    String tableId = tableEntry.get("table_id").asText();
+                    String id = paperId + "-" + tableId; // Esempio: PMC1234-T1
 
-                    // Controlla che il nodo "caption" esista prima di chiamare asText
-                    String caption = entry.getValue().has("caption")
-                            ? entry.getValue().get("caption").asText("")
-                            : "";
-
-                    // Gestisci il nodo "mentions"
-                    List<String> mentions = new ArrayList<>();
-                    if (entry.getValue().has("mentions")) {
-                        // CORREZIONE: Usa mention.asText() per estrarre la stringa
-                        entry.getValue().get("mentions").forEach(mention -> mentions.add(mention.asText()));
-                    }
-
-                    // Gestisci il nodo "context_paragraphs"
-                    List<String> context_paragraphs = new ArrayList<>();
-                    if (entry.getValue().has("context_paragraphs")) {
-                        // CORREZIONE: Usa context_paragraph.asText()
-                        entry.getValue().get("context_paragraphs").forEach(context_paragraph -> context_paragraphs.add(context_paragraph.asText()));
-                    }
-
-                    // Gestisci il nodo "terms"
-                    List<String> terms = new ArrayList<>();
-                    if (entry.getValue().has("terms")) {
-                        // CORREZIONE: Usa term.asText()
-                        entry.getValue().get("terms").forEach(term -> terms.add(term.asText()));
-                    }
+                    // Estrazione dei campi
+                    String caption = tableEntry.get("caption") != null ? tableEntry.get("caption").asText("") : "";
+                    String tableHtml = tableEntry.get("body") != null ? tableEntry.get("body").asText("") : "";
+                    
+                    // Gestisci i campi List<String>
+                    List<String> mentions = extractStringList(tableEntry, "mentions");
+                    List<String> context_paragraphs = extractStringList(tableEntry, "context_paragraphs");
+                    List<String> terms = extractStringList(tableEntry, "terms");
 
                     Table table = new Table(id, caption, tableHtml, cleanHtml(tableHtml), mentions, context_paragraphs, terms, fileName);
                     tables.add(table);
-                });
+                    tablesInFile++;
+                }
+                
+                // DEBUG: Stampa quante tabelle sono state trovate in questo file
+                if (tablesInFile == 0) {
+                     System.out.println("WARNING: File " + file.getName() + " was successfully read but contained 0 tables.");
+                }
 
 
             } catch (IOException e) {
-                System.out.println("Error opening the file: " + file.getName());
-                e.printStackTrace();
+                // 💡 CORREZIONE: Stampa l'errore esatto che Jackson sta generando
+                System.err.println("CRITICAL JSON PARSING ERROR in file: " + file.getName() + ". Message: " + e.getMessage());
+                // e.printStackTrace(); // Manteniamo il traceback completo per il debugging
             }
         }
 
+        System.out.println("Successfully parsed a total of " + tables.size() + " tables.");
         return tables;
     }
+    
+    // 💡 METODO AUSILIARIO (Aggiungi questo alla classe Parser)
+    private List<String> extractStringList(JsonNode parentNode, String fieldName) {
+        List<String> resultList = new ArrayList<>();
+        if (parentNode.has(fieldName) && parentNode.get(fieldName).isArray()) {
+            parentNode.get(fieldName).forEach(element -> {
+                resultList.add(element.asText(""));
+            });
+        }
+        return resultList;
+    }
+
 
     public String cleanHtml(String htmlContent) {
         Document doc = Jsoup.parse(htmlContent);

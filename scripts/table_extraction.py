@@ -80,15 +80,33 @@ def extract_tables_from_html(html_string, paper_id):
 
         # ---- CAPTION ----
         caption = ""
+        
+        # 1. CERCA <caption/> (Figlio diretto di <table>)
         cap_tag = table.find("caption")
         if cap_tag:
             caption = clean_text(cap_tag.get_text(" ", strip=True))
-        else:
-            # cerca figcaption / tag vicino
+        
+        # 2. CERCA NEL PARENT (Spesso <figure> o <table-wrap>)
+        if not caption:
             parent = table.parent
-            figcap = parent.find("figcaption") if parent else None
-            if figcap:
-                caption = clean_text(figcap.get_text(" ", strip=True))
+            if parent:
+                # Cerca figcaption o un elemento <title> o <p> all'inizio del contenitore
+                # Usiamo select_one per prendere il primo elemento trovato
+                figcap = parent.find("figcaption")
+                title_tag = parent.find("title") 
+                p_tag = parent.find("p") # A volte è un paragrafo
+                
+                if figcap:
+                    caption = clean_text(figcap.get_text(" ", strip=True))
+                elif title_tag:
+                    caption = clean_text(title_tag.get_text(" ", strip=True))
+                elif p_tag and p_tag.get_text(" ", strip=True):
+                    # Solo se il paragrafo precede la tabella (euristica debole)
+                    caption = clean_text(p_tag.get_text(" ", strip=True))
+        
+        # 3. Pulizia finale: Rimuovi la label (es. "Table 1:")
+        if caption:
+            caption = re.sub(r'^\s*Table\s*\d+\s*:\s*', '', caption, flags=re.IGNORECASE).strip()
 
         # ---- BODY (TESTO) ----
         rows = []

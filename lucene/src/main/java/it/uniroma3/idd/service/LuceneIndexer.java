@@ -46,6 +46,7 @@ public class LuceneIndexer {
             if (luceneConfig.isShouldInitializeIndex()) {
                 System.out.println("Deleting the index directory...");
                 deleteNonEmptyDirectory(Paths.get(luceneConfig.getIndexDirectory())); // Delete the index directory
+                deleteNonEmptyDirectory(Paths.get(luceneConfig.getTableDirectory()));
                 indexArticles(luceneConfig.getIndexDirectory(), Codec.getDefault()); // Initialize the index
                 indexTables(luceneConfig.getTableDirectory(), Codec.getDefault());
             }
@@ -99,15 +100,28 @@ public class LuceneIndexer {
 
         for (Table table : tables) {
             Document doc = new Document();
-            doc.add(new StringField("id", table.getId(), TextField.Store.YES));
-            doc.add(new TextField("caption", table.getCaption(), TextField.Store.YES));
+            
+            // 1. ID: Campo non tokenizzato e memorizzato (CORRETTO)
+            doc.add(new StringField("id", table.getId(), Field.Store.YES));
+            
+            // 2. Caption: Campo tokenizzato e memorizzato (CORRETTO)
+            doc.add(new TextField("caption", table.getCaption(), Field.Store.YES)); 
+            
+            // 3. HTML Originale: Campo memorizzato ma NON indicizzato (CORRETTO)
             doc.add(new StoredField("html_table", table.getBody()));
-            doc.add(new TextField("body", table.getBodyCleaned(), Field.Store.NO));
-            doc.add(new TextField("mentions", table.getMentionsString(), TextField.Store.YES));
-            doc.add(new TextField("context_paragraphs", table.getContext_paragraphsString(), TextField.Store.YES));
-            doc.add(new TextField("terms", table.getTermsString(), TextField.Store.YES));
-            doc.add(new StringField("fileName", table.getFileName(), TextField.Store.YES));
-
+            
+            // 4. Body Pulito: Campo tokenizzato e memorizzato (CORREZIONE - da NO a YES se serve)
+            // Se non ti serve recuperare il body, tieni Field.Store.NO.
+            doc.add(new TextField("body", table.getBodyCleaned(), Field.Store.YES)); 
+            
+            // 5. Campi Lista: Tokenizzati e memorizzati (assumendo che le String siano ben formate)
+            doc.add(new TextField("mentions", table.getMentionsString(), Field.Store.YES)); 
+            doc.add(new TextField("context_paragraphs", table.getContext_paragraphsString(), Field.Store.YES)); 
+            doc.add(new TextField("terms", table.getTermsString(), Field.Store.YES));
+            
+            // 6. Nome file: Campo non tokenizzato e memorizzato (CORREZIONE del Field.Store)
+            doc.add(new StringField("fileName", table.getFileName(), Field.Store.YES)); // USARE Field.Store.YES
+            
             writer.addDocument(doc);
         }
 

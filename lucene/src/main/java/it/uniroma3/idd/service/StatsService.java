@@ -7,44 +7,65 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class StatsService {
-    public void statsIndex(Path indexPath) {
+
+    public void statsIndex(Path indexPath, String indexName) {
+
+        System.out.println("--- STATISTICHE INDICE: " + indexName.toUpperCase() + " ---");
+
         try (Directory directory = FSDirectory.open(indexPath);
-             IndexReader reader = DirectoryReader.open(directory)) {
+             DirectoryReader reader = DirectoryReader.open(directory)) {
 
             int numDocs = reader.numDocs();
             System.out.println("Numero di documenti indicizzati: " + numDocs);
             System.out.println("\nConteggio dei termini per ciascun campo:\n");
 
-            for (LeafReaderContext leafContext : reader.leaves()) {
-                LeafReader leafReader = leafContext.reader();
+            Map<String, Long> globalTermCounts = new HashMap<>();
 
-                for (FieldInfo fieldInfo : leafReader.getFieldInfos()) {
-                    String fieldName = fieldInfo.name;
+            // Itera su tutti i segmenti (Lucene 10 non permette un singolo LeafReader aggregato)
+            for (LeafReaderContext leafCtx : reader.leaves()) {
+
+                LeafReader leafReader = leafCtx.reader();
+
+                // ✔ Lucene 10.3: i campi si recuperano dal FieldInfos
+                FieldInfos fieldInfos = leafReader.getFieldInfos();
+
+                for (FieldInfo fi : fieldInfos) {
+                    String fieldName = fi.name;
+
                     Terms terms = leafReader.terms(fieldName);
+                    if (terms == null)
+                        continue;
 
-                    if (terms != null) {
-                        TermsEnum termsEnum = terms.iterator();
-                        int termCount = 0;
-
-                        while (termsEnum.next() != null) {
-                            termCount++;
-                        }
-
-                        System.out.println("- Campo: " + fieldName +
-                                " - Termini indicizzati: " + termCount);
-                    } else {
-                        System.out.println("- Campo: " + fieldName +
-                                " - Nessun termine trovato.");
+                    long count = 0;
+                    TermsEnum te = terms.iterator();
+                    while (te.next() != null) {
+                        count++;
                     }
+
+                    // somma al totale globale per quel campo
+                    globalTermCounts.merge(fieldName, count, Long::sum);
+                }
+            }
+
+            // Output delle statistiche aggregate
+            if (globalTermCounts.isEmpty()) {
+                System.out.println("Nessun termine trovato.");
+            } else {
+                for (Map.Entry<String, Long> entry : globalTermCounts.entrySet()) {
+                    System.out.println("- Campo: " + entry.getKey()
+                            + " - Termini unici (totale): " + entry.getValue());
                 }
             }
 
         } catch (IOException e) {
-            System.err.println("Errore durante la lettura dell'indice: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Errore durante la lettura dell'indice " + indexName + ": " + e.getMessage());
         }
+
+        System.out.println("----------------------------------------\n");
     }
 }
