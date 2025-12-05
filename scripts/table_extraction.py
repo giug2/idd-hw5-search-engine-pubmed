@@ -3,6 +3,17 @@ import nltk
 nltk.download("punkt")
 nltk.download("stopwords")
 
+'''
+tables_output.append({
+            "paper_id": paper_id,
+            "table_id": table_id,
+            "caption": caption,
+            "body": body,
+            "mentions": mentions,
+            "context_paragraphs": context,
+            "terms": list(terms)
+        })
+'''
 
 import os
 import json

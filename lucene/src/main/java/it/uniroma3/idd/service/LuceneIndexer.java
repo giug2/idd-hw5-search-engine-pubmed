@@ -3,6 +3,7 @@ package it.uniroma3.idd.service;
 import it.uniroma3.idd.config.LuceneConfig;
 import it.uniroma3.idd.event.IndexingCompleteEvent;
 import it.uniroma3.idd.model.Article;
+import it.uniroma3.idd.model.Table;
 import it.uniroma3.idd.utils.Parser;
 import jakarta.annotation.PostConstruct;
 import org.apache.lucene.analysis.Analyzer;
@@ -46,8 +47,9 @@ public class LuceneIndexer {
                 System.out.println("Deleting the index directory...");
                 deleteNonEmptyDirectory(Paths.get(luceneConfig.getIndexDirectory())); // Delete the index directory
                 indexArticles(luceneConfig.getIndexDirectory(), Codec.getDefault()); // Initialize the index
+                indexTables(luceneConfig.getTableDirectory(), Codec.getDefault());
             }
-            System.out.println("Index initialized, publishing event.");
+            System.out.println("Table Index initialized, publishing event.");
             eventPublisher.publishEvent(new IndexingCompleteEvent(this)); // Publish the event upon completion
             System.out.println("IndexingComplete event published.");
         } catch (Exception e) {
@@ -76,6 +78,36 @@ public class LuceneIndexer {
             doc.add(new TextField("paragraphs", String.join(" ", article.getParagraphs()), TextField.Store.YES));
             doc.add(new TextField("articleAbstract", article.getArticleAbstract(), TextField.Store.YES));
             doc.add(new TextField("publicationDate", article.getPublicationDate(), TextField.Store.YES));
+            writer.addDocument(doc);
+        }
+
+        writer.commit();
+        writer.close();
+    }
+
+    public void indexTables(String Pathdir, Codec codec) throws Exception {
+        Path path = Paths.get(Pathdir);
+        Directory dir = FSDirectory.open(path);
+
+        IndexWriterConfig config = new IndexWriterConfig(perFieldAnalyzer);
+
+        config.setCodec(codec);
+
+        IndexWriter writer = new IndexWriter(dir, config);
+
+        List<Table> tables = parser.tableParser();
+
+        for (Table table : tables) {
+            Document doc = new Document();
+            doc.add(new StringField("id", table.getId(), TextField.Store.YES));
+            doc.add(new TextField("caption", table.getCaption(), TextField.Store.YES));
+            doc.add(new StoredField("html_table", table.getBody()));
+            doc.add(new TextField("body", table.getBodyCleaned(), Field.Store.NO));
+            doc.add(new TextField("mentions", table.getMentionsString(), TextField.Store.YES));
+            doc.add(new TextField("context_paragraphs", table.getContext_paragraphsString(), TextField.Store.YES));
+            doc.add(new TextField("terms", table.getTermsString(), TextField.Store.YES));
+            doc.add(new StringField("fileName", table.getFileName(), TextField.Store.YES));
+
             writer.addDocument(doc);
         }
 

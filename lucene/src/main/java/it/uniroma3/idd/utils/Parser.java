@@ -2,10 +2,13 @@ package it.uniroma3.idd.utils;
 
 import it.uniroma3.idd.config.LuceneConfig;
 import it.uniroma3.idd.model.Article;
+import it.uniroma3.idd.model.Table;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,6 +93,75 @@ public class Parser {
         }
 
         return articles;
+    }
+
+    public List<Table> tableParser() {
+        File dir = new File(luceneConfig.getTablePath());
+        if (!dir.exists() || !dir.isDirectory()) {
+            System.err.println("Tables directory not found: " + dir.getAbsolutePath());
+            return new ArrayList<>();
+        }
+
+        File[] files = dir.listFiles();
+        if (files == null) {
+            System.err.println("Error listing files in: " + dir.getAbsolutePath());
+            return new ArrayList<>();
+        }
+
+        System.out.println("Number of files in the directory: " + files.length);
+        List<Table> tables = new ArrayList<>();
+
+        for (File file : files) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(file);
+
+                //save the name of the file
+                String fileName = file.getName().replaceFirst("\\.json$", "");
+
+                jsonNode.fields().forEachRemaining(entry -> {
+                    String id = entry.getKey();
+                    JsonNode tableNode = entry.getValue().get("table");
+                    String tableHtml = tableNode != null ? tableNode.asText("") : "";
+
+                    // Controlla che il nodo "caption" esista prima di chiamare asText
+                    String caption = entry.getValue().has("caption")
+                            ? entry.getValue().get("caption").asText("")
+                            : "";
+
+                    // Gestisci il nodo "mentions"
+                    List<String> mentions = new ArrayList<>();
+                    if (entry.getValue().has("mentions")) {
+                        // CORREZIONE: Usa mention.asText() per estrarre la stringa
+                        entry.getValue().get("mentions").forEach(mention -> mentions.add(mention.asText()));
+                    }
+
+                    // Gestisci il nodo "context_paragraphs"
+                    List<String> context_paragraphs = new ArrayList<>();
+                    if (entry.getValue().has("context_paragraphs")) {
+                        // CORREZIONE: Usa context_paragraph.asText()
+                        entry.getValue().get("context_paragraphs").forEach(context_paragraph -> context_paragraphs.add(context_paragraph.asText()));
+                    }
+
+                    // Gestisci il nodo "terms"
+                    List<String> terms = new ArrayList<>();
+                    if (entry.getValue().has("terms")) {
+                        // CORREZIONE: Usa term.asText()
+                        entry.getValue().get("terms").forEach(term -> terms.add(term.asText()));
+                    }
+
+                    Table table = new Table(id, caption, tableHtml, cleanHtml(tableHtml), mentions, context_paragraphs, terms, fileName);
+                    tables.add(table);
+                });
+
+
+            } catch (IOException e) {
+                System.out.println("Error opening the file: " + file.getName());
+                e.printStackTrace();
+            }
+        }
+
+        return tables;
     }
 
     public String cleanHtml(String htmlContent) {

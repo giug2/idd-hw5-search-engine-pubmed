@@ -53,6 +53,9 @@ public class Searcher {
                 
                 String title = doc.get("title");
                 if (title == null) {
+                    title = doc.get("caption"); // Fallback for tables
+                }
+                if (title == null) {
                     title = "No Title";
                 }
                 

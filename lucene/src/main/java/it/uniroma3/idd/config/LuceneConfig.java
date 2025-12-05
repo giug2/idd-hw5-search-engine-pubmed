@@ -28,6 +28,14 @@ public class LuceneConfig {
     private String indexDirectory;
 
     @Getter
+    @Value("${lucene.index_table.directory}")
+    private String tableDirectory;
+
+    @Getter
+    @Value("${lucene.index_img.directory}")
+    private String imgDirectory;
+
+    @Getter
     @Value("${lucene.index.initialize}")
     private boolean shouldInitializeIndex;
 
@@ -38,6 +46,14 @@ public class LuceneConfig {
     @Getter
     @Value("${data.articles.path}")
     private String articlesPath;
+
+    @Getter
+    @Value("${data.tables.path}")
+    private String tablePath;
+
+    @Getter
+    @Value("${data.img.path}")
+    private String imgPath;
 
     @Bean
     public Analyzer customAnalyzer() {
@@ -64,6 +80,16 @@ public class LuceneConfig {
         perFieldAnalyzers.put("paragraphs", standard);
         perFieldAnalyzers.put("articleAbstract", standard);
 
+        // Tables
+        perFieldAnalyzers.put("caption", simple);
+        perFieldAnalyzers.put("body", whitespace);
+        perFieldAnalyzers.put("mentions", standard);
+        perFieldAnalyzers.put("context_paragraphs", standard);
+        perFieldAnalyzers.put("terms", standard);
+
+        // Images
+
+        
         return new PerFieldAnalyzerWrapper(customAnalyzer(), perFieldAnalyzers);
     }
 }
