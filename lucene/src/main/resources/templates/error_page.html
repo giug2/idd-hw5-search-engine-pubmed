@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Errore - PubMed Search Engine</title>
+    <link rel="stylesheet" th:href="@{/css/error.css}">
+</head>
+<body>
+
+    <div class="error-container">
+        <h1>Qualcosa è andato storto!</h1>
+        
+        <p>Si è verificato un errore durante l'elaborazione della tua richiesta.</p>
+
+        <div th:if="${error}" class="error-message">
+            Dettaglio Errore: <span th:text="${error}">Errore non specificato dal sistema.</span>
+        </div>
+        <div th:unless="${error}">
+            <p>Non è stato fornito un messaggio di errore specifico.</p>
+        </div>
+
+        <p style="margin-top: 30px;">
+            <a href="/">Torna alla Pagina di Ricerca</a>
+        </p>
+    </div>
+
+</body>
+</html>

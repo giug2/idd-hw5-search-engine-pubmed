@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${document.title}">Dettaglio Tabella</title>
+    <link rel="stylesheet" th:href="@{/css/details.css}"> 
+</head>
+
+
+<body>
+
+    <div class="container">
+        <a href="/" class="back-link">← Torna alla Ricerca</a>
+        
+        <h1 th:text="${document.title}">Titolo Tabella (Caption)</h1>
+        
+        <div class="metadata">
+            <p><strong>ID Tabella:</strong> <span th:text="${document.id}"></span></p>
+            
+            <p>
+                <strong>Articolo Collegato:</strong>
+                <span th:if="${document.results.containsKey('ID Articolo Padre')}">
+                    <span th:with="articleId=${document.results.get('ID Articolo Padre')}">
+                        <a th:href="@{'/dettaglio/articoli/' + ${articleId}}" 
+                           th:text="${articleId}" 
+                           title="Visualizza i dettagli dell'articolo principale"></a>
+                    </span>
+                </span>
+                <span th:unless="${document.results.containsKey('ID Articolo Padre')}">N/A</span>
+            </p>
+        </div>
+        
+        <hr>
+
+        <div th:if="${document.results.containsKey('HTML Tabella')}" class="table-view content-section">
+            <h2>Struttura Tabella Originale</h2>
+            <div class="table-data-wrapper" th:utext="${document.results.get('HTML Tabella')}"></div>
+        </div>
+
+        <div th:if="${document.results.containsKey('Contesto')}" class="content-section table-context">
+            <h2>Paragrafi di Contesto</h2>
+            <p th:text="${document.results.get('Contesto')}">Paragrafi che circondavano la tabella nell'articolo.</p>
+        </div>
+        
+        <div class="content-section extraction-info" th:if="${document.results.containsKey('Menzioni') or document.results.containsKey('Termini Chiave')}">
+            <h2>Dati di Estrazione</h2>
+            
+            <p th:if="${document.results.containsKey('Menzioni')}">
+                <strong>Menzioni Rilevate:</strong> 
+                <span th:text="${document.results.get('Menzioni')}"></span>
+            </p>
+            
+            <p th:if="${document.results.containsKey('Termini Chiave')}">
+                <strong>Termini Chiave:</strong> 
+                <span th:text="${document.results.get('Termini Chiave')}"></span>
+            </p>
+        </div>
+
+        <hr>
+        <p style="text-align: right; font-size: 0.8em;">
+            Dati recuperati dall'indice Lucene: <strong th:text="${indexKey.toUpperCase()}"></strong>
+        </p>
+        
+    </div>
+
+</body>
+</html>

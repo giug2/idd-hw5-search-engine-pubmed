@@ -60,6 +60,11 @@
             <artifactId>spring-tx</artifactId>
             <version>7.0.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
                 
         <!-- Apache Lucene-->
         <dependency>

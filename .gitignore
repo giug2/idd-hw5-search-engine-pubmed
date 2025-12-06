@@ -29,9 +29,10 @@ logs/
 
 # Lucene Index (Generated)
 lucene/index/
-index/
+/lucene/index_tables/
+/lucene/index_img/
 
 # Data to index (Documenti da indicizzare)
 /pm_html_articles/
-/tables
-/lucene/index_tables
+/tables/
+/img/

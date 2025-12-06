@@ -9,21 +9,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Component
 public class Parser {
 
     private final LuceneConfig luceneConfig;
 
+
     @Autowired
     public Parser(LuceneConfig luceneConfig) {
         this.luceneConfig = luceneConfig;
     }
+
 
     public List<Article> articleParser() {
         File dir = new File(luceneConfig.getArticlesPath());
@@ -91,11 +93,10 @@ public class Parser {
                 e.printStackTrace();
             }
         }
-
         return articles;
     }
 
-    // Parser.java - tableParser() CORRETTO
+
     public List<Table> tableParser() {
         File dir = new File(luceneConfig.getTablePath());
         if (!dir.exists() || !dir.isDirectory()) {
@@ -120,10 +121,9 @@ public class Parser {
                 //save the name of the file
                 String fileName = file.getName().replaceFirst("\\.json$", "");
                 
-                // 💡 DEBUG: Controlla se il nodo radice è un Array prima di iterare
                 if (!jsonNode.isArray()) {
                     System.err.println("ERROR PARSING JSON: File " + file.getName() + " is NOT a JSON Array. Skipping.");
-                    continue; // Passa al file successivo
+                    continue; 
                 }
 
                 int tablesInFile = 0;
@@ -132,7 +132,7 @@ public class Parser {
                     // Costruiamo l'ID combinando paper_id e table_id
                     String paperId = tableEntry.get("paper_id").asText();
                     String tableId = tableEntry.get("table_id").asText();
-                    String id = paperId + "-" + tableId; // Esempio: PMC1234-T1
+                    String id = paperId + "-" + tableId; 
 
                     // Estrazione dei campi
                     String caption = tableEntry.get("caption") != null ? tableEntry.get("caption").asText("") : "";
@@ -148,24 +148,20 @@ public class Parser {
                     tablesInFile++;
                 }
                 
-                // DEBUG: Stampa quante tabelle sono state trovate in questo file
                 if (tablesInFile == 0) {
                      System.out.println("WARNING: File " + file.getName() + " was successfully read but contained 0 tables.");
                 }
 
 
             } catch (IOException e) {
-                // 💡 CORREZIONE: Stampa l'errore esatto che Jackson sta generando
                 System.err.println("CRITICAL JSON PARSING ERROR in file: " + file.getName() + ". Message: " + e.getMessage());
-                // e.printStackTrace(); // Manteniamo il traceback completo per il debugging
             }
         }
-
         System.out.println("Successfully parsed a total of " + tables.size() + " tables.");
         return tables;
     }
     
-    // 💡 METODO AUSILIARIO (Aggiungi questo alla classe Parser)
+    
     private List<String> extractStringList(JsonNode parentNode, String fieldName) {
         List<String> resultList = new ArrayList<>();
         if (parentNode.has(fieldName) && parentNode.get(fieldName).isArray()) {
@@ -181,5 +177,4 @@ public class Parser {
         Document doc = Jsoup.parse(htmlContent);
         return doc.text();
     }
-
 }

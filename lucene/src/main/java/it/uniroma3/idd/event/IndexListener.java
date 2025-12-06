@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import org.springframework.lang.NonNull;
-
 import java.nio.file.Paths;
 import java.nio.file.Path;
+
 
 @Component
 public class IndexListener implements ApplicationListener<IndexingCompleteEvent> {
@@ -16,11 +16,13 @@ public class IndexListener implements ApplicationListener<IndexingCompleteEvent>
     private final LuceneConfig luceneConfig;
     private final StatsService statsService;
 
+
     @Autowired
     public IndexListener(LuceneConfig luceneConfig, StatsService statsService) {
         this.luceneConfig = luceneConfig;
         this.statsService = statsService;
     }
+
 
     @Override
     public void onApplicationEvent(@NonNull IndexingCompleteEvent event) {

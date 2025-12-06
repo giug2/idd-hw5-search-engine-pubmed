@@ -16,11 +16,11 @@ import org.apache.lucene.store.FSDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+
 
 @Component
 public class LuceneIndexer {
@@ -30,6 +30,7 @@ public class LuceneIndexer {
     private final Analyzer perFieldAnalyzer;
     private final Parser parser;
 
+
     @Autowired
     public LuceneIndexer(LuceneConfig luceneConfig, ApplicationEventPublisher eventPublisher, Analyzer perFieldAnalyzer, Parser parser) {
         this.luceneConfig = luceneConfig;
@@ -38,10 +39,10 @@ public class LuceneIndexer {
         this.parser = parser;
     }
 
+
     @PostConstruct
     public void init() {
         try {
-            // Log to monitor the flow
             System.out.println("Index initialization in progress...");
             if (luceneConfig.isShouldInitializeIndex()) {
                 System.out.println("Deleting the index directory...");
@@ -51,12 +52,13 @@ public class LuceneIndexer {
                 indexTables(luceneConfig.getTableDirectory(), Codec.getDefault());
             }
             System.out.println("Table Index initialized, publishing event.");
-            eventPublisher.publishEvent(new IndexingCompleteEvent(this)); // Publish the event upon completion
+            eventPublisher.publishEvent(new IndexingCompleteEvent(this)); 
             System.out.println("IndexingComplete event published.");
         } catch (Exception e) {
             throw new RuntimeException("Error initializing the index", e);
         }
     }
+
 
     public void indexArticles(String Pathdir, Codec codec) throws IOException {
         Path path = Paths.get(Pathdir);
@@ -64,7 +66,6 @@ public class LuceneIndexer {
 
         IndexWriterConfig config = new IndexWriterConfig(perFieldAnalyzer);
 
-        // Set the codec
         config.setCodec(codec);
 
         IndexWriter writer = new IndexWriter(dir, config);
@@ -81,10 +82,10 @@ public class LuceneIndexer {
             doc.add(new TextField("publicationDate", article.getPublicationDate(), TextField.Store.YES));
             writer.addDocument(doc);
         }
-
         writer.commit();
         writer.close();
     }
+
 
     public void indexTables(String Pathdir, Codec codec) throws Exception {
         Path path = Paths.get(Pathdir);
@@ -100,34 +101,22 @@ public class LuceneIndexer {
 
         for (Table table : tables) {
             Document doc = new Document();
-            
-            // 1. ID: Campo non tokenizzato e memorizzato (CORRETTO)
+        
             doc.add(new StringField("id", table.getId(), Field.Store.YES));
-            
-            // 2. Caption: Campo tokenizzato e memorizzato (CORRETTO)
             doc.add(new TextField("caption", table.getCaption(), Field.Store.YES)); 
-            
-            // 3. HTML Originale: Campo memorizzato ma NON indicizzato (CORRETTO)
             doc.add(new StoredField("html_table", table.getBody()));
-            
-            // 4. Body Pulito: Campo tokenizzato e memorizzato (CORREZIONE - da NO a YES se serve)
-            // Se non ti serve recuperare il body, tieni Field.Store.NO.
             doc.add(new TextField("body", table.getBodyCleaned(), Field.Store.YES)); 
-            
-            // 5. Campi Lista: Tokenizzati e memorizzati (assumendo che le String siano ben formate)
             doc.add(new TextField("mentions", table.getMentionsString(), Field.Store.YES)); 
             doc.add(new TextField("context_paragraphs", table.getContext_paragraphsString(), Field.Store.YES)); 
             doc.add(new TextField("terms", table.getTermsString(), Field.Store.YES));
-            
-            // 6. Nome file: Campo non tokenizzato e memorizzato (CORREZIONE del Field.Store)
-            doc.add(new StringField("fileName", table.getFileName(), Field.Store.YES)); // USARE Field.Store.YES
+            doc.add(new StringField("fileName", table.getFileName(), Field.Store.YES)); 
             
             writer.addDocument(doc);
         }
-
         writer.commit();
         writer.close();
     }
+
 
     public void deleteNonEmptyDirectory(Path directory) throws IOException {
         // Verifica se la directory esiste
@@ -151,5 +140,4 @@ public class LuceneIndexer {
             System.out.println("Directory does not exist or is not a directory.");
         }
     }
-
 }

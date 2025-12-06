@@ -2,8 +2,8 @@ package it.uniroma3.idd.model;
 
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
-
 import java.util.List;
+
 
 public class Article {
 

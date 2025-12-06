@@ -4,17 +4,16 @@ import org.apache.lucene.index.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @Service
 public class StatsService {
 
     public void statsIndex(Path indexPath, String indexName) {
-
         System.out.println("--- STATISTICHE INDICE: " + indexName.toUpperCase() + " ---");
 
         try (Directory directory = FSDirectory.open(indexPath);
@@ -30,8 +29,6 @@ public class StatsService {
             for (LeafReaderContext leafCtx : reader.leaves()) {
 
                 LeafReader leafReader = leafCtx.reader();
-
-                // ✔ Lucene 10.3: i campi si recuperano dal FieldInfos
                 FieldInfos fieldInfos = leafReader.getFieldInfos();
 
                 for (FieldInfo fi : fieldInfos) {
@@ -46,8 +43,6 @@ public class StatsService {
                     while (te.next() != null) {
                         count++;
                     }
-
-                    // somma al totale globale per quel campo
                     globalTermCounts.merge(fieldName, count, Long::sum);
                 }
             }
@@ -65,7 +60,6 @@ public class StatsService {
         } catch (IOException e) {
             System.err.println("Errore durante la lettura dell'indice " + indexName + ": " + e.getMessage());
         }
-
         System.out.println("----------------------------------------\n");
     }
 }

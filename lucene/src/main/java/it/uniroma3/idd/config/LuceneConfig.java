@@ -12,9 +12,9 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.HashMap;
 import java.util.Map;
+
 
 @Configuration
 public class LuceneConfig {
@@ -23,6 +23,15 @@ public class LuceneConfig {
     @Value("${lucene.queryExplain}")
     private boolean queryExplain;
 
+    @Getter
+    @Value("${lucene.index.initialize}")
+    private boolean shouldInitializeIndex;
+
+    @Getter
+    @Value("${lucene.searcher.tresholdMultiplier}")
+    private float treasholdMultiplier;
+
+    // Path degli indici
     @Getter
     @Value("${lucene.index.directory}")
     private String indexDirectory;
@@ -35,14 +44,7 @@ public class LuceneConfig {
     @Value("${lucene.index_img.directory}")
     private String imgDirectory;
 
-    @Getter
-    @Value("${lucene.index.initialize}")
-    private boolean shouldInitializeIndex;
-
-    @Getter
-    @Value("${lucene.searcher.tresholdMultiplier}")
-    private float treasholdMultiplier;
-
+    // Path dei documenti (articoli, tabelle, immagini)
     @Getter
     @Value("${data.articles.path}")
     private String articlesPath;
@@ -55,6 +57,7 @@ public class LuceneConfig {
     @Value("${data.img.path}")
     private String imgPath;
 
+
     @Bean
     public Analyzer customAnalyzer() {
         return new Analyzer() {
@@ -66,6 +69,7 @@ public class LuceneConfig {
             }
         };
     }
+
 
     @Bean
     public Analyzer perFieldAnalyzer() {

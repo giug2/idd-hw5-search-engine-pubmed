@@ -1,9 +1,10 @@
 package it.uniroma3.idd.dto;
 
-import lombok.*;
-import org.apache.lucene.document.Document;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.util.Map;
+
 
 @Data @NoArgsConstructor @AllArgsConstructor
 public class GetDocumentResponse {
@@ -11,21 +12,10 @@ public class GetDocumentResponse {
     private String id;
     private String title;
     private String authors;
-    private Map<String, String> results;
-
-    public GetDocumentResponse documentToGetDocumentResponse(Document document) {
-
-        String snippet = document.get("snippet") != null ? document.get("snippet") : "N/A";
-        String snippetField = document.get("snippetField") != null ? document.get("snippetField") : "N/A";
-
-        return new GetDocumentResponse(
-                document.get("id"),
-                document.get("title"),
-                document.get("authors"),
-                Map.of("snippet", snippet, "snippetField", snippetField)
-        );
-    }
-
-
-
+    
+    /**
+     * Contiene i campi specifici del documento (es. "abstract", "paragraphs" per articoli, 
+     * "html_table" per tabelle, ecc.)
+     */
+    private Map<String, String> results; 
 }
