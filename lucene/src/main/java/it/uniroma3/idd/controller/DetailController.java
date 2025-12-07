@@ -82,6 +82,9 @@ public class DetailController {
             case "articoli":
                 title = doc.get("title");
                 authors = doc.get("authors");
+                String articleId = doc.get("id");
+                String rawHtmlUrl = "/raw_articles/" + articleId + ".html";
+                results.put("URL Articolo Originale", rawHtmlUrl);
                 results.put("Abstract", doc.get("articleAbstract"));
                 results.put("Testo", doc.get("paragraphs"));
                 results.put("Data di Pubblicazione", doc.get("publicationDate"));

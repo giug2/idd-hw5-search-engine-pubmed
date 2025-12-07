@@ -20,6 +20,17 @@
              <p><strong>Data di Pubblicazione:</strong> <span th:text="${document.results.get('Data di Pubblicazione')}"></span></p>
         </div>
 
+        <div class="metadata">
+        <p th:if="${document.results.containsKey('URL Articolo Originale')}">
+            <strong>Visualizza File Originale:</strong>
+            <a th:href="${document.results.get('URL Articolo Originale')}" 
+            target="_blank" 
+            title="Apri il file HTML originale">
+            [Apri Articolo HTML]
+            </a>
+        </p>
+        </div>
+
         <div th:if="${document.results.containsKey('Abstract')}" class="section">
             <h3>Abstract</h3>
             <p th:text="${document.results.get('Abstract')}">Contenuto dell'abstract...</p>
