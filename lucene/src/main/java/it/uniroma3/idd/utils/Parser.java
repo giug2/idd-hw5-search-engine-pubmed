@@ -135,13 +135,14 @@ public class Parser {
                     // Estrazione dei campi
                     String caption = tableEntry.get("caption") != null ? tableEntry.get("caption").asText("") : "";
                     String tableHtml = tableEntry.get("body") != null ? tableEntry.get("body").asText("") : "";
+                    String htmlBody = tableEntry.get("html_body") != null ? tableEntry.get("html_body").asText("") : "";
                     
                     // Gestisci i campi List<String>
                     List<String> mentions = extractStringList(tableEntry, "mentions");
                     List<String> context_paragraphs = extractStringList(tableEntry, "context_paragraphs");
                     List<String> terms = extractStringList(tableEntry, "terms");
 
-                    Table table = new Table(id, caption, tableHtml, cleanHtml(tableHtml), mentions, context_paragraphs, terms, paperId);
+                    Table table = new Table(id, caption, tableHtml, cleanHtml(tableHtml), mentions, context_paragraphs, terms, paperId, htmlBody);
                     tables.add(table);
                     tablesInFile++;
                 }

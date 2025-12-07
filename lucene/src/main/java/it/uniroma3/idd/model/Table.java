@@ -17,7 +17,10 @@ public class Table {
     private String body;               
 
     @NotNull
-    private String bodyCleaned;        
+    private String bodyCleaned;    
+
+    @NotNull
+    private String htmlBody;     
 
     private List<String> mentions;    
 
@@ -27,7 +30,7 @@ public class Table {
 
     private String fileName;           
 
-    public Table(String id, String caption, String body, String bodyCleaned, List<String> mentions, List<String> context_paragraphs, List<String> terms, String fileName) {
+    public Table(String id, String caption, String body, String bodyCleaned, List<String> mentions, List<String> context_paragraphs, List<String> terms, String fileName, String htmlBody) {
         this.id = id;
         this.caption = caption;
         this.body = body;
@@ -36,6 +39,7 @@ public class Table {
         this.context_paragraphs = context_paragraphs;
         this.fileName = fileName;
         this.terms = terms;
+        this.htmlBody=htmlBody;
     }
 
     public @NotNull String getId() {
@@ -102,6 +106,14 @@ public class Table {
         this.fileName = fileName;
     }
 
+    public String getHtmlBody() {
+        return htmlBody;
+    }
+
+    public void setHtmlBody(String htmlBody) {
+        this.htmlBody = htmlBody;
+    }
+
     //if mentions is null, return empty string
     public String getMentionsString() {
         if (mentions == null) {
@@ -132,6 +144,7 @@ public class Table {
                 "id='" + id + '\'' +
                 ", caption='" + caption + '\'' +
                 ", body='" + body + '\'' +
+                ", htmlBody='" + htmlBody + '\'' +
                 ", mentions=" + mentions +
                 ", context_paragraphs=" + context_paragraphs +
                 ", terms=" + terms +

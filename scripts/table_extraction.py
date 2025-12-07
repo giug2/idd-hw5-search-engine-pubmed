@@ -9,6 +9,7 @@ tables_output.append({
             "table_id": table_id,
             "caption": caption,
             "body": body,
+            "html_body": html_body,
             "mentions": mentions,
             "context_paragraphs": context,
             "terms": list(terms)
@@ -72,6 +73,8 @@ def extract_tables_from_html(html_string, paper_id):
         )
 
     for idx, table in enumerate(tables, start=1):
+
+        html_body = str(table)
 
         # ---- TABLE ID ----
         table_id = table.get("id")
@@ -146,6 +149,7 @@ def extract_tables_from_html(html_string, paper_id):
             "table_id": table_id,
             "caption": caption,
             "body": body,
+            "html_body": html_body,
             "mentions": mentions,
             "context_paragraphs": context,
             "terms": list(terms)

@@ -104,7 +104,7 @@ public class LuceneIndexer {
         
             doc.add(new StringField("id", table.getId(), Field.Store.YES));
             doc.add(new TextField("caption", table.getCaption(), Field.Store.YES)); 
-            doc.add(new StoredField("html_table", table.getBody()));
+            doc.add(new StoredField("html_table", table.getHtmlBody()));
             doc.add(new TextField("body", table.getBodyCleaned(), Field.Store.YES)); 
             doc.add(new TextField("mentions", table.getMentionsString(), Field.Store.YES)); 
             doc.add(new TextField("context_paragraphs", table.getContext_paragraphsString(), Field.Store.YES)); 
