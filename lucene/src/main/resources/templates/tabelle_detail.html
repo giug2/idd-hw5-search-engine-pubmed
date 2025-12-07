@@ -22,9 +22,8 @@
                 <strong>Articolo Collegato:</strong>
                 <span th:if="${document.results.containsKey('ID Articolo Padre')}">
                     <span th:with="articleId=${document.results.get('ID Articolo Padre')}">
-                        <a th:href="@{'/dettaglio/articoli/' + ${articleId}}" 
-                           th:text="${articleId}" 
-                           title="Visualizza i dettagli dell'articolo principale"></a>
+                        <a th:href="@{/dettaglio/articoli/{id}(id=${articleId})}" th:text="${articleId}"
+                        title="Visualizza i dettagli dell'articolo principale"></a>
                     </span>
                 </span>
                 <span th:unless="${document.results.containsKey('ID Articolo Padre')}">N/A</span>

@@ -102,4 +102,25 @@ public class DetailController {
 
         return new GetDocumentResponse(id, title, authors, results);
     }
+
+    @GetMapping("/dettaglio/articoli/{id}")
+    public String viewArticle(@PathVariable("id") String id, Model model) {
+        try {
+            Document luceneDoc = searcher.getDocumentById(id, "articoli");
+            if (luceneDoc == null) {
+                model.addAttribute("error", "Articolo non trovato: " + id);
+                return "error_page";
+            }
+
+            GetDocumentResponse responseDTO = mapDocumentToResponse(luceneDoc, "articoli");
+            model.addAttribute("document", responseDTO);
+            model.addAttribute("indexKey", "articoli");
+
+            return "articoli_detail"; // template Thymeleaf per articoli
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "error_page";
+        }
+    }
+
 }

@@ -74,7 +74,7 @@ public class LuceneIndexer {
 
         for (Article article : articles) {
             Document doc = new Document();
-            doc.add(new StringField("id", article.getId(), TextField.Store.YES));
+            doc.add(new StringField("id", article.getId(), Field.Store.YES));
             doc.add(new TextField("title", article.getTitle(), TextField.Store.YES));
             doc.add(new TextField("authors", String.join(" ", article.getAuthors()), TextField.Store.YES));
             doc.add(new TextField("paragraphs", String.join(" ", article.getParagraphs()), TextField.Store.YES));

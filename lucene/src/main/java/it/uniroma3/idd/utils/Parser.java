@@ -46,7 +46,7 @@ public class Parser {
         for (File file : files) {
             try {
                 Document document = Jsoup.parse(file, "UTF-8");
-                String id = file.getName();
+                String id = file.getName().replaceFirst("(?i)\\.html?$", "");
                 
                 // Title
                 String title = document.select("article-title").first() != null ? document.select("article-title").first().text() : "No Title Found";
@@ -117,9 +117,6 @@ public class Parser {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(file);
-
-                //save the name of the file
-                String fileName = file.getName().replaceFirst("\\.json$", "");
                 
                 if (!jsonNode.isArray()) {
                     System.err.println("ERROR PARSING JSON: File " + file.getName() + " is NOT a JSON Array. Skipping.");
@@ -130,7 +127,8 @@ public class Parser {
                 for (JsonNode tableEntry : jsonNode) {
                     
                     // Costruiamo l'ID combinando paper_id e table_id
-                    String paperId = tableEntry.get("paper_id").asText();
+                    String paperId = tableEntry.get("paper_id").asText("");
+                    paperId = paperId.replaceFirst("(?i)\\.html?$", ""); 
                     String tableId = tableEntry.get("table_id").asText();
                     String id = paperId + "-" + tableId; 
 
@@ -143,7 +141,7 @@ public class Parser {
                     List<String> context_paragraphs = extractStringList(tableEntry, "context_paragraphs");
                     List<String> terms = extractStringList(tableEntry, "terms");
 
-                    Table table = new Table(id, caption, tableHtml, cleanHtml(tableHtml), mentions, context_paragraphs, terms, fileName);
+                    Table table = new Table(id, caption, tableHtml, cleanHtml(tableHtml), mentions, context_paragraphs, terms, paperId);
                     tables.add(table);
                     tablesInFile++;
                 }
