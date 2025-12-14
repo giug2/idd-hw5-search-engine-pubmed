@@ -124,6 +124,9 @@ public class Searcher {
             case "tabelle":
                 defaultFields = new String[]{"caption", "body", "mentions", "terms", "context_paragraphs"};
                 break;
+            case "immagini":
+                defaultFields = new String[]{"caption", "alt", "context_paragraphs", "fileName"};
+                break;
             default:
                 defaultFields = new String[]{}; 
                 break;
@@ -164,6 +167,12 @@ public class Searcher {
                 snippet = (context != null) ? context.substring(0, Math.min(context.length(), 150)) + "..." : "Contesto non disponibile.";
                 String articleId = doc.get("fileName");
                 urlDettaglio = "/dettaglio/tabelle/" + id + "?articleId=" + articleId; 
+            } else if ("immagini".equals(indexKey)) {
+                titolo = doc.get("caption") != null ? doc.get("caption") : doc.get("id");
+                String contextImg = doc.get("context_paragraphs");
+                snippet = (contextImg != null) ? contextImg.substring(0, Math.min(contextImg.length(), 150)) + "..." : "Contesto non disponibile.";
+                String articleIdImg = doc.get("fileName");
+                urlDettaglio = "/dettaglio/immagini/" + id + "?articleId=" + articleIdImg;
             } else {
                 titolo = doc.get("title") != null ? doc.get("title") : doc.get("id"); 
                 snippet = "Dettagli non ancora mappati per questo tipo di indice.";

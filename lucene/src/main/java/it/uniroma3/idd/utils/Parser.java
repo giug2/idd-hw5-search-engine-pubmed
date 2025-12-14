@@ -3,6 +3,7 @@ package it.uniroma3.idd.utils;
 import it.uniroma3.idd.config.LuceneConfig;
 import it.uniroma3.idd.model.Article;
 import it.uniroma3.idd.model.Table;
+import it.uniroma3.idd.model.Image;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,6 +159,67 @@ public class Parser {
         }
         System.out.println("Successfully parsed a total of " + tables.size() + " tables.");
         return tables;
+    }
+
+
+    public List<Image> imageParser() {
+        File dir = new File(luceneConfig.getImgPath());
+        if (!dir.exists() || !dir.isDirectory()) {
+            System.err.println("Images directory not found: " + dir.getAbsolutePath());
+            return new ArrayList<>();
+        }
+
+        File[] files = dir.listFiles((dir1, name) -> name.endsWith(".json"));
+        if (files == null) {
+            System.err.println("Error listing files in: " + dir.getAbsolutePath());
+            return new ArrayList<>();
+        }
+
+        System.out.println("Number of image JSON files found: " + files.length);
+        List<Image> images = new ArrayList<>();
+
+        for (File file : files) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(file);
+
+                if (!jsonNode.isArray()) {
+                    System.err.println("ERROR PARSING JSON: File " + file.getName() + " is NOT a JSON Array. Skipping.");
+                    continue;
+                }
+
+                int imagesInFile = 0;
+                for (JsonNode imgEntry : jsonNode) {
+                    String paperId = imgEntry.get("paper_id").asText("");
+                    paperId = paperId.replaceFirst("(?i)\\.html?$", "");
+                    String imageId = imgEntry.get("image_id") != null ? imgEntry.get("image_id").asText() : "";
+                    String id = paperId + "-" + imageId;
+
+                    String caption = imgEntry.get("caption") != null ? imgEntry.get("caption").asText("") : "";
+                    String alt = imgEntry.get("alt") != null ? imgEntry.get("alt").asText("") : "";
+                    String src = imgEntry.get("src") != null ? imgEntry.get("src").asText("") : "";
+                    String srcResolved = imgEntry.get("src_resolved") != null ? imgEntry.get("src_resolved").asText("") : "";
+                    String savedPath = imgEntry.get("saved_path") != null ? imgEntry.get("saved_path").asText("") : "";
+
+                    List<String> context_paragraphs = extractStringList(imgEntry, "context_paragraphs");
+                    String fileName = imgEntry.get("fileName") != null ? imgEntry.get("fileName").asText("") : "";
+
+                    Image image = new Image(id, caption, alt, src, srcResolved, savedPath, context_paragraphs, fileName);
+                    images.add(image);
+                    imagesInFile++;
+                }
+
+                if (imagesInFile == 0) {
+                    System.out.println("WARNING: File " + file.getName() + " was successfully read but contained 0 images.");
+                }
+
+            } catch (IOException e) {
+                System.err.println("CRITICAL JSON PARSING ERROR in file: " + file.getName() + ". Message: " + e.getMessage());
+            }
+        }
+
+        System.out.println("Successfully parsed a total of " + images.size() + " images.");
+        return images;
     }
     
     

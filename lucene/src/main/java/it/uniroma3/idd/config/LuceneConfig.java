@@ -92,7 +92,10 @@ public class LuceneConfig {
         perFieldAnalyzers.put("terms", standard);
 
         // Images
-
+        perFieldAnalyzers.put("alt", simple);
+        perFieldAnalyzers.put("src", simple);
+        perFieldAnalyzers.put("saved_path", simple);
+        perFieldAnalyzers.put("fileName", simple);
         
         return new PerFieldAnalyzerWrapper(customAnalyzer(), perFieldAnalyzers);
     }

@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.beans.factory.annotation.Value;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,9 @@ import java.util.Map;
 public class DetailController {
     
     private final Searcher searcher;
+
+    @Value("${data.img.path}")
+    private String dataImgPath;
 
 
     @Autowired
@@ -97,6 +101,43 @@ public class DetailController {
                 results.put("ID Articolo Padre", doc.get("fileName")); 
                 results.put("Menzioni", doc.get("mentions")); 
                 results.put("Termini Chiave", doc.get("terms")); 
+                break;
+            case "immagini":
+                title = "Immagine: " + (doc.get("caption") != null ? doc.get("caption") : doc.get("id"));
+                // Proviamo a costruire un URL servibile per l'immagine salvata sotto /saved_images/
+                String rawSaved = doc.get("saved_path") != null ? doc.get("saved_path") : "";
+                String servedUrl = "";
+                if (!rawSaved.isEmpty()) {
+                    try {
+                        java.io.File base = new java.io.File(dataImgPath).getCanonicalFile();
+                        java.io.File target = new java.io.File(rawSaved).getCanonicalFile();
+                        java.net.URI baseUri = base.toURI();
+                        java.net.URI targetUri = target.toURI();
+                        java.net.URI rel = baseUri.relativize(targetUri);
+                        String relPath = rel.getPath();
+                        if (relPath == null || relPath.isEmpty() || relPath.equals(targetUri.getPath())) {
+                            // Se relativize non funziona, tentiamo di cercare la sottostringa "img" nel percorso
+                            int idx = rawSaved.indexOf("img/");
+                            if (idx >= 0) {
+                                relPath = rawSaved.substring(idx + 4); // dopo 'img/'
+                            } else {
+                                relPath = target.getName();
+                            }
+                        }
+                        servedUrl = "/saved_images/" + relPath.replace("\\\\", "/");
+                    } catch (Exception e) {
+                        // fallback: usa solo il nome file
+                        servedUrl = "/saved_images/" + new java.io.File(rawSaved).getName();
+                    }
+                }
+
+                // salva il percorso servito (vuoto se non disponibile) e il percorso sorgente originale
+                results.put("Percorso salvato", servedUrl);
+                results.put("Src (original)", doc.get("src"));
+                results.put("Caption", doc.get("caption"));
+                results.put("Alt", doc.get("alt"));
+                results.put("Contesto", doc.get("context_paragraphs"));
+                results.put("ID Articolo Padre", doc.get("fileName"));
                 break;
     
             default:

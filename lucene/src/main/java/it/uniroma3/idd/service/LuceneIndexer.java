@@ -4,6 +4,7 @@ import it.uniroma3.idd.config.LuceneConfig;
 import it.uniroma3.idd.event.IndexingCompleteEvent;
 import it.uniroma3.idd.model.Article;
 import it.uniroma3.idd.model.Table;
+import it.uniroma3.idd.model.Image;
 import it.uniroma3.idd.utils.Parser;
 import jakarta.annotation.PostConstruct;
 import org.apache.lucene.analysis.Analyzer;
@@ -48,8 +49,10 @@ public class LuceneIndexer {
                 System.out.println("Deleting the index directory...");
                 deleteNonEmptyDirectory(Paths.get(luceneConfig.getIndexDirectory())); // Delete the index directory
                 deleteNonEmptyDirectory(Paths.get(luceneConfig.getTableDirectory()));
+                deleteNonEmptyDirectory(Paths.get(luceneConfig.getImgDirectory()));
                 indexArticles(luceneConfig.getIndexDirectory(), Codec.getDefault()); // Initialize the index
                 indexTables(luceneConfig.getTableDirectory(), Codec.getDefault());
+                indexImages(luceneConfig.getImgDirectory(), Codec.getDefault());
             }
             System.out.println("Table Index initialized, publishing event.");
             eventPublisher.publishEvent(new IndexingCompleteEvent(this)); 
@@ -111,6 +114,35 @@ public class LuceneIndexer {
             doc.add(new TextField("terms", table.getTermsString(), Field.Store.YES));
             doc.add(new StringField("fileName", table.getFileName(), Field.Store.YES)); 
             
+            writer.addDocument(doc);
+        }
+        writer.commit();
+        writer.close();
+    }
+
+
+    public void indexImages(String Pathdir, Codec codec) throws Exception {
+        Path path = Paths.get(Pathdir);
+        Directory dir = FSDirectory.open(path);
+
+        IndexWriterConfig config = new IndexWriterConfig(perFieldAnalyzer);
+
+        config.setCodec(codec);
+
+        IndexWriter writer = new IndexWriter(dir, config);
+
+        List<Image> images = parser.imageParser();
+
+        for (Image image : images) {
+            Document doc = new Document();
+            doc.add(new StringField("id", image.getId(), Field.Store.YES));
+            doc.add(new TextField("caption", image.getCaption(), Field.Store.YES));
+            doc.add(new TextField("alt", image.getAlt(), Field.Store.YES));
+            doc.add(new StoredField("src", image.getSrc()));
+            doc.add(new StoredField("src_resolved", image.getSrcResolved()));
+            doc.add(new StoredField("saved_path", image.getSavedPath()));
+            doc.add(new TextField("context_paragraphs", image.getContext_paragraphsString(), Field.Store.YES));
+            doc.add(new StringField("fileName", image.getFileName(), Field.Store.YES));
             writer.addDocument(doc);
         }
         writer.commit();

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${document.title}">Dettaglio Immagine</title>
+    <link rel="stylesheet" th:href="@{/css/details.css}">
+</head>
+
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Torna alla Ricerca</a>
+
+        <h1 th:text="${document.title}">Titolo Immagine</h1>
+
+        <div class="metadata">
+            <p><strong>ID Immagine:</strong> <span th:text="${document.id}"></span></p>
+            <p>
+                <strong>Articolo Collegato:</strong>
+                <span th:if="${document.results.containsKey('ID Articolo Padre')}">
+                    <span th:with="articleId=${document.results.get('ID Articolo Padre')}">
+                        <a th:href="@{/dettaglio/articoli/{id}(id=${articleId})}" th:text="${articleId}" title="Visualizza i dettagli dell'articolo principale"></a>
+                    </span>
+                </span>
+                <span th:unless="${document.results.containsKey('ID Articolo Padre')}">N/A</span>
+            </p>
+        </div>
+
+        <hr>
+
+        <div class="content-section">
+            <h2>Anteprima Immagine</h2>
+            <div th:if="${document.results.get('Percorso salvato') != ''}">
+                <img th:src="${document.results.get('Percorso salvato')}" alt="Anteprima immagine" style="max-width: 80%; height: auto; border: 1px solid #ccc; padding: 6px;"/>
+                <p>
+                    <a th:href="${document.results.get('Percorso salvato')}" target="_blank">Apri immagine in nuova scheda</a>
+                </p>
+            </div>
+            <div th:if="${document.results.get('Percorso salvato') == ''}">
+                <p><em>Nessuna immagine salvata disponibile per l'anteprima.</em></p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Metadati</h2>
+            <p th:if="${document.results.containsKey('Caption')}"><strong>Caption:</strong> <span th:text="${document.results.get('Caption')}"></span></p>
+            <p th:if="${document.results.containsKey('Alt')}"><strong>Alt:</strong> <span th:text="${document.results.get('Alt')}"></span></p>
+            <p th:if="${document.results.containsKey('Src (original)')}"><strong>Sorgente originale:</strong> <span th:text="${document.results.get('Src (original)')}"></span></p>
+        </div>
+
+        <div th:if="${document.results.containsKey('Contesto')}" class="content-section table-context">
+            <h2>Paragrafi di Contesto</h2>
+            <p th:text="${document.results.get('Contesto')}">Paragrafi che circondavano l'immagine nell'articolo.</p>
+        </div>
+
+        <hr>
+        <p style="text-align: right; font-size: 0.8em;">
+            Dati recuperati dall'indice Lucene: <strong th:text="${indexKey.toUpperCase()}"></strong>
+        </p>
+
+    </div>
+
+</body>
+</html>
