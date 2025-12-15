@@ -31,6 +31,5 @@ public class WebConfig implements WebMvcConfigurer {
         System.out.println("DEBUG MAPPING IMAGES URI ATTIVO: " + imagesFileUri);
         registry.addResourceHandler("/saved_images/**")
             .addResourceLocations(imagesFileUri);
-        
     }
 }

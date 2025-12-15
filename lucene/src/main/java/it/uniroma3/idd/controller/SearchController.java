@@ -17,7 +17,6 @@ public class SearchController {
     
     private final Searcher searcher;
 
-
     @Autowired
     public SearchController(Searcher searcher) {
         this.searcher = searcher;

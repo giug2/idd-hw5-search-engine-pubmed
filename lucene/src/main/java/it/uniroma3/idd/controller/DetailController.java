@@ -147,6 +147,7 @@ public class DetailController {
         return new GetDocumentResponse(id, title, authors, results);
     }
 
+
     @GetMapping("/dettaglio/articoli/{id}")
     public String viewArticle(@PathVariable("id") String id, Model model) {
         try {
@@ -166,5 +167,4 @@ public class DetailController {
             return "error_page";
         }
     }
-
 }

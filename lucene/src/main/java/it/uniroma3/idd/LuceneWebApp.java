@@ -13,8 +13,3 @@ public class LuceneWebApp {
 
 
 // mvn spring-boot:run
-
-
-
-
-

@@ -157,7 +157,6 @@ public class Searcher {
             
             if ("articoli".equals(indexKey)) {
                 titolo = doc.get("title");
-                
                 String abst = doc.get("articleAbstract");
                 snippet = (abst != null) ? abst.substring(0, Math.min(abst.length(), 150)) + "..." : "Abstract non disponibile.";
                 urlDettaglio = "/dettaglio/articoli/" + id;

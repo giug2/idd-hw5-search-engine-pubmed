@@ -25,7 +25,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 
 
-
 @Component
 public class LuceneIndexer {
 
@@ -69,13 +68,11 @@ public class LuceneIndexer {
     public void indexArticles(String Pathdir, Codec codec) throws IOException {
         Path path = Paths.get(Pathdir);
         Directory dir = FSDirectory.open(path);
-
         IndexWriterConfig config = new IndexWriterConfig(perFieldAnalyzer);
 
         config.setCodec(codec);
 
         IndexWriter writer = new IndexWriter(dir, config);
-
         List<Article> articles = parser.articleParser();
 
         for (Article article : articles) {
@@ -117,18 +114,15 @@ public class LuceneIndexer {
     public void indexTables(String Pathdir, Codec codec) throws Exception {
         Path path = Paths.get(Pathdir);
         Directory dir = FSDirectory.open(path);
-
         IndexWriterConfig config = new IndexWriterConfig(perFieldAnalyzer);
 
         config.setCodec(codec);
 
         IndexWriter writer = new IndexWriter(dir, config);
-
         List<Table> tables = parser.tableParser();
 
         for (Table table : tables) {
             Document doc = new Document();
-        
             doc.add(new StringField("id", table.getId(), Field.Store.YES));
             doc.add(new TextField("caption", table.getCaption(), Field.Store.YES)); 
             doc.add(new StoredField("html_table", table.getHtmlBody()));
@@ -137,7 +131,6 @@ public class LuceneIndexer {
             doc.add(new TextField("context_paragraphs", table.getContext_paragraphsString(), Field.Store.YES)); 
             doc.add(new TextField("terms", table.getTermsString(), Field.Store.YES));
             doc.add(new StringField("fileName", table.getFileName(), Field.Store.YES)); 
-            
             writer.addDocument(doc);
         }
         writer.commit();
@@ -148,13 +141,11 @@ public class LuceneIndexer {
     public void indexImages(String Pathdir, Codec codec) throws Exception {
         Path path = Paths.get(Pathdir);
         Directory dir = FSDirectory.open(path);
-
         IndexWriterConfig config = new IndexWriterConfig(perFieldAnalyzer);
 
         config.setCodec(codec);
 
         IndexWriter writer = new IndexWriter(dir, config);
-
         List<Image> images = parser.imageParser();
 
         for (Image image : images) {
