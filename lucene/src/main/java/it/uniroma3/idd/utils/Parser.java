@@ -149,7 +149,6 @@ public class Parser {
                 
                 // Date
                 String publicationDate = extractPublicationDate(document);
-                System.out.println(file.getName() + " → " + publicationDate);
 
 
                 // Paragraphs (Body)

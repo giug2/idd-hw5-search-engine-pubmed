@@ -184,6 +184,53 @@ def process_folder(input_folder, output_folder="tables"):
 
 
 # ---------------------------------------------------------
+# STATISTICHE
+# ---------------------------------------------------------
+def summarize_tables(output_folder="tables"):
+    files = [f for f in os.listdir(output_folder) if f.endswith(".json")]
+    summary = {
+        "total_articles": len(files),
+        "total_tables": 0,
+        "field_counts": {
+            "paper_id": 0,
+            "table_id": 0,
+            "caption": 0,
+            "body": 0,
+            "html_body": 0,
+            "mentions": 0,
+            "context_paragraphs": 0,
+            "terms": 0
+        }
+    }
+
+    for filename in files:
+        path = os.path.join(output_folder, filename)
+        with open(path, "r", encoding="utf-8") as f:
+            tables = json.load(f)
+            summary["total_tables"] += len(tables)
+
+            for table in tables:
+                for field in summary["field_counts"]:
+                    value = table.get(field)
+                    if value:
+                        # consideriamo anche liste non vuote come “piene”
+                        if isinstance(value, list):
+                            if len(value) > 0:
+                                summary["field_counts"][field] += 1
+                        else:
+                            summary["field_counts"][field] += 1
+
+    print("===== SUMMARY =====")
+    print(f"Articoli processati: {summary['total_articles']}")
+    print(f"Tabelle estratte: {summary['total_tables']}")
+    print("Campi pieni per campo JSON:")
+    for field, count in summary["field_counts"].items():
+        print(f"  {field}: {count}")
+    print("===================")
+    return summary
+
+
+# ---------------------------------------------------------
 # MAIN
 # ---------------------------------------------------------
 if __name__ == "__main__":
@@ -194,3 +241,6 @@ if __name__ == "__main__":
 
     input_folder = sys.argv[1]
     process_folder(input_folder)
+    
+    # Statistiche
+    summarize_tables("tables")
