@@ -21,6 +21,9 @@ public class DetailController {
 
     @Value("${data.img.path}")
     private String dataImgPath;
+    
+    @Value("${data.articles.path}")
+    private String dataArticlesPath;
 
 
     @Autowired
@@ -131,8 +134,30 @@ public class DetailController {
                     }
                 }
 
+                // fallback: se non abbiamo saved_path ma abbiamo src_resolved sotto la cartella degli articoli,
+                // proviamo a servire l'immagine direttamente da /raw_articles/<relpath>
+                if ((servedUrl == null || servedUrl.isEmpty()) && doc.get("src_resolved") != null) {
+                    String srcResolved = doc.get("src_resolved");
+                    try {
+                        java.io.File base = new java.io.File(dataArticlesPath).getCanonicalFile();
+                        java.io.File target = new java.io.File(srcResolved).getCanonicalFile();
+                        java.net.URI baseUri = base.toURI();
+                        java.net.URI targetUri = target.toURI();
+                        java.net.URI rel = baseUri.relativize(targetUri);
+                        String relPath = rel.getPath();
+                        if (relPath != null && !relPath.isEmpty() && !relPath.equals(targetUri.getPath())) {
+                            servedUrl = "/raw_articles/" + relPath.replace("\\\\", "/");
+                        } else if (target.exists()) {
+                            // se relativize non funziona ma il file esiste, usa il nome file
+                            servedUrl = "/raw_articles/" + target.getName();
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+
                 // salva il percorso servito (vuoto se non disponibile) e il percorso sorgente originale
-                results.put("Percorso salvato", servedUrl);
+                results.put("Percorso salvato", servedUrl != null ? servedUrl : "");
                 results.put("Src (original)", doc.get("src"));
                 results.put("Caption", doc.get("caption"));
                 results.put("Alt", doc.get("alt"));

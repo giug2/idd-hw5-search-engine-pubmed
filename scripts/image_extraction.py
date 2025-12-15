@@ -263,6 +263,31 @@ def extract_from_file(path, output_folder=None):
                             saved = True
                         except Exception:
                             saved = False
+                    else:
+                        # Se il percorso risolto non esiste, proviamo a cercare il file per nome
+                        # all'interno della radice degli articoli (se esiste). Questo aiuta quando
+                        # il src è relativo ma l'immagine si trova in una sottocartella diversa.
+                        try:
+                            # SEARCH_ROOT viene impostato in process_path
+                            global SEARCH_ROOT
+                            found = None
+                            if SEARCH_ROOT and os.path.isdir(SEARCH_ROOT):
+                                target_fname = os.path.basename(src_resolved)
+                                for r, _, files in os.walk(SEARCH_ROOT):
+                                    if target_fname in files:
+                                        candidate = os.path.join(r, target_fname)
+                                        # copia il primo match
+                                        try:
+                                            shutil.copy2(candidate, dest_path)
+                                            saved = True
+                                            found = candidate
+                                            break
+                                        except Exception:
+                                            continue
+                            if not saved:
+                                saved = False
+                        except Exception:
+                            saved = False
 
                 if saved:
                     image_obj['saved_path'] = os.path.relpath(dest_path)
@@ -310,6 +335,12 @@ def process_path(input_path, output_folder=DEFAULT_OUTPUT, recursive=True, save_
     print(f"Trovati {len(files)} file HTML/XML da processare.")
 
     total_images = 0
+    # imposta SEARCH_ROOT per consentire ricerche globali di file immagine
+    global SEARCH_ROOT
+    try:
+        SEARCH_ROOT = os.path.abspath(input_path)
+    except Exception:
+        SEARCH_ROOT = None
     for f in files:
         # se non vogliamo salvare immagini, passiamo output_folder=None
         out_folder = output_folder if save_images else None
