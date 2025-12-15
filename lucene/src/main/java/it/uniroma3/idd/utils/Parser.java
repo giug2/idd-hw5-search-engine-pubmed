@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.jsoup.nodes.Element;
+import java.util.Map;
 
 
 @Component
@@ -25,6 +27,88 @@ public class Parser {
     @Autowired
     public Parser(LuceneConfig luceneConfig) {
         this.luceneConfig = luceneConfig;
+    }
+
+
+    private String extractPublicationDate(Document document) {
+        // 1. epub
+        Element pubDate = document.selectFirst("pub-date[pub-type=epub]");
+
+        // 2. ppub
+        if (pubDate == null) {
+            pubDate = document.selectFirst("pub-date[pub-type=ppub]");
+        }
+
+        // 3. qualsiasi pub-date
+        if (pubDate == null) {
+            pubDate = document.selectFirst("pub-date");
+        }
+
+        if (pubDate == null) return "Unknown Date";
+
+        // 4. string-date
+        Element stringDate = pubDate.selectFirst("string-date");
+        if (stringDate != null) {
+            return normalizeStringDate(stringDate.text());
+        }
+
+        // 5. year / month / day
+        String year = pubDate.select("year").text();
+        String month = normalizeMonth(pubDate.select("month").text());
+        String day = pubDate.select("day").text();
+
+        if (year.isEmpty()) return "Unknown Date";
+
+        StringBuilder date = new StringBuilder(year);
+
+        if (!month.isEmpty()) {
+            date.append("-").append(month);
+            if (!day.isEmpty()) {
+                date.append("-").append(day.length() == 1 ? "0" + day : day);
+            }
+        }
+
+        return date.toString();
+    }
+
+    private String normalizeMonth(String month) {
+        if (month.isEmpty()) return "";
+
+        Map<String, String> months = Map.ofEntries(
+            Map.entry("jan", "01"), Map.entry("january", "01"),
+            Map.entry("feb", "02"), Map.entry("february", "02"),
+            Map.entry("mar", "03"), Map.entry("march", "03"),
+            Map.entry("apr", "04"), Map.entry("april", "04"),
+            Map.entry("may", "05"),
+            Map.entry("jun", "06"), Map.entry("june", "06"),
+            Map.entry("jul", "07"), Map.entry("july", "07"),
+            Map.entry("aug", "08"), Map.entry("august", "08"),
+            Map.entry("sep", "09"), Map.entry("september", "09"),
+            Map.entry("oct", "10"), Map.entry("october", "10"),
+            Map.entry("nov", "11"), Map.entry("november", "11"),
+            Map.entry("dec", "12"), Map.entry("december", "12")
+        );
+
+        month = month.toLowerCase().trim();
+
+        if (month.matches("\\d+")) {
+            return month.length() == 1 ? "0" + month : month;
+        }
+
+        return months.getOrDefault(month, "");
+    }
+
+    private String normalizeStringDate(String text) {
+        // es: "2021 Mar 15" → 2021-03-15
+        String[] parts = text.split("\\s+");
+        if (parts.length >= 2) {
+            String year = parts[0];
+            String month = normalizeMonth(parts[1]);
+            String day = parts.length >= 3 ? parts[2] : "";
+            return year + (month.isEmpty() ? "" : "-" + month) +
+                (day.isEmpty() ? "" : "-" + day);
+        }
+        return text;
     }
 
 
@@ -64,23 +148,9 @@ public class Parser {
                 String articleAbstract = document.select("abstract p").first() != null ? document.select("abstract p").text() : "No Abstract Found";
                 
                 // Date
-                String publicationDate = "Unknown Date";
-                org.jsoup.nodes.Element pubDateElement = document.select("pub-date").first();
-                if (pubDateElement != null) {
-                    String year = pubDateElement.select("year").text();
-                    String month = pubDateElement.select("month").text();
-                    String day = pubDateElement.select("day").text();
-                    
-                    if (!year.isEmpty()) {
-                        publicationDate = year;
-                        if (!month.isEmpty()) {
-                            publicationDate += "-" + (month.length() == 1 ? "0" + month : month);
-                            if (!day.isEmpty()) {
-                                publicationDate += "-" + (day.length() == 1 ? "0" + day : day);
-                            }
-                        }
-                    }
-                }
+                String publicationDate = extractPublicationDate(document);
+                System.out.println(file.getName() + " → " + publicationDate);
+
 
                 // Paragraphs (Body)
                 List<String> paragraphs = new ArrayList<>();

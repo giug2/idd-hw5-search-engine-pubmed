@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.ZoneId;
+
 
 
 @Component
@@ -82,11 +85,32 @@ public class LuceneIndexer {
             doc.add(new TextField("authors", String.join(" ", article.getAuthors()), TextField.Store.YES));
             doc.add(new TextField("paragraphs", String.join(" ", article.getParagraphs()), TextField.Store.YES));
             doc.add(new TextField("articleAbstract", article.getArticleAbstract(), TextField.Store.YES));
-            doc.add(new TextField("publicationDate", article.getPublicationDate(), TextField.Store.YES));
+            doc.add(new StringField("publicationDate",article.getPublicationDate(),Field.Store.YES));
+            String date = article.getPublicationDate();
+            if (date.length() >= 4) {
+                int year = Integer.parseInt(date.substring(0, 4));
+                doc.add(new IntPoint("publicationYear", year));
+                doc.add(new StoredField("publicationYear", year));
+            }
+
+            if (date.length() == 10) { // YYYY-MM-DD
+                long epoch = toEpoch(date);
+                doc.add(new LongPoint("publicationDate_ts", epoch));
+                doc.add(new StoredField("publicationDate_ts", epoch));
+            }
             writer.addDocument(doc);
         }
         writer.commit();
         writer.close();
+    }
+
+
+    private long toEpoch(String date) {
+        // date = YYYY-MM-DD
+        LocalDate localDate = LocalDate.parse(date);
+        return localDate.atStartOfDay(ZoneId.systemDefault())
+                        .toInstant()
+                        .toEpochMilli();
     }
 
 
