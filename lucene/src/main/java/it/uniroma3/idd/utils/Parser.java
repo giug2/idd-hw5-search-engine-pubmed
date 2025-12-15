@@ -34,25 +34,20 @@ public class Parser {
     private String extractPublicationDate(Document document) {
         // 1. epub
         Element pubDate = document.selectFirst("pub-date[pub-type=epub]");
-
         // 2. ppub
         if (pubDate == null) {
             pubDate = document.selectFirst("pub-date[pub-type=ppub]");
         }
-
         // 3. qualsiasi pub-date
         if (pubDate == null) {
             pubDate = document.selectFirst("pub-date");
         }
-
         if (pubDate == null) return "Unknown Date";
-
         // 4. string-date
         Element stringDate = pubDate.selectFirst("string-date");
         if (stringDate != null) {
             return normalizeStringDate(stringDate.text());
         }
-
         // 5. year / month / day
         String year = pubDate.select("year").text();
         String month = normalizeMonth(pubDate.select("month").text());
@@ -68,9 +63,9 @@ public class Parser {
                 date.append("-").append(day.length() == 1 ? "0" + day : day);
             }
         }
-
         return date.toString();
     }
+
 
     private String normalizeMonth(String month) {
         if (month.isEmpty()) return "";
@@ -91,13 +86,12 @@ public class Parser {
         );
 
         month = month.toLowerCase().trim();
-
         if (month.matches("\\d+")) {
             return month.length() == 1 ? "0" + month : month;
         }
-
         return months.getOrDefault(month, "");
     }
+    
 
     private String normalizeStringDate(String text) {
         // es: "2021 Mar 15" → 2021-03-15

@@ -1,102 +1,111 @@
 <!DOCTYPE html>
 <html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Ricerca Lucene Scalabile PubM-IDD</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+        <meta charset="UTF-8">
+        <title>Ricerca Lucene Scalabile PubM-IDD</title>
+        <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
-    <div class="container">
-        <h1>🔍 Motore di Ricerca Lucene</h1>
+        <div class="container">
+                <h1>🔍 Motore di Ricerca Lucene</h1>
 
-        <form th:action="@{/search}" method="post">
-            
-            <div class="form-group">
-                <label for="query" style="font-weight: bold;">Query di Ricerca:</label>
-                <input type="text" id="query" name="query" th:value="${query}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <form th:action="@{/search}" method="post">
+                        
+                        <div class="form-group">
+                                <label for="query" style="font-weight: bold;">Query di Ricerca:</label>
+                                <input type="text" id="query" name="query" th:value="${query}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                
+                                <p class="sintax-guide">
+                                        Guida alla Ricerca Lucene Avanzata:
+                                        <ul>
+                                                <li>
+                                                        Ricerca Combinata (Multi-campo): Inserisci solo la parola chiave (es. `protein gene`). Verrà cercata in tutti i campi predefiniti degli indici selezionati.
+                                                </li>
+                                                <li>
+                                                        Ricerca Specifica (Campo:Valore): Utilizza i seguenti campi:
+                                                        <div style="margin-left: 20px; margin-top: 5px;">
+                                                                <strong>Articoli (Testo):</strong> `title`, `authors`, `articleAbstract`, `paragraphs`<br>
+                                <strong>Articoli (Data/Anno):</strong> <code>publicationYear</code> (Numerico YYYY)<br>
+                                                                <strong>Tabelle:</strong> `caption`, `body`, `mentions`, `terms`, `context_paragraphs`<br>
+                                <strong>Immagini:</strong> `caption`, `alt`, `context_paragraphs`, `fileName`
+                                                        </div>
+                                                        Esempio: `title:cancer AND authors:Smith`
+                                                </li>
+                                                <li>
+                                                        Operatori Logici: Usa `AND`, `OR`, `NOT` (in maiuscolo).
+                                                </li>
+                                                <li>
+                                                        Frasi Esatte: Racchiudi tra virgolette doppie (es. `"cell culture"`).
+                                                </li>
+                                                <li>
+                                                        Troncamento/Wildcard: Usa `*` per zero o più caratteri (es. `bio*`) e `?` per un singolo carattere (es. `te?t`).
+                                                </li>
+                                                <li>
+                                                        Ricerca per Intervallo di Data/Anno: Utilizza la sintassi `[min TO max]` sul campo.
+                                                        <div style="margin-left: 20px; margin-top: 5px; background-color: #eee; padding: 5px; border-left: 3px solid #007bff;">
+                                                                <strong>Esempio Anno:</strong> <code>publicationYear:[2018 TO 2023]</code><br>
+                                                        </div>
+                                                        **Attenzione:** I campi di data funzionano solo per l'indice "Articoli".
+                                                </li>
+                                        </ul>
+                                </p>
+                        </div>
+
+                        <div class="index-checkboxes">
+                                <h4>Scegli Indice/i da consultare:</h4>
+                                
+                                <label style="margin-right: 15px;"><input type="checkbox" name="indices" value="articoli" 
+                                                             th:checked="${#lists.contains(indicesScelti, 'articoli')}"> Articoli </label>
+                                
+                                <label style="margin-right: 15px;"><input type="checkbox" name="indices" value="tabelle" 
+                                                             th:checked="${#lists.contains(indicesScelti, 'tabelle')}"> Tabelle </label>
+                                
+                                <label><input type="checkbox" name="indices" value="immagini" 
+                                                             th:checked="${#lists.contains(indicesScelti, 'immagini')}"> Immagini </label>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 20px; text-align: center;">
+                                <button type="submit" style="padding: 10px 30px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Esegui Ricerca</button>
+                        </div>
+                        
+                </form>
                 
-                <p class="sintax-guide">
-                    Guida alla Ricerca Lucene Avanzata:
-                    <ul>
-                        <li>
-                            Ricerca Combinata (Multi-campo): Inserisci solo la parola chiave (es. `protein gene`). Verrà cercata in tutti i campi predefiniti degli indici selezionati.
-                        </li>
-                        <li>
-                            Ricerca Specifica (Campo:Valore): Utilizza i seguenti campi:
-                            <div style="margin-left: 20px; margin-top: 5px;">
-                                <strong>Articoli:</strong> `title`, `authors`, `articleAbstract`, `paragraphs`<br>
-                                <strong>Tabelle:</strong> `caption`, `body`, `mentions`, `terms`, `context_paragraphs`
-                            </div>
-                            Esempio: `title:cancer AND authors:Smith`
-                        </li>
-                        <li>
-                            Operatori Logici: Usa `AND`, `OR`, `NOT` (in maiuscolo).
-                        </li>
-                        <li>
-                            Frasi Esatte: Racchiudi tra virgolette doppie (es. `"cell culture"`).
-                        </li>
-                        <li>
-                            Troncamento/Wildcard: Usa `*` per zero o più caratteri (es. `bio*`) e `?` per un singolo carattere (es. `te?t`).
-                        </li>
-                    </ul>
-                </p>
-            </div>
-
-            <div class="index-checkboxes">
-                <h4>Scegli Indice/i da consultare:</h4>
+                <hr>
                 
-                <label style="margin-right: 15px;"><input type="checkbox" name="indices" value="articoli" 
-                              th:checked="${#lists.contains(indicesScelti, 'articoli')}"> Articoli </label>
-                
-                <label style="margin-right: 15px;"><input type="checkbox" name="indices" value="tabelle" 
-                              th:checked="${#lists.contains(indicesScelti, 'tabelle')}"> Tabelle </label>
-                
-                <label><input type="checkbox" name="indices" value="immagini" 
-                              th:checked="${#lists.contains(indicesScelti, 'immagini')}"> Immagini </label>
-            </div>
-
-            <div class="form-group" style="margin-top: 20px; text-align: center;">
-                <button type="submit" style="padding: 10px 30px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Esegui Ricerca</button>
-            </div>
-            
-        </form>
-        
-        <hr>
-        
-        <div th:if="${error}" class="error">
-            <p>ERRORE: <span th:text="${error}"></span></p>
-        </div>
-
-        <div th:if="${risultatiTotali}" class="results-container">
-            <h2>Risultati trovati per: "<span th:text="${query}"></span>"</h2>
-            
-            <div class="results-grid">
-                
-                <div th:each="entry : ${risultatiTotali}" class="result-list-column">
-                    
-                    <h3 th:text="${entry.key.toUpperCase()} + ' (' + ${entry.value.size()} + ' Trovati)'">Risultati:</h3>
-                    
-                    <div th:if="${entry.value.isEmpty()}">
-                        <p>Nessun risultato trovato in questo indice.</p>
-                    </div>
-
-                    <div th:each="result : ${entry.value}" class="result-item">
-
-                        <h4>
-                            <a th:href="@{${result.urlDettaglio}}" th:text="${result.titolo}">Titolo del Documento</a>
-                            <span class="score" th:text="'(Score: ' + ${#numbers.formatDecimal(result.score, 1, 4)} + ')'"></span>
-                        </h4>
-
-                        <p th:text="${result.snippet}">Snippet: Anteprima del contenuto...</p>
-                    </div>
-                    
+                <div th:if="${error}" class="error">
+                        <p>ERRORE: <span th:text="${error}"></span></p>
                 </div>
-                
-            </div>
-            
+
+                <div th:if="${risultatiTotali}" class="results-container">
+                        <h2>Risultati trovati per: "<span th:text="${query}"></span>"</h2>
+                        
+                        <div class="results-grid">
+                                
+                                <div th:each="entry : ${risultatiTotali}" class="result-list-column">
+                                        
+                                        <h3 th:text="${entry.key.toUpperCase()} + ' (' + ${entry.value.size()} + ' Trovati)'">Risultati:</h3>
+                                        
+                                        <div th:if="${entry.value.isEmpty()}">
+                                                <p>Nessun risultato trovato in questo indice.</p>
+                                        </div>
+
+                                        <div th:each="result : ${entry.value}" class="result-item">
+
+                                                <h4>
+                                                        <a th:href="@{${result.urlDettaglio}}" th:text="${result.titolo}">Titolo del Documento</a>
+                                                        <span class="score" th:text="'(Score: ' + ${#numbers.formatDecimal(result.score, 1, 4)} + ')'"></span>
+                                                </h4>
+
+                                                <p th:text="${result.snippet}">Snippet: Anteprima del contenuto...</p>
+                                        </div>
+                                        
+                                </div>
+                                
+                        </div>
+                        
+                </div>
         </div>
-    </div>
 
 </body>
 </html>

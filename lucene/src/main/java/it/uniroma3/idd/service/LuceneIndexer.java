@@ -23,6 +23,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.ZoneOffset;
 
 
 @Component
@@ -77,37 +79,31 @@ public class LuceneIndexer {
 
         for (Article article : articles) {
             Document doc = new Document();
+            String date = article.getPublicationDate();
+            
+            // --- 1. Campi Generici e Testuali ---
             doc.add(new StringField("id", article.getId(), Field.Store.YES));
             doc.add(new TextField("title", article.getTitle(), TextField.Store.YES));
             doc.add(new TextField("authors", String.join(" ", article.getAuthors()), TextField.Store.YES));
             doc.add(new TextField("paragraphs", String.join(" ", article.getParagraphs()), TextField.Store.YES));
             doc.add(new TextField("articleAbstract", article.getArticleAbstract(), TextField.Store.YES));
-            doc.add(new StringField("publicationDate",article.getPublicationDate(),Field.Store.YES));
-            String date = article.getPublicationDate();
-            if (date.length() >= 4) {
-                int year = Integer.parseInt(date.substring(0, 4));
-                doc.add(new IntPoint("publicationYear", year));
-                doc.add(new StoredField("publicationYear", year));
-            }
-
-            if (date.length() == 10) { // YYYY-MM-DD
-                long epoch = toEpoch(date);
-                doc.add(new LongPoint("publicationDate_ts", epoch));
-                doc.add(new StoredField("publicationDate_ts", epoch));
+            doc.add(new StringField("publicationDate", date, Field.Store.YES)); 
+            
+            if (date != null && !date.equals("Unknown Date") && date.length() >= 4) {
+                try {
+                    int year = Integer.parseInt(date.substring(0, 4));
+                    // YEAR
+                    doc.add(new IntPoint("publicationYear", year));
+                    doc.add(new StoredField("publicationYear", year));
+                    doc.add(new StringField("publicationYear_str", String.valueOf(year), Field.Store.NO));
+                } catch (NumberFormatException e) {
+                    System.err.println("Errore nel parsing dell'anno per l'articolo " + article.getId());
+                }
             }
             writer.addDocument(doc);
         }
         writer.commit();
         writer.close();
-    }
-
-
-    private long toEpoch(String date) {
-        // date = YYYY-MM-DD
-        LocalDate localDate = LocalDate.parse(date);
-        return localDate.atStartOfDay(ZoneId.systemDefault())
-                        .toInstant()
-                        .toEpochMilli();
     }
 
 
