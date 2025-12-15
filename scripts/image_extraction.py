@@ -1,339 +1,185 @@
-import json
+"""
+image_extraction_auto.py
+
+Estrae immagini (tag <img> e <figure>) da tutti i file HTML in pm_html_articles/
+Salva JSON e immagini in images_output/
+"""
+
+from bs4 import BeautifulSoup
 import os
-import string
+import json
 import re
-from lxml import etree
+import shutil
+import base64
+import urllib.request
 
-# ---------------------------------------------------------
-# CONFIGURAZIONE STOP WORDS PER FIGURE
-# ---------------------------------------------------------
-# Lista di parole non informative da ignorare nell'estrazione dei termini dalle caption.
-STOP_WORDS = {
-    # Articoli e preposizioni inglesi
-    'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',
-    'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did',
-    'this', 'that', 'these', 'those', 'it', 'we', 'they', 'them', 'their', 'its', 'our', 'your',
-    'can', 'may', 'should', 'would', 'could', 'will', 'shall', 'must',
-    # Termini generici di riferimento
-    'table', 'figure', 'fig', 'section', 'eq', 'equation', 'et', 'al', 'shown', 'using', 'used',
-    'show', 'shows', 'see', 'refer', 'reference', 'caption', 'image', 'picture', 'illustration',
-    'above', 'below', 'left', 'right', 'top', 'bottom', 'as', 'also', 'here', 'there',
-    # Verbi comuni
-    'present', 'presents', 'presented', 'display', 'displays', 'displayed', 'depict', 'depicts',
-    'illustrate', 'illustrates', 'illustrated', 'demonstrate', 'demonstrates', 'demonstrated',
-    # Aggettivi/avverbi comuni
-    'different', 'various', 'several', 'many', 'some', 'each', 'all', 'both', 'such', 'other',
-    'first', 'second', 'third', 'new', 'proposed', 'respectively', 'corresponding',
-    # Articoli e preposizioni italiane
-    'il', 'lo', 'la', 'i', 'gli', 'le', 'un', 'uno', 'una', 'di', 'da', 'con', 'su', 'per',
-    'tra', 'fra', 'è', 'sono', 'del', 'della', 'dei', 'delle', 'nel', 'nella', 'nei', 'nelle'
-}
+# =========================
+# CONFIG
+# =========================
+INPUT_DIR = "pm_html_articles"
+OUTPUT_DIR = "images_output"
+HTML_EXTS = (".html", ".htm", ".xhtml", ".xml")
 
+# =========================
+# Utility
+# =========================
+def clean_text(s):
+    if not s:
+        return ""
+    return " ".join(s.split())
 
-def extract_informative_terms(text):
-    """
-    Pulisce il testo e restituisce un set di termini unici "informativi".
-    Rimuove punteggiatura, converte in minuscolo e filtra le stop words.
-    """
-    if not text:
-        return set()
-    
-    # Rimuove la punteggiatura e converte in minuscolo
-    translator = str.maketrans('', '', string.punctuation)
-    clean_text = text.lower().translate(translator)
-    
-    # Divide in parole
-    tokens = clean_text.split()
-    
-    # Filtra parole corte (< 3 caratteri), stop words e numeri puri
-    informative_terms = {
-        word for word in tokens 
-        if word not in STOP_WORDS and len(word) > 2 and not word.isdigit()
-    }
-    
-    return informative_terms
-
-
-def get_node_text(node):
-    """
-    Estrae tutto il testo visibile da un nodo e dai suoi figli, pulito.
-    """
-    return "".join(node.itertext()).strip()
-
-
-def get_node_html(node):
-    """
-    Restituisce la rappresentazione HTML (stringa) del nodo.
-    """
-    return etree.tostring(node, pretty_print=True).decode()
-
-
-def build_full_image_url(src, base_url, article_id):
-    """
-    Costruisce l'URL completo dell'immagine partendo dal src relativo.
-    Adattato per PMC (PubMed Central).
-    """
+def resolve_src(base_file_path, src):
     if not src:
         return ""
-    
-    # Se è già un URL completo, restituiscilo
-    if src.startswith('http://') or src.startswith('https://'):
+    src = src.strip()
+    if src.startswith("data:") or re.match(r'^https?://', src):
         return src
-    
-    # Base URL di PMC
-    pmc_base = "https://pmc.ncbi.nlm.nih.gov"
-    
-    # Se il src inizia con /, è relativo alla root
-    if src.startswith('/'):
-        return f"{pmc_base}{src}"
-        
-    # Altrimenti proviamo a costruire un URL basato sull'ID articolo se disponibile
-    if article_id:
-        # Esempio: https://pmc.ncbi.nlm.nih.gov/articles/PMC12345/bin/image.jpg
-        # Rimuoviamo eventuali prefissi "article_" o suffissi ".html" dall'ID se presenti
-        clean_id = article_id.replace('article_', '').split('_')[-1] # Prende l'ultimo pezzo che dovrebbe essere il PMCID
-        
-        # Assicuriamoci che inizi con PMC
-        if not clean_id.startswith('PMC') and clean_id.isdigit():
-            clean_id = f"PMC{clean_id}"
-            
-        if clean_id.startswith('PMC'):
-             # Aggiungiamo l'estensione .jpg se manca (spesso nei file XML manca l'estensione nel href, ma qui sembra esserci)
-             return f"{pmc_base}/articles/{clean_id}/bin/{src}"
-    
-    return src
+    base_dir = os.path.dirname(os.path.abspath(base_file_path))
+    return os.path.normpath(os.path.join(base_dir, src))
 
-
-def process_figures_from_file(html_path, output_dir='output_figures'):
-    """
-    Funzione principale per estrarre le figure da un singolo file XML (PMC Article Set).
-    """
-    
-    # Verifica esistenza file
-    if not os.path.exists(html_path):
-        print(f"Errore: Il file {html_path} non esiste.")
-        return
-
-    filename = os.path.basename(html_path)
-    article_id = filename.replace('.html', '')
-    print(f"--- Elaborazione figure dal file: {filename} ---")
-
-    # Parsing XML
+def extract_from_file(path, output_folder=None):
     try:
-        with open(html_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        # Il parser XML di lxml è più adatto per questi file
-        # Usiamo recover=True per essere più tolleranti
-        parser = etree.XMLParser(recover=True)
-        root = etree.fromstring(content.encode('utf-8'), parser=parser)
+        with open(path, "r", encoding="utf-8") as f:
+            html = f.read()
     except Exception as e:
-        print(f"Errore nella lettura/parsing del file {filename}: {e}")
-        return
-    
-    # Namespace map per XPath
-    ns = {'xlink': 'http://www.w3.org/1999/xlink'}
-    
-    # Struttura dati finale
-    extracted_data = {}
+        print(f"[ERROR] Impossibile leggere {path}: {e}")
+        return []
 
-    # Estrazione del Titolo del documento
-    title_nodes = root.xpath("//article-title")
-    
-    source_identifier = filename
-    if title_nodes:
-        page_title = get_node_text(title_nodes[0])
-        if page_title:
-            source_identifier = page_title
+    parser = 'lxml-xml' if html[:400].lstrip().startswith('<?xml') or '<article' in html[:400].lower() else 'lxml'
+    try:
+        soup = BeautifulSoup(html, parser)
+    except Exception:
+        soup = BeautifulSoup(html, 'lxml')
 
-    # Trova tutte le figure (tag <fig>)
-    found_figure_nodes = root.xpath("//fig")
-    
-    if not found_figure_nodes:
-        print(f"Nessuna figura trovata nel file {filename}.")
+    paragraphs = [clean_text(p.get_text(" ", strip=True)) for p in soup.find_all(["p", "div"]) if clean_text(p.get_text(" ", strip=True))]
 
-    # Trova tutti i paragrafi del documento (escludendo quelli dentro figure/tabelle)
-    # In PMC XML i paragrafi sono <p>
-    all_paragraphs = root.xpath("//p[not(ancestor::fig) and not(ancestor::table-wrap)]")
+    images_out = []
+    imgs = []
 
-    for figure_node in found_figure_nodes:
-        
-        # --- IDENTIFICAZIONE ID ---
-        figure_id = figure_node.get('id')
-        
-        if not figure_id:
-            unnamed_count = sum(1 for k in extracted_data.keys() if k.startswith('unnamed_fig_'))
-            figure_id = f"unnamed_fig_{unnamed_count + 1}"
+    # Figure / fig
+    for fig in soup.find_all(["figure", "fig"]):
+        img_tag = fig.find("img")
+        if img_tag:
+            imgs.append((img_tag, fig))
+            continue
+        graphic_tag = fig.find(["graphic", "inline-graphic"]) if hasattr(fig, 'find') else None
+        if graphic_tag:
+            imgs.append((graphic_tag, fig))
 
-        print(f" -> Trovata figura ID: {figure_id}")
+    # Tag <img> standalone
+    for img_tag in soup.find_all("img"):
+        parent_fig = img_tag.find_parent(["figure", "fig"])
+        if parent_fig is None:
+            imgs.append((img_tag, None))
 
-        # --- A. Estrazione URL Immagine e Link Href ---
-        # Cerca tag <graphic>
-        graphic_nodes = figure_node.xpath(".//graphic")
-        image_url = ""
-        image_alt = ""
-        link_href = "" # In XML spesso non c'è un link href separato, ma usiamo l'immagine stessa
-        
-        if graphic_nodes:
-            graphic_node = graphic_nodes[0]
-            # L'attributo è xlink:href
-            src = graphic_node.get(f"{{{ns['xlink']}}}href")
-            if src:
-                image_url = build_full_image_url(src, None, article_id)
-                # Usiamo lo stesso URL per il link se non c'è altro
-                link_href = image_url
+    # JATS graphic standalone
+    for graphic_tag in soup.find_all(["graphic", "inline-graphic"]):
+        parent_fig = graphic_tag.find_parent(["figure", "fig"])
+        if parent_fig is None:
+            imgs.append((graphic_tag, None))
 
-        # --- B. Estrazione Caption ---
-        # <caption/p> o solo <caption>
-        caption_node = figure_node.xpath(".//caption")
-        caption_text = ""
-        if caption_node:
-            caption_text = get_node_text(caption_node[0])
+    paper_id = os.path.splitext(os.path.basename(path))[0]
 
-        # --- C. Analisi Termini Informativi dalla Caption ---
-        caption_terms = extract_informative_terms(caption_text)
-        
-        # --- D. Scansione Paragrafi ---
-        citing_paragraphs = []
-        contextual_paragraphs = []
+    for idx, (img_tag, fig_parent) in enumerate(imgs, start=1):
+        src = ""
+        alt = ""
+        if getattr(img_tag, 'name', '') == 'img':
+            src = img_tag.get("src") or img_tag.get("data-src") or ""
+            alt = clean_text(img_tag.get("alt", ""))
+        else:
+            src = img_tag.get("xlink:href") or img_tag.get("href") or img_tag.get("src") or ""
+            alt = clean_text(img_tag.get("alt", ""))
 
-        for p in all_paragraphs:
-            p_text = get_node_text(p)
-            # Per XML, tostring potrebbe includere namespace, ma va bene
-            p_html = etree.tostring(p, encoding='unicode', method='xml')
-            
-            # 1. Controllo Citazione Esplicita
-            # Cerca <xref ref-type="fig" rid="figure_id">
-            refs = p.xpath(f".//xref[@ref-type='fig' and @rid='{figure_id}']")
-            
-            is_citing = False
-            if refs:
-                citing_paragraphs.append(p_html)
-                is_citing = True
-            
-            # 2. Controllo Termini (solo se non è già un paragrafo citante)
-            if not is_citing and caption_terms:
-                p_terms = extract_informative_terms(p_text)
-                common_terms = caption_terms.intersection(p_terms)
-                
-                # SOGLIA: almeno 2 termini in comune per essere considerato rilevante
-                if len(common_terms) >= 2:
-                    contextual_paragraphs.append({
-                        "html": p_html,
-                        "matched_terms": list(common_terms)
-                    })
+        caption = ""
+        if fig_parent is not None:
+            figcap = fig_parent.find("figcaption") or fig_parent.find("caption")
+            if figcap:
+                caption = clean_text(figcap.get_text(" ", strip=True))
 
-        # --- E. Salvataggio Dati Figura ---
-        extracted_data[figure_id] = {
-            "source_file": source_identifier,
-            "image_url": image_url,
-            "link_href": link_href,
-            "caption": caption_text,
-            "citing_paragraphs": citing_paragraphs,
-            "contextual_paragraphs": contextual_paragraphs
+        context = []
+        filename = os.path.basename(src) if src else ""
+        for p in paragraphs:
+            if filename and filename in p:
+                context.append(p)
+            elif re.search(r'figure\s*\d+', p, flags=re.IGNORECASE):
+                context.append(p)
+        context = list(dict.fromkeys(context))
+
+        src_resolved = resolve_src(path, src)
+
+        image_obj = {
+            "paper_id": paper_id,
+            "image_id": f"{paper_id}_img_{idx}",
+            "src": src,
+            "src_resolved": src_resolved,
+            "alt": alt,
+            "caption": caption,
+            "context_paragraphs": context,
+            "fileName": paper_id,
+            "saved_path": ""
         }
 
-    # Salvataggio su file JSON dedicato per questo articolo
-    output_filename = f"{article_id}_figures.json"
-    output_path = os.path.join(output_dir, output_filename)
-    
-    try:
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(extracted_data, f, ensure_ascii=False, indent=4)
-        # print(f"Dati salvati in: {output_path}")
-    except Exception as e:
-        print(f"Errore nel salvataggio del JSON {output_path}: {e}")
+        # Salvataggio immagini
+        if output_folder and src_resolved:
+            try:
+                dest_dir = os.path.join(output_folder, paper_id)
+                os.makedirs(dest_dir, exist_ok=True)
+                fname = os.path.basename(src_resolved) if not src_resolved.startswith('data:') else f"{image_obj['image_id']}.bin"
+                dest_path = os.path.join(dest_dir, fname)
+                saved = False
+                if src_resolved.startswith('data:'):
+                    header, _, data = src_resolved.partition(',')
+                    if ';base64' in header:
+                        with open(dest_path, 'wb') as wf:
+                            wf.write(base64.b64decode(data))
+                        saved = True
+                elif re.match(r'^https?://', src_resolved):
+                    try:
+                        urllib.request.urlretrieve(src_resolved, dest_path)
+                        saved = True
+                    except Exception:
+                        saved = False
+                else:
+                    if os.path.exists(src_resolved):
+                        try:
+                            shutil.copy2(src_resolved, dest_path)
+                            saved = True
+                        except Exception:
+                            saved = False
 
+                image_obj['saved_path'] = os.path.relpath(dest_path) if saved else ""
+            except Exception:
+                image_obj['saved_path'] = ""
 
-# ---------------------------------------------------------
-# ESECUZIONE
-# ---------------------------------------------------------
-if __name__ == '__main__':
-    # -----------------------------------------------------
-    # CONFIGURAZIONE DINAMICA PATH (Gerarchia Progetto)
-    # -----------------------------------------------------
-    
-    # 1. Identifica la cartella dove si trova QUESTO script
-    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+        images_out.append(image_obj)
 
-    # 2. Identifica la cartella genitore (root del progetto)
-    PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+    return images_out
 
-    # 3. Definisci i percorsi relativi alla radice del progetto
-    RESOURCES_DIR = os.path.join(PROJECT_ROOT, 'lucene', 'src', 'main', 'resources')
+# =========================
+# Processamento cartella
+# =========================
+def process_folder(input_folder=INPUT_DIR, output_folder=OUTPUT_DIR):
+    files = []
+    for root, _, filenames in os.walk(input_folder):
+        for fname in sorted(filenames):
+            if fname.lower().endswith(HTML_EXTS):
+                files.append(os.path.join(root, fname))
 
-    # Input: cartella con i file HTML (usa 'input/pm_html_articles' nella root)
-    SOURCE_DIRECTORY = os.path.join(PROJECT_ROOT, 'input', 'pm_html_articles')
-    
-    # Output: cartella dove salvare i JSON delle figure
-    # Salviamo in input/img nella root del progetto (come atteso da application.properties: data.img.path=../input/img)
-    OUTPUT_DIRECTORY = os.path.join(PROJECT_ROOT, 'input', 'img')
+    print(f"Trovati {len(files)} file HTML da processare.")
+    total_images = 0
+    for f in files:
+        images = extract_from_file(f, output_folder=output_folder)
+        total_images += len(images)
+        json_out_path = os.path.join(output_folder, os.path.splitext(os.path.basename(f))[0] + ".json")
+        os.makedirs(output_folder, exist_ok=True)
+        with open(json_out_path, "w", encoding="utf-8") as out_f:
+            json.dump(images, out_f, ensure_ascii=False, indent=2)
+        print(f"[OK] {os.path.basename(f)} -> {json_out_path} (immagini: {len(images)})")
 
-    # Numero massimo di file da processare (None = tutti)
-    NUM_FILES_TO_PROCESS = None
-    
-    # -----------------------------------------------------
-    # LOGICA DI ESECUZIONE SU CARTELLA
-    # -----------------------------------------------------
-    
-    print("-" * 60)
-    print(f"Script Directory: {SCRIPT_DIR}")
-    print(f"Project Root:     {PROJECT_ROOT}")
-    print(f"Resources Dir:    {RESOURCES_DIR}")
-    print(f"Input Folder:     {SOURCE_DIRECTORY}")
-    print(f"Output Folder:    {OUTPUT_DIRECTORY}")
-    print("-" * 60)
+    print(f"Processati {len(files)} file, immagini totali estratte: {total_images}")
 
-    if not os.path.exists(SOURCE_DIRECTORY):
-        print(f"ERRORE: La cartella sorgente non esiste: {SOURCE_DIRECTORY}")
-        print(f"Verifica che la cartella '{os.path.basename(SOURCE_DIRECTORY)}' esista nel percorso indicato.")
-    else:
-        # 1. Recupera tutti i file .html nella cartella
-        all_files = [f for f in os.listdir(SOURCE_DIRECTORY) if f.endswith(".html")]
-        all_files.sort()
-        
-        total_found = len(all_files)
-        print(f"Totale file HTML trovati nella cartella: {total_found}")
-
-        # 2. Applica il limite se impostato
-        files_to_process = all_files
-        if isinstance(NUM_FILES_TO_PROCESS, int) and NUM_FILES_TO_PROCESS > 0:
-            print(f"Limite attivato: verranno processati solo i primi {NUM_FILES_TO_PROCESS} file.")
-            files_to_process = all_files[:NUM_FILES_TO_PROCESS]
-        else:
-            print("Nessun limite impostato: verranno processati tutti i file.")
-
-        # 3. Ciclo di elaborazione
-        for i, filename in enumerate(files_to_process, 1):
-            full_path = os.path.join(SOURCE_DIRECTORY, filename)
-            
-            print(f"\n[{i}/{len(files_to_process)}] Inizio elaborazione...")
-            process_figures_from_file(full_path, output_dir=OUTPUT_DIRECTORY)
-
-        print("\n--- Processo estrazione figure completato ---")
-
-
-#    STRUTTURA DEL JSON GENERATO:
-#
-#    {
-#        "id_figura_1": {
-#            "source_file": "Titolo del paper o nome file",
-#            "image_url": "https://arxiv.org/html/.../figs/image.png",
-#            "caption": "Figure 1: Descrizione della figura...",
-#            "informative_terms_identified": ["model", "architecture", "network", ...],
-#            "citing_paragraphs": [
-#                "<p>Paragrafo che cita esplicitamente la figura...</p>",
-#                ...
-#            ],
-#            "contextual_paragraphs": [
-#                {
-#                    "html": "<p>Paragrafo con termini correlati...</p>",
-#                    "matched_terms": ["model", "architecture"]
-#                },
-#                ...
-#            ]
-#        },
-#        "id_figura_2": {
-#            ...
-#        }
-#    }
+# =========================
+# Esecuzione
+# =========================
+if __name__ == "__main__":
+    process_folder()
