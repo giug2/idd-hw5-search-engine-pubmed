@@ -156,6 +156,7 @@ public class LuceneIndexer {
             doc.add(new StoredField("src", image.getSrc()));
             doc.add(new StoredField("src_resolved", image.getSrcResolved()));
             doc.add(new StoredField("saved_path", image.getSavedPath()));
+            doc.add(new StoredField("link_href", image.getLinkHref()));
             doc.add(new TextField("context_paragraphs", image.getContext_paragraphsString(), Field.Store.YES));
             doc.add(new StringField("fileName", image.getFileName(), Field.Store.YES));
             writer.addDocument(doc);

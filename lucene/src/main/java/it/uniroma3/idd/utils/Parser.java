@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.nodes.Element;
 import java.util.Map;
+import java.util.Iterator;
 
 
 @Component
@@ -252,34 +253,68 @@ public class Parser {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(file);
 
-                if (!jsonNode.isArray()) {
-                    System.err.println("ERROR PARSING JSON: File " + file.getName() + " is NOT a JSON Array. Skipping.");
-                    continue;
-                }
+                if (jsonNode.isObject()) {
+                    // New format: Map<String, Object>
+                    Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
+                    while (fields.hasNext()) {
+                        Map.Entry<String, JsonNode> entry = fields.next();
+                        String imageId = entry.getKey();
+                        JsonNode imgData = entry.getValue();
 
-                int imagesInFile = 0;
-                for (JsonNode imgEntry : jsonNode) {
-                    String paperId = imgEntry.get("paper_id").asText("");
-                    paperId = paperId.replaceFirst("(?i)\\.html?$", "");
-                    String imageId = imgEntry.get("image_id") != null ? imgEntry.get("image_id").asText() : "";
-                    String id = paperId + "-" + imageId;
+                        String caption = imgData.has("caption") ? imgData.get("caption").asText("") : "";
+                        String src = imgData.has("image_url") ? imgData.get("image_url").asText("") : "";
+                        String linkHref = imgData.has("link_href") ? imgData.get("link_href").asText("") : "";
+                        
+                        // Extract article ID from filename (e.g. article_0001_12345678_figures.json -> article_0001_12345678)
+                        String fileName = file.getName().replace("_figures.json", "");
+                        
+                        // Context paragraphs
+                        List<String> contextParagraphs = new ArrayList<>();
+                        
+                        // 1. Citing paragraphs (simple strings)
+                        if (imgData.has("citing_paragraphs") && imgData.get("citing_paragraphs").isArray()) {
+                            imgData.get("citing_paragraphs").forEach(p -> contextParagraphs.add(cleanHtml(p.asText())));
+                        }
+                        
+                        // 2. Contextual paragraphs (objects with "html" field)
+                        if (imgData.has("contextual_paragraphs") && imgData.get("contextual_paragraphs").isArray()) {
+                            imgData.get("contextual_paragraphs").forEach(pObj -> {
+                                if (pObj.has("html")) {
+                                    contextParagraphs.add(cleanHtml(pObj.get("html").asText()));
+                                }
+                            });
+                        }
 
-                    String caption = imgEntry.get("caption") != null ? imgEntry.get("caption").asText("") : "";
-                    String alt = imgEntry.get("alt") != null ? imgEntry.get("alt").asText("") : "";
-                    String src = imgEntry.get("src") != null ? imgEntry.get("src").asText("") : "";
-                    String srcResolved = imgEntry.get("src_resolved") != null ? imgEntry.get("src_resolved").asText("") : "";
-                    String savedPath = imgEntry.get("saved_path") != null ? imgEntry.get("saved_path").asText("") : "";
+                        // ID: Use the key from the JSON map directly
+                        String id = imageId;
 
-                    List<String> context_paragraphs = extractStringList(imgEntry, "context_paragraphs");
-                    String fileName = imgEntry.get("fileName") != null ? imgEntry.get("fileName").asText("") : "";
+                        // Create Image object
+                        Image image = new Image(id, caption, "", src, src, "", linkHref, contextParagraphs, fileName);
+                        images.add(image);
+                    }
+                } else if (jsonNode.isArray()) {
+                    // Old format: Array of Objects (keeping for backward compatibility if needed)
+                    for (JsonNode imgEntry : jsonNode) {
+                        String paperId = imgEntry.get("paper_id").asText("");
+                        paperId = paperId.replaceFirst("(?i)\\.html?$", "");
+                        String imageId = imgEntry.get("image_id") != null ? imgEntry.get("image_id").asText() : "";
+                        String id = paperId + "-" + imageId;
 
-                    Image image = new Image(id, caption, alt, src, srcResolved, savedPath, context_paragraphs, fileName);
-                    images.add(image);
-                    imagesInFile++;
-                }
+                        String caption = imgEntry.get("caption") != null ? imgEntry.get("caption").asText("") : "";
+                        String alt = imgEntry.get("alt") != null ? imgEntry.get("alt").asText("") : "";
+                        String src = imgEntry.get("src") != null ? imgEntry.get("src").asText("") : "";
+                        String srcResolved = imgEntry.get("src_resolved") != null ? imgEntry.get("src_resolved").asText("") : "";
+                        String savedPath = imgEntry.get("saved_path") != null ? imgEntry.get("saved_path").asText("") : "";
+                        String linkHref = imgEntry.get("link_href") != null ? imgEntry.get("link_href").asText("") : "";
 
-                if (imagesInFile == 0) {
-                    System.out.println("WARNING: File " + file.getName() + " was successfully read but contained 0 images.");
+                        List<String> context_paragraphs = extractStringList(imgEntry, "context_paragraphs");
+                        String fileName = imgEntry.get("fileName") != null ? imgEntry.get("fileName").asText("") : "";
+
+                        Image image = new Image(id, caption, alt, src, srcResolved, savedPath, linkHref, context_paragraphs, fileName);
+                        images.add(image);
+                    }
+                } else {
+                    System.err.println("ERROR PARSING JSON: File " + file.getName() + " is neither Object nor Array. Skipping.");
                 }
 
             } catch (IOException e) {

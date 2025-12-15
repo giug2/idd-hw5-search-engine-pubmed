@@ -15,11 +15,12 @@
 
         <div class="metadata">
             <p><strong>ID Immagine:</strong> <span th:text="${document.id}"></span></p>
-            <p>
+           <p>
                 <strong>Articolo Collegato:</strong>
                 <span th:if="${document.results.containsKey('ID Articolo Padre')}">
                     <span th:with="articleId=${document.results.get('ID Articolo Padre')}">
-                        <a th:href="@{/dettaglio/articoli/{id}(id=${articleId})}" th:text="${articleId}" title="Visualizza i dettagli dell'articolo principale"></a>
+                        <a th:href="@{/dettaglio/articoli/{id}(id=${articleId})}" th:text="${articleId}"
+                        title="Visualizza i dettagli dell'articolo principale"></a>
                     </span>
                 </span>
                 <span th:unless="${document.results.containsKey('ID Articolo Padre')}">N/A</span>
@@ -43,6 +44,10 @@
 
         <div class="content-section">
             <h2>Metadati</h2>
+            <p th:if="${document.results.containsKey('Link Href') and document.results.get('Link Href') != ''}">
+                <strong>Link Originale:</strong> 
+                <a th:href="${document.results.get('Link Href')}" th:text="${document.results.get('Link Href')}" target="_blank"></a>
+            </p>
             <p th:if="${document.results.containsKey('Caption')}"><strong>Caption:</strong> <span th:text="${document.results.get('Caption')}"></span></p>
             <p th:if="${document.results.containsKey('Alt')}"><strong>Alt:</strong> <span th:text="${document.results.get('Alt')}"></span></p>
             <p th:if="${document.results.containsKey('Src (original)')}"><strong>Sorgente originale:</strong> <span th:text="${document.results.get('Src (original)')}"></span></p>

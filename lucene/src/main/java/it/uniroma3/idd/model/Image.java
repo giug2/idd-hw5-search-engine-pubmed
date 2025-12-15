@@ -15,17 +15,19 @@ public class Image {
     private String src;
     private String srcResolved;
     private String savedPath;
+    private String linkHref;
 
     private List<String> context_paragraphs;
     private String fileName;
 
-    public Image(String id, String caption, String alt, String src, String srcResolved, String savedPath, List<String> context_paragraphs, String fileName) {
+    public Image(String id, String caption, String alt, String src, String srcResolved, String savedPath, String linkHref, List<String> context_paragraphs, String fileName) {
         this.id = id;
         this.caption = caption;
         this.alt = alt;
         this.src = src;
         this.srcResolved = srcResolved;
         this.savedPath = savedPath;
+        this.linkHref = linkHref;
         this.context_paragraphs = context_paragraphs;
         this.fileName = fileName;
     }
@@ -47,6 +49,9 @@ public class Image {
 
     public String getSavedPath() { return savedPath; }
     public void setSavedPath(String savedPath) { this.savedPath = savedPath; }
+
+    public String getLinkHref() { return linkHref; }
+    public void setLinkHref(String linkHref) { this.linkHref = linkHref; }
 
     public List<String> getContext_paragraphs() { return context_paragraphs; }
     public void setContext_paragraphs(List<String> context_paragraphs) { this.context_paragraphs = context_paragraphs; }

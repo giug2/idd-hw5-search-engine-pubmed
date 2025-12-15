@@ -159,6 +159,7 @@ public class DetailController {
                 // salva il percorso servito (vuoto se non disponibile) e il percorso sorgente originale
                 results.put("Percorso salvato", servedUrl != null ? servedUrl : "");
                 results.put("Src (original)", doc.get("src"));
+                results.put("Link Href", doc.get("link_href"));
                 results.put("Caption", doc.get("caption"));
                 results.put("Alt", doc.get("alt"));
                 results.put("Contesto", doc.get("context_paragraphs"));
