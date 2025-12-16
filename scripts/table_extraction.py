@@ -51,16 +51,71 @@ def tokenize_terms(text):
 
 
 # ---------------------------------------------------------
+# ELEMENTI DA ESCLUDERE (header, footer, modals, disclaimer)
+# ---------------------------------------------------------
+EXCLUDED_SELECTORS = [
+    "header", "footer", "nav", 
+    ".usa-modal", ".usa-banner", ".usa-nav",
+    "[role='banner']", "[role='navigation']", "[role='contentinfo']",
+    "#ncbi-header", "#ncbi-footer", ".ncbi-header", ".ncbi-footer",
+    ".pmc-sidebar", ".article-details", ".article-actions"
+]
+
+# Testi da escludere completamente (disclaimer NLM, etc.)
+EXCLUDED_TEXT_PATTERNS = [
+    "PERMALINK",
+    "As a library, NLM provides access to scientific literature",
+    "Inclusion in an NLM database does not imply endorsement",
+    "Copy As a library",
+    "Open in a new tab",
+    "Google Scholar",
+    "Go to:"
+]
+
+
+def should_exclude_paragraph(text):
+    """Verifica se un paragrafo contiene testo da escludere."""
+    if not text:
+        return True
+    for pattern in EXCLUDED_TEXT_PATTERNS:
+        if pattern in text:
+            return True
+    return False
+
+
+# ---------------------------------------------------------
 # ESTRAZIONE DA UN SINGOLO ARTICOLO HTML
 # ---------------------------------------------------------
 def extract_tables_from_html(html_string, paper_id):
     soup = BeautifulSoup(html_string, "lxml")
+    
+    # Rileva se è una pagina web PMC (HTML) o un file XML
+    is_web_page = soup.find("html") is not None and soup.find("head") is not None
+    
+    # Se è una pagina web PMC, estrai solo il contenuto dell'articolo
+    if is_web_page:
+        # Rimuovi elementi non desiderati (header, footer, modals, etc.)
+        for selector in EXCLUDED_SELECTORS:
+            for element in soup.select(selector):
+                element.decompose()
+        
+        # Cerca il contenuto principale dell'articolo
+        article_content = (
+            soup.find("main") or 
+            soup.find("article") or 
+            soup.find(class_="article") or
+            soup.find(id="mc") or  # PMC article container
+            soup
+        )
+    else:
+        # File XML - usa tutto il documento
+        article_content = soup
 
-    # Tutti i paragrafi dell'articolo
+    # Estrai i paragrafi solo dal contenuto dell'articolo
     paragraphs = []
-    for p in soup.find_all(["p", "div"]):
+    for p in article_content.find_all(["p"]):  # Solo <p>, non <div> che include troppo
         txt = clean_text(p.get_text(" ", strip=True))
-        if txt:
+        if txt and not should_exclude_paragraph(txt):
             paragraphs.append(txt)
 
     tables_output = []
@@ -235,12 +290,30 @@ def summarize_tables(output_folder="tables"):
 # ---------------------------------------------------------
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) < 2:
-        print("USO: python table_extraction.py pm_html_articles/")
-        exit()
+    
+    # Default paths (assumendo esecuzione dalla root del progetto)
+    input_folder = "input/pm_html_articles"
+    output_folder = "input/tables"
 
-    input_folder = sys.argv[1]
-    process_folder(input_folder)
+    # Se vengono passati argomenti, sovrascriviamo i default
+    if len(sys.argv) >= 2:
+        input_folder = sys.argv[1]
+    if len(sys.argv) >= 3:
+        output_folder = sys.argv[2]
+
+    # Gestione path se eseguiti da dentro la cartella scripts/
+    if not os.path.exists(input_folder) and os.path.exists("../" + input_folder):
+        input_folder = "../" + input_folder
+        output_folder = "../" + output_folder
+
+    print(f"Input folder: {input_folder}")
+    print(f"Output folder: {output_folder}")
+
+    if not os.path.exists(input_folder):
+        print(f"ERRORE: La cartella di input '{input_folder}' non esiste.")
+        exit(1)
+
+    process_folder(input_folder, output_folder)
     
     # Statistiche
-    summarize_tables("tables")
+    summarize_tables(output_folder)

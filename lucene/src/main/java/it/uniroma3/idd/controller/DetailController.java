@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.HashMap;
 import java.util.Map;
@@ -137,21 +138,26 @@ public class DetailController {
                 // proviamo a servire l'immagine direttamente da /raw_articles/<relpath>
                 if ((servedUrl == null || servedUrl.isEmpty()) && doc.get("src_resolved") != null) {
                     String srcResolved = doc.get("src_resolved");
-                    try {
-                        java.io.File base = new java.io.File(dataArticlesPath).getCanonicalFile();
-                        java.io.File target = new java.io.File(srcResolved).getCanonicalFile();
-                        java.net.URI baseUri = base.toURI();
-                        java.net.URI targetUri = target.toURI();
-                        java.net.URI rel = baseUri.relativize(targetUri);
-                        String relPath = rel.getPath();
-                        if (relPath != null && !relPath.isEmpty() && !relPath.equals(targetUri.getPath())) {
-                            servedUrl = "/raw_articles/" + relPath.replace("\\\\", "/");
-                        } else if (target.exists()) {
-                            // se relativize non funziona ma il file esiste, usa il nome file
-                            servedUrl = "/raw_articles/" + target.getName();
+                    
+                    if (srcResolved.startsWith("http://") || srcResolved.startsWith("https://")) {
+                        servedUrl = srcResolved;
+                    } else {
+                        try {
+                            java.io.File base = new java.io.File(dataArticlesPath).getCanonicalFile();
+                            java.io.File target = new java.io.File(srcResolved).getCanonicalFile();
+                            java.net.URI baseUri = base.toURI();
+                            java.net.URI targetUri = target.toURI();
+                            java.net.URI rel = baseUri.relativize(targetUri);
+                            String relPath = rel.getPath();
+                            if (relPath != null && !relPath.isEmpty() && !relPath.equals(targetUri.getPath())) {
+                                servedUrl = "/raw_articles/" + relPath.replace("\\\\", "/");
+                            } else if (target.exists()) {
+                                // se relativize non funziona ma il file esiste, usa il nome file
+                                servedUrl = "/raw_articles/" + target.getName();
+                            }
+                        } catch (Exception e) {
+                            // ignore
                         }
-                    } catch (Exception e) {
-                        // ignore
                     }
                 }
 

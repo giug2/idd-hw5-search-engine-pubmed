@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +51,7 @@ public class Parser {
         if (stringDate != null) {
             return normalizeStringDate(stringDate.text());
         }
-        // 5. year / month / day
+        // 5. anno / mese / giorno
         String year = pubDate.select("year").text();
         String month = normalizeMonth(pubDate.select("month").text());
         String day = pubDate.select("day").text();
@@ -125,30 +128,120 @@ public class Parser {
 
         for (File file : files) {
             try {
-                Document document = Jsoup.parse(file, "UTF-8");
+                // Rileva se il file è HTML o XML
+                boolean isHtml = false;
+                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                    // Leggi le prime righe per sicurezza, saltando le righe vuote
+                    for (int i = 0; i < 5; i++) {
+                        String line = br.readLine();
+                        if (line == null) break;
+                        line = line.trim().toLowerCase();
+                        if (line.isEmpty()) continue;
+                        
+                        if (line.startsWith("<!doctype html") || line.startsWith("<html")) {
+                            isHtml = true;
+                            break;
+                        }
+                        // Se vediamo la dichiarazione XML o tag specifici JATS, è XML
+                        if (line.startsWith("<?xml") || line.startsWith("<pmc-articleset") || line.startsWith("<article")) {
+                            isHtml = false;
+                            break;
+                        }
+                    }
+                }
+
+                Document document;
+                if (isHtml) {
+                    document = Jsoup.parse(file, "UTF-8");
+                } else {
+                    document = Jsoup.parse(new FileInputStream(file), "UTF-8", "", org.jsoup.parser.Parser.xmlParser());
+                }
+
                 String id = file.getName().replaceFirst("(?i)\\.html?$", "");
                 
-                // Title
-                String title = document.select("article-title").first() != null ? document.select("article-title").first().text() : "No Title Found";
+                // Titolo
+                String title = "No Title Found";
+                if (isHtml) {
+                    Element metaTitle = document.selectFirst("meta[name=citation_title]");
+                    if (metaTitle != null) title = metaTitle.attr("content");
+                    else if (document.title() != null && !document.title().isEmpty()) title = document.title();
+                    else {
+                        // Fallback per PMC HTML: prova h1.content-title
+                        Element h1 = document.selectFirst("h1.content-title");
+                        if (h1 != null) title = h1.text();
+                    }
+                } else {
+                    title = document.select("article-title").first() != null ? document.select("article-title").first().text() : "No Title Found";
+                }
                 
-                // Authors
+                // Autori
                 List<String> authors = new ArrayList<>();
-                document.select("contrib[contrib-type=author] name").forEach(nameElement -> {
-                    String surname = nameElement.select("surname").text();
-                    String givenNames = nameElement.select("given-names").text();
-                    authors.add(givenNames + " " + surname);
-                });
+                if (isHtml) {
+                    document.select("meta[name=citation_author]").forEach(meta -> {
+                        authors.add(meta.attr("content"));
+                    });
+                } else {
+                    document.select("contrib[contrib-type=author] name").forEach(nameElement -> {
+                        String surname = nameElement.select("surname").text();
+                        String givenNames = nameElement.select("given-names").text();
+                        authors.add(givenNames + " " + surname);
+                    });
+                }
                 
                 // Abstract
-                String articleAbstract = document.select("abstract p").first() != null ? document.select("abstract p").text() : "No Abstract Found";
+                String articleAbstract = "No Abstract Found";
+                if (isHtml) {
+                    Element metaDesc = document.selectFirst("meta[name=description]");
+                    if (metaDesc != null) articleAbstract = metaDesc.attr("content");
+                    else {
+                        Element ogDesc = document.selectFirst("meta[name=og:description]");
+                        if (ogDesc != null) articleAbstract = ogDesc.attr("content");
+                        else {
+                            // Fallback: prova a trovare il div dell'abstract
+                            Element absDiv = document.selectFirst("div.abstract-content, div#abstract-1");
+                            if (absDiv != null) articleAbstract = absDiv.text();
+                        }
+                    }
+                } else {
+                    articleAbstract = document.select("abstract p").first() != null ? document.select("abstract p").text() : "No Abstract Found";
+                }
                 
-                // Date
-                String publicationDate = extractPublicationDate(document);
+                // Data
+                String publicationDate = "Unknown Date";
+                if (isHtml) {
+                    Element metaDate = document.selectFirst("meta[name=citation_publication_date]");
+                    if (metaDate != null) {
+                        publicationDate = normalizeStringDate(metaDate.attr("content"));
+                    }
+                } else {
+                    publicationDate = extractPublicationDate(document);
+                }
 
 
-                // Paragraphs (Body)
+                // Paragrafi (Corpo)
                 List<String> paragraphs = new ArrayList<>();
-                document.select("body p").forEach(paragraph -> paragraphs.add(paragraph.text()));
+                if (isHtml) {
+                    // Per i file HTML, i paragrafi potrebbero trovarsi in contenitori diversi a seconda della struttura del sito
+                    // Prova i tag p standard, ma forse restringi al contenuto principale se possibile
+                    // L'HTML di PMC di solito ha il contenuto in .jig-ncbi-inp-strip o simile, ma 'body p' è un fallback sicuro
+                    document.select("body p").forEach(paragraph -> {
+                        String text = paragraph.text();
+                        if (text.length() > 50) { // Filtra testo di navigazione breve
+                            paragraphs.add(text);
+                        }
+                    });
+                } else {
+                    document.select("body p").forEach(paragraph -> {
+                        String text = paragraph.text();
+                        if (!text.isEmpty()) {
+                            paragraphs.add(text);
+                        }
+                    });
+                }
+
+                if (articleAbstract.isEmpty() || articleAbstract.length() < 20) {
+                    articleAbstract = "No Abstract Found";
+                }
 
                 Article article = new Article(id, title, authors, paragraphs, articleAbstract, publicationDate);
                 articles.add(article);
@@ -248,7 +341,7 @@ public class Parser {
                 JsonNode jsonNode = objectMapper.readTree(file);
 
                 if (jsonNode.isObject()) {
-                    // New format: Map<String, Object>
+                    // Nuovo formato: Map<String, Object>
                     Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
                     while (fields.hasNext()) {
                         Map.Entry<String, JsonNode> entry = fields.next();
@@ -257,37 +350,46 @@ public class Parser {
 
                         String caption = imgData.has("caption") ? imgData.get("caption").asText("") : "";
                         String src = imgData.has("image_url") ? imgData.get("image_url").asText("") : "";
+                        if (isJunkImage(src)) continue;
                         String linkHref = imgData.has("link_href") ? imgData.get("link_href").asText("") : "";
                         
-                        // Extract article ID from filename (e.g. article_0001_12345678_figures.json -> article_0001_12345678)
+                        // Estrai ID articolo dal nome file (es. article_0001_12345678_figures.json -> article_0001_12345678)
                         String fileName = file.getName().replace("_figures.json", "");
                         
-                        // Context paragraphs
+                        // Paragrafi di contesto
                         List<String> contextParagraphs = new ArrayList<>();
                         
-                        // 1. Citing paragraphs (simple strings)
+                        // 1. Paragrafi citanti (stringhe semplici)
                         if (imgData.has("citing_paragraphs") && imgData.get("citing_paragraphs").isArray()) {
-                            imgData.get("citing_paragraphs").forEach(p -> contextParagraphs.add(cleanHtml(p.asText())));
+                            imgData.get("citing_paragraphs").forEach(p -> {
+                                String text = cleanHtml(p.asText());
+                                if (!text.isEmpty() && text.length() >= 20) {
+                                    contextParagraphs.add(text);
+                                }
+                            });
                         }
                         
-                        // 2. Contextual paragraphs (objects with "html" field)
+                        // 2. Paragrafi contestuali (oggetti con campo "html")
                         if (imgData.has("contextual_paragraphs") && imgData.get("contextual_paragraphs").isArray()) {
                             imgData.get("contextual_paragraphs").forEach(pObj -> {
                                 if (pObj.has("html")) {
-                                    contextParagraphs.add(cleanHtml(pObj.get("html").asText()));
+                                    String text = cleanHtml(pObj.get("html").asText());
+                                    if (!text.isEmpty() && text.length() >= 20) {
+                                        contextParagraphs.add(text);
+                                    }
                                 }
                             });
                         }
 
-                        // ID: Use the key from the JSON map directly
+                        // ID: Usa direttamente la chiave dalla mappa JSON
                         String id = imageId;
 
-                        // Create Image object
+                        // Crea oggetto Image
                         Image image = new Image(id, caption, "", src, src, "", linkHref, contextParagraphs, fileName);
                         images.add(image);
                     }
                 } else if (jsonNode.isArray()) {
-                    // Old format: Array of Objects (keeping for backward compatibility if needed)
+                    // Vecchio formato: Array di Oggetti (mantenuto per retrocompatibilità se necessario)
                     for (JsonNode imgEntry : jsonNode) {
                         String paperId = imgEntry.get("paper_id").asText("");
                         paperId = paperId.replaceFirst("(?i)\\.html?$", "");
@@ -297,6 +399,7 @@ public class Parser {
                         String caption = imgEntry.get("caption") != null ? imgEntry.get("caption").asText("") : "";
                         String alt = imgEntry.get("alt") != null ? imgEntry.get("alt").asText("") : "";
                         String src = imgEntry.get("src") != null ? imgEntry.get("src").asText("") : "";
+                        if (isJunkImage(src)) continue;
                         String srcResolved = imgEntry.get("src_resolved") != null ? imgEntry.get("src_resolved").asText("") : "";
                         String savedPath = imgEntry.get("saved_path") != null ? imgEntry.get("saved_path").asText("") : "";
                         String linkHref = imgEntry.get("link_href") != null ? imgEntry.get("link_href").asText("") : "";
@@ -325,7 +428,10 @@ public class Parser {
         List<String> resultList = new ArrayList<>();
         if (parentNode.has(fieldName) && parentNode.get(fieldName).isArray()) {
             parentNode.get(fieldName).forEach(element -> {
-                resultList.add(element.asText(""));
+                String text = element.asText("");
+                if (!text.isEmpty() && text.length() >= 20) {
+                    resultList.add(text);
+                }
             });
         }
         return resultList;
@@ -335,5 +441,19 @@ public class Parser {
     public String cleanHtml(String htmlContent) {
         Document doc = Jsoup.parse(htmlContent);
         return doc.text();
+    }
+    
+    /**
+     * Verifica se un'immagine è un'icona/logo/asset del sito da escludere.
+     */
+    private boolean isJunkImage(String src) {
+        if (src == null) return true;
+        String lower = src.toLowerCase();
+        return lower.contains("icon") || 
+               lower.contains("logo") || 
+               lower.contains("flag") || 
+               lower.contains("spinner") || 
+               lower.contains("loader") ||
+               lower.endsWith(".svg");
     }
 }

@@ -53,6 +53,10 @@ public class LuceneConfig {
     @Value("${data.tables.path}")
     private String tablePath;
 
+    public void setTablePath(String tablePath) {
+        this.tablePath = tablePath;
+    }
+
     @Getter
     @Value("${data.img.path}")
     private String imgPath;

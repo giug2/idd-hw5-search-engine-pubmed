@@ -16,9 +16,41 @@ import urllib.request
 # =========================
 # CONFIG
 # =========================
-INPUT_DIR = "pm_html_articles"
-OUTPUT_DIR = "images_output"
+INPUT_DIR = "input/pm_html_articles"
+OUTPUT_DIR = "input/img"
 HTML_EXTS = (".html", ".htm", ".xhtml", ".xml")
+
+# =========================
+# ELEMENTI DA ESCLUDERE (header, footer, modals, disclaimer PMC)
+# =========================
+EXCLUDED_SELECTORS = [
+    "header", "footer", "nav", 
+    ".usa-modal", ".usa-banner", ".usa-nav",
+    "[role='banner']", "[role='navigation']", "[role='contentinfo']",
+    "#ncbi-header", "#ncbi-footer", ".ncbi-header", ".ncbi-footer",
+    ".pmc-sidebar", ".article-details", ".article-actions"
+]
+
+# Testi da escludere completamente (disclaimer NLM, etc.)
+EXCLUDED_TEXT_PATTERNS = [
+    "PERMALINK",
+    "As a library, NLM provides access to scientific literature",
+    "Inclusion in an NLM database does not imply endorsement",
+    "Copy As a library",
+    "Open in a new tab",
+    "Google Scholar",
+    "Go to:"
+]
+
+
+def should_exclude_paragraph(text):
+    """Verifica se un paragrafo contiene testo da escludere."""
+    if not text:
+        return True
+    for pattern in EXCLUDED_TEXT_PATTERNS:
+        if pattern in text:
+            return True
+    return False
 
 # =========================
 # Utility
@@ -51,7 +83,32 @@ def extract_from_file(path, output_folder=None):
     except Exception:
         soup = BeautifulSoup(html, 'lxml')
 
-    paragraphs = [clean_text(p.get_text(" ", strip=True)) for p in soup.find_all(["p", "div"]) if clean_text(p.get_text(" ", strip=True))]
+    # Rileva se è una pagina web PMC (HTML) o un file XML
+    is_web_page = soup.find("html") is not None and soup.find("head") is not None
+    
+    # Se è una pagina web PMC, rimuovi elementi non desiderati
+    if is_web_page:
+        for selector in EXCLUDED_SELECTORS:
+            for element in soup.select(selector):
+                element.decompose()
+        
+        # Cerca il contenuto principale dell'articolo
+        article_content = (
+            soup.find("main") or 
+            soup.find("article") or 
+            soup.find(class_="article") or
+            soup.find(id="mc") or
+            soup
+        )
+    else:
+        article_content = soup
+
+    # Estrai paragrafi solo dal contenuto dell'articolo, escludendo testi problematici
+    paragraphs = []
+    for p in article_content.find_all(["p"]):  # Solo <p>, non <div>
+        txt = clean_text(p.get_text(" ", strip=True))
+        if txt and not should_exclude_paragraph(txt):
+            paragraphs.append(txt)
 
     images_out = []
     imgs = []
@@ -182,4 +239,26 @@ def process_folder(input_folder=INPUT_DIR, output_folder=OUTPUT_DIR):
 # Esecuzione
 # =========================
 if __name__ == "__main__":
-    process_folder()
+    import sys
+    
+    input_dir = INPUT_DIR
+    output_dir = OUTPUT_DIR
+
+    if len(sys.argv) >= 2:
+        input_dir = sys.argv[1]
+    if len(sys.argv) >= 3:
+        output_dir = sys.argv[2]
+
+    # Gestione path se eseguiti da dentro la cartella scripts/
+    if not os.path.exists(input_dir) and os.path.exists("../" + input_dir):
+        input_dir = "../" + input_dir
+        output_dir = "../" + output_dir
+
+    print(f"Input folder: {input_dir}")
+    print(f"Output folder: {output_dir}")
+
+    if not os.path.exists(input_dir):
+        print(f"ERRORE: La cartella di input '{input_dir}' non esiste.")
+        exit(1)
+
+    process_folder(input_dir, output_dir)
