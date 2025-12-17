@@ -16,7 +16,7 @@ import urllib.request
 # =========================
 # CONFIG
 # =========================
-INPUT_DIR = "input/pm_html_articles"
+INPUT_DIR = "input/pmc_html_articles"
 OUTPUT_DIR = "input/img"
 HTML_EXTS = (".html", ".htm", ".xhtml", ".xml")
 
@@ -235,6 +235,53 @@ def process_folder(input_folder=INPUT_DIR, output_folder=OUTPUT_DIR):
 
     print(f"Processati {len(files)} file, immagini totali estratte: {total_images}")
 
+
+# =========================
+# Statistiche immagini
+# =========================
+def summarize_images(output_folder=OUTPUT_DIR):
+    files = [f for f in os.listdir(output_folder) if f.endswith(".json")]
+
+    summary = {
+        "total_articles": len(files),
+        "total_images": 0,
+        "field_counts": {
+            "caption": 0,
+            "alt": 0,
+            "context_paragraphs": 0,
+            "saved_path": 0
+        }
+    }
+
+    for f in files:
+        json_path = os.path.join(output_folder, f)
+        try:
+            with open(json_path, encoding="utf-8") as fh:
+                images = json.load(fh)
+        except Exception as e:
+            print(f"[ERROR] Impossibile leggere {json_path}: {e}")
+            continue
+
+        summary["total_images"] += len(images)
+        for img in images:
+            for field in summary["field_counts"].keys():
+                value = img.get(field)
+                if value:
+                    if isinstance(value, list) and len(value) == 0:
+                        continue
+                    summary["field_counts"][field] += 1
+
+    # Stampa risultati
+    print("===== IMAGE SUMMARY =====")
+    print(f"Articoli processati: {summary['total_articles']}")
+    print(f"Immagini estratte: {summary['total_images']}")
+    print("Campi pieni per immagine:")
+    for field, count in summary["field_counts"].items():
+        print(f"  {field}: {count}")
+    print("=========================")
+    return summary
+
+
 # =========================
 # Esecuzione
 # =========================
@@ -262,3 +309,4 @@ if __name__ == "__main__":
         exit(1)
 
     process_folder(input_dir, output_dir)
+    summarize_images(output_dir)
