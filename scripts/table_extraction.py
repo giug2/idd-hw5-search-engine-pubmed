@@ -1,4 +1,3 @@
-# extract_tables.py
 import nltk
 nltk.download("punkt", quiet=True)
 nltk.download("punkt_tab", quiet=True)
@@ -104,17 +103,15 @@ def extract_tables_from_html(html_string, paper_id):
         table_id = table.get("id") or f"{paper_id}_table_{idx}"
 
         # -------------------------------------------------
-        # CAPTION (PMC-AWARE)
+        # CAPTION 
         # -------------------------------------------------
-        # ---- CAPTION ----
         caption = ""
-
-        # 1. prova a prendere <caption> dentro table
+        # prova a prendere <caption> dentro table
         cap_tag = table.find("caption")
         if cap_tag:
             caption = clean_text(cap_tag.get_text(" ", strip=True))
 
-        # 2. prova a prendere figcaption/title/p nel parent
+        # prova a prendere figcaption/title/p nel parent
         if not caption:
             parent = table.parent
             if parent:
@@ -128,7 +125,7 @@ def extract_tables_from_html(html_string, paper_id):
                 elif p_tag and p_tag.get_text(" ", strip=True):
                     caption = clean_text(p_tag.get_text(" ", strip=True))
 
-        # 3. nuovo: cerca il div.caption **precedente immediato** prima del tbl-box
+        # cerca il div.caption prima del tbl-box
         if not caption:
             prev_div = table.find_parent("div", class_="tbl-box")
             if prev_div:
@@ -136,16 +133,14 @@ def extract_tables_from_html(html_string, paper_id):
                 if sibling:
                     caption = clean_text(sibling.get_text(" ", strip=True))
 
-        # 4. fallback: prendi il paragrafo immediatamente successivo
+        # prendi il paragrafo immediatamente successivo
         if not caption:
             next_p = table.find_next("p")
             if next_p and next_p.get_text(strip=True):
                 caption = clean_text(next_p.get_text(" ", strip=True))
 
-        # 5. pulizia finale
         if caption:
             caption = re.sub(r'^\s*Table\s*\d+\s*[:.]?\s*', '', caption, flags=re.IGNORECASE).strip()
-
 
         # -------------------------------------------------
         # BODY

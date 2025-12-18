@@ -19,6 +19,7 @@ public class Article {
     private String articleAbstract;
     private String publicationDate;
 
+
     // Constructor
     public Article(String id, String title, List<String> authors, List<String> paragraphs, String articleAbstract, String publicationDate) {
         this.id = id;

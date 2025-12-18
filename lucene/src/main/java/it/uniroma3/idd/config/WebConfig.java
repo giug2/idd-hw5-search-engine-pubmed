@@ -9,15 +9,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     @Value("${data.articles.path}") 
-    private String articlesPath; // Ora è "pm_html_articles"
+    private String articlesPath; 
     
     @Value("${data.img.path}")
-    private String imagesPath; // directory dove si trovano i JSON e le immagini salvate
+    private String imagesPath; 
+
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         
-        // 1. Costruisci l'URI nel formato corretto, utilizzando 'file:./' per indicare 
+        // Costruisci l'URI nel formato corretto, utilizzando 'file:./' per indicare 
         // la directory di lavoro corrente (che è la radice del progetto)
         String fileUri = "file:./" + articlesPath + "/";
         
@@ -26,10 +27,10 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/raw_articles/**")
                 .addResourceLocations(fileUri);
         
-        // Mappa le immagini salvate (es. ../input/img/...) sotto /saved_images/**
+        // Mappa le immagini salvate (es. ../input/img/...) sotto /saved_path/**
         String imagesFileUri = "file:./" + imagesPath + "/";
         System.out.println("DEBUG MAPPING IMAGES URI ATTIVO: " + imagesFileUri);
-        registry.addResourceHandler("/saved_images/**")
+        registry.addResourceHandler("/saved_path/**")
             .addResourceLocations(imagesFileUri);
     }
 }

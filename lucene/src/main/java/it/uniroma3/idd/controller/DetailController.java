@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
+import java.net.URI;
 
 
 @Controller
@@ -103,73 +105,61 @@ public class DetailController {
                 results.put("Contesto", doc.get("context_paragraphs"));
                 results.put("ID Articolo Padre", doc.get("fileName")); 
                 results.put("Menzioni", doc.get("mentions")); 
-                results.put("Termini Chiave", doc.get("terms")); 
                 break;
             case "immagini":
-                title = "Immagine: " + (doc.get("caption") != null ? doc.get("caption") : doc.get("id"));
-                // Proviamo a costruire un URL servibile per l'immagine salvata sotto /saved_images/
-                String rawSaved = doc.get("saved_path") != null ? doc.get("saved_path") : "";
-                String servedUrl = "";
-                if (!rawSaved.isEmpty()) {
-                    try {
-                        java.io.File base = new java.io.File(dataImgPath).getCanonicalFile();
-                        java.io.File target = new java.io.File(rawSaved).getCanonicalFile();
-                        java.net.URI baseUri = base.toURI();
-                        java.net.URI targetUri = target.toURI();
-                        java.net.URI rel = baseUri.relativize(targetUri);
-                        String relPath = rel.getPath();
-                        if (relPath == null || relPath.isEmpty() || relPath.equals(targetUri.getPath())) {
-                            // Se relativize non funziona, tentiamo di cercare la sottostringa "img" nel percorso
-                            int idx = rawSaved.indexOf("img/");
-                            if (idx >= 0) {
-                                relPath = rawSaved.substring(idx + 4); // dopo 'img/'
-                            } else {
-                                relPath = target.getName();
-                            }
-                        }
-                        servedUrl = "/saved_images/" + relPath.replace("\\\\", "/");
-                    } catch (Exception e) {
-                        // fallback: usa solo il nome file
-                        servedUrl = "/saved_images/" + new java.io.File(rawSaved).getName();
+                title = "Immagine: " + 
+                    (doc.get("caption") != null && !doc.get("caption").isEmpty()
+                        ? doc.get("caption")
+                        : doc.get("id"));
+
+                /* =========================================================
+                * 1. URL SERVITO LOCALMENTE (per <img>)
+                * ========================================================= */
+                String imageUrl = "";
+
+                String savedPath = doc.get("saved_path");
+                String previewUrl = "";
+
+                if (savedPath != null && !savedPath.isEmpty()) {
+                    // normalizza separatori Windows
+                    String normalized = savedPath.replace("\\", "/");
+
+                    // rimuove "input/img/" dal path
+                    int idx = normalized.indexOf("img/");
+                    if (idx >= 0) {
+                        previewUrl = "/saved_path/" + normalized.substring(idx + 4);
                     }
                 }
 
-                // fallback: se non abbiamo saved_path ma abbiamo src_resolved sotto la cartella degli articoli,
-                // proviamo a servire l'immagine direttamente da /raw_articles/<relpath>
-                if ((servedUrl == null || servedUrl.isEmpty()) && doc.get("src_resolved") != null) {
-                    String srcResolved = doc.get("src_resolved");
-                    
+                /* =========================================================
+                * 2. URL ORIGINALE / ESTERNO (per <a>)
+                * ========================================================= */
+                String externalUrl = "";
+                String srcResolved = doc.get("src_resolved");
+
+                if (srcResolved != null && !srcResolved.isEmpty()) {
                     if (srcResolved.startsWith("http://") || srcResolved.startsWith("https://")) {
-                        servedUrl = srcResolved;
+                        externalUrl = srcResolved;
                     } else {
-                        try {
-                            java.io.File base = new java.io.File(dataArticlesPath).getCanonicalFile();
-                            java.io.File target = new java.io.File(srcResolved).getCanonicalFile();
-                            java.net.URI baseUri = base.toURI();
-                            java.net.URI targetUri = target.toURI();
-                            java.net.URI rel = baseUri.relativize(targetUri);
-                            String relPath = rel.getPath();
-                            if (relPath != null && !relPath.isEmpty() && !relPath.equals(targetUri.getPath())) {
-                                servedUrl = "/raw_articles/" + relPath.replace("\\\\", "/");
-                            } else if (target.exists()) {
-                                // se relativize non funziona ma il file esiste, usa il nome file
-                                servedUrl = "/raw_articles/" + target.getName();
-                            }
-                        } catch (Exception e) {
-                            // ignore
-                        }
+                        externalUrl = "/raw_articles/" + srcResolved.replace("\\", "/");
                     }
                 }
 
-                // salva il percorso servito (vuoto se non disponibile) e il percorso sorgente originale
-                results.put("Percorso salvato", servedUrl != null ? servedUrl : "");
-                results.put("Src (original)", doc.get("src"));
-                results.put("Link Href", doc.get("link_href"));
+                /* =========================================================
+                * 3. RISULTATI
+                * ========================================================= */
+                results.put("image_url", previewUrl);
+                results.put("image_external_url", externalUrl);
+
                 results.put("Caption", doc.get("caption"));
                 results.put("Alt", doc.get("alt"));
+                results.put("Src (original)", doc.get("src"));
+                results.put("Menzioni", doc.get("mentions"));
                 results.put("Contesto", doc.get("context_paragraphs"));
                 results.put("ID Articolo Padre", doc.get("fileName"));
+
                 break;
+
     
             default:
                 results.put("Raw Data", doc.toString()); 

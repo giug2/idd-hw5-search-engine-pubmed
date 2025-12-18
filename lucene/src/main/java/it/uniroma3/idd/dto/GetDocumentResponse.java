@@ -14,8 +14,7 @@ public class GetDocumentResponse {
     private String authors;
     
     /**
-     * Contiene i campi specifici del documento (es. "abstract", "paragraphs" per articoli, 
-     * "html_table" per tabelle, ecc.)
+     * Contiene i campi specifici del documento (articoli, tabelle e img)
      */
     private Map<String, String> results; 
 }

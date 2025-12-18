@@ -1,10 +1,3 @@
-"""
-image_extraction_auto.py
-
-Estrae immagini (tag <img> e <figure>) da tutti i file HTML in pm_html_articles/
-Salva JSON e immagini in images_output/
-"""
-
 from bs4 import BeautifulSoup
 import os
 import json
@@ -12,6 +5,16 @@ import re
 import shutil
 import base64
 import urllib.request
+import nltk
+from nltk.corpus import stopwords
+
+
+try:
+    STOPWORDS = set(stopwords.words("english"))
+except LookupError:
+    nltk.download("stopwords")
+    STOPWORDS = set(stopwords.words("english"))
+
 
 # =========================
 # CONFIG
@@ -19,6 +22,7 @@ import urllib.request
 INPUT_DIR = "input/pmc_html_articles"
 OUTPUT_DIR = "input/img"
 HTML_EXTS = (".html", ".htm", ".xhtml", ".xml")
+
 
 # =========================
 # ELEMENTI DA ESCLUDERE (header, footer, modals, disclaimer PMC)
@@ -52,6 +56,7 @@ def should_exclude_paragraph(text):
             return True
     return False
 
+
 # =========================
 # Utility
 # =========================
@@ -59,6 +64,7 @@ def clean_text(s):
     if not s:
         return ""
     return " ".join(s.split())
+
 
 def resolve_src(base_file_path, src):
     if not src:
@@ -69,6 +75,26 @@ def resolve_src(base_file_path, src):
     base_dir = os.path.dirname(os.path.abspath(base_file_path))
     return os.path.normpath(os.path.join(base_dir, src))
 
+
+def extract_informative_terms(text, min_len=4):
+    """
+    Estrae termini informativi dalla caption:
+    - solo lettere
+    - lowercase
+    - rimozione stopword NLTK
+    - lunghezza minima
+    """
+    if not text:
+        return []
+
+    tokens = re.findall(r"\b[a-zA-Z]+\b", text.lower())
+    terms = [
+        t for t in tokens
+        if len(t) >= min_len and t not in STOPWORDS
+    ]
+    return list(set(terms))
+
+
 def extract_from_file(path, output_folder=None):
     try:
         with open(path, "r", encoding="utf-8") as f:
@@ -77,15 +103,16 @@ def extract_from_file(path, output_folder=None):
         print(f"[ERROR] Impossibile leggere {path}: {e}")
         return []
 
-    parser = 'lxml-xml' if html[:400].lstrip().startswith('<?xml') or '<article' in html[:400].lower() else 'lxml'
-    try:
-        soup = BeautifulSoup(html, parser)
-    except Exception:
-        soup = BeautifulSoup(html, 'lxml')
+    parser = (
+        "lxml-xml"
+        if html[:400].lstrip().startswith("<?xml") or "<article" in html[:400].lower()
+        else "lxml"
+    )
 
-    # Rileva se è una pagina web PMC (HTML) o un file XML
+    soup = BeautifulSoup(html, parser)
+
     is_web_page = soup.find("html") is not None and soup.find("head") is not None
-    
+
     # Se è una pagina web PMC, rimuovi elementi non desiderati
     if is_web_page:
         for selector in EXCLUDED_SELECTORS:
@@ -110,58 +137,67 @@ def extract_from_file(path, output_folder=None):
         if txt and not should_exclude_paragraph(txt):
             paragraphs.append(txt)
 
-    images_out = []
     imgs = []
 
     # Figure / fig
     for fig in soup.find_all(["figure", "fig"]):
-        img_tag = fig.find("img")
-        if img_tag:
-            imgs.append((img_tag, fig))
-            continue
-        graphic_tag = fig.find(["graphic", "inline-graphic"]) if hasattr(fig, 'find') else None
-        if graphic_tag:
-            imgs.append((graphic_tag, fig))
+        img = fig.find("img") or fig.find(["graphic", "inline-graphic"])
+        if img:
+            imgs.append((img, fig))
 
-    # Tag <img> standalone
-    for img_tag in soup.find_all("img"):
-        parent_fig = img_tag.find_parent(["figure", "fig"])
-        if parent_fig is None:
-            imgs.append((img_tag, None))
+    for img in soup.find_all("img"):
+        if not img.find_parent(["figure", "fig"]):
+            imgs.append((img, None))
 
-    # JATS graphic standalone
-    for graphic_tag in soup.find_all(["graphic", "inline-graphic"]):
-        parent_fig = graphic_tag.find_parent(["figure", "fig"])
-        if parent_fig is None:
-            imgs.append((graphic_tag, None))
+    for graphic in soup.find_all(["graphic", "inline-graphic"]):
+        if not graphic.find_parent(["figure", "fig"]):
+            imgs.append((graphic, None))
 
     paper_id = os.path.splitext(os.path.basename(path))[0]
+    images_out = []
 
     for idx, (img_tag, fig_parent) in enumerate(imgs, start=1):
-        src = ""
-        alt = ""
-        if getattr(img_tag, 'name', '') == 'img':
+        if img_tag.name == "img":
             src = img_tag.get("src") or img_tag.get("data-src") or ""
             alt = clean_text(img_tag.get("alt", ""))
         else:
-            src = img_tag.get("xlink:href") or img_tag.get("href") or img_tag.get("src") or ""
-            alt = clean_text(img_tag.get("alt", ""))
+            src = img_tag.get("xlink:href") or img_tag.get("href") or ""
+            alt = ""
 
+        # ---- CAPTION ----
         caption = ""
-        if fig_parent is not None:
+        if fig_parent:
             figcap = fig_parent.find("figcaption") or fig_parent.find("caption")
             if figcap:
                 caption = clean_text(figcap.get_text(" ", strip=True))
 
-        context = []
-        filename = os.path.basename(src) if src else ""
-        for p in paragraphs:
-            if filename and filename in p:
-                context.append(p)
-            elif re.search(r'figure\s*\d+', p, flags=re.IGNORECASE):
-                context.append(p)
-        context = list(dict.fromkeys(context))
+        caption_terms = extract_informative_terms(caption)
 
+        # ---- CONTEXT ----
+        figure_mentions = []
+        caption_term_mentions = []
+
+        filename = os.path.basename(src)
+
+        for p in paragraphs:
+            p_low = p.lower()
+
+            if filename and filename.lower() in p_low:
+                figure_mentions.append(p)
+                continue
+
+            if re.search(r"\b(fig(ure)?\.?\s*\d+)\b", p, flags=re.IGNORECASE):
+                figure_mentions.append(p)
+
+            for term in caption_terms:
+                if term in p_low:
+                    caption_term_mentions.append(p)
+                    break
+
+        figure_mentions = list(dict.fromkeys(figure_mentions))
+        caption_term_mentions = list(dict.fromkeys(caption_term_mentions))
+
+        # ---- URL ----
         src_resolved = resolve_src(path, src)
 
         image_obj = {
@@ -171,7 +207,8 @@ def extract_from_file(path, output_folder=None):
             "src_resolved": src_resolved,
             "alt": alt,
             "caption": caption,
-            "context_paragraphs": context,
+            "mentions": figure_mentions,
+            "context_paragraphs": caption_term_mentions,
             "fileName": paper_id,
             "saved_path": ""
         }
@@ -181,15 +218,21 @@ def extract_from_file(path, output_folder=None):
             try:
                 dest_dir = os.path.join(output_folder, paper_id)
                 os.makedirs(dest_dir, exist_ok=True)
-                fname = os.path.basename(src_resolved) if not src_resolved.startswith('data:') else f"{image_obj['image_id']}.bin"
+                fname = (
+                    os.path.basename(src_resolved)
+                    if not src_resolved.startswith("data:")
+                    else f"{image_obj['image_id']}.bin"
+                )
                 dest_path = os.path.join(dest_dir, fname)
                 saved = False
+
                 if src_resolved.startswith('data:'):
                     header, _, data = src_resolved.partition(',')
                     if ';base64' in header:
                         with open(dest_path, 'wb') as wf:
                             wf.write(base64.b64decode(data))
                         saved = True
+
                 elif re.match(r'^https?://', src_resolved):
                     try:
                         urllib.request.urlretrieve(src_resolved, dest_path)
@@ -212,6 +255,7 @@ def extract_from_file(path, output_folder=None):
 
     return images_out
 
+
 # =========================
 # Processamento cartella
 # =========================
@@ -223,17 +267,18 @@ def process_folder(input_folder=INPUT_DIR, output_folder=OUTPUT_DIR):
                 files.append(os.path.join(root, fname))
 
     print(f"Trovati {len(files)} file HTML da processare.")
-    total_images = 0
     for f in files:
         images = extract_from_file(f, output_folder=output_folder)
-        total_images += len(images)
-        json_out_path = os.path.join(output_folder, os.path.splitext(os.path.basename(f))[0] + ".json")
+        json_path = os.path.join(
+            output_folder,
+            os.path.splitext(os.path.basename(f))[0] + ".json"
+        )
         os.makedirs(output_folder, exist_ok=True)
-        with open(json_out_path, "w", encoding="utf-8") as out_f:
+        with open(json_path, "w", encoding="utf-8") as out_f:
             json.dump(images, out_f, ensure_ascii=False, indent=2)
-        print(f"[OK] {os.path.basename(f)} -> {json_out_path} (immagini: {len(images)})")
+        print(f"[OK] {os.path.basename(f)} -> {json_path} (immagini: {len(images)})")
 
-    print(f"Processati {len(files)} file, immagini totali estratte: {total_images}")
+    print(f"Processati {len(files)} file, immagini totali estratte: {len(images)}")
 
 
 # =========================
@@ -248,6 +293,7 @@ def summarize_images(output_folder=OUTPUT_DIR):
         "field_counts": {
             "caption": 0,
             "alt": 0,
+            "mentions": 0,
             "context_paragraphs": 0,
             "saved_path": 0
         }

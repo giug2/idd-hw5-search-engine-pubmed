@@ -67,6 +67,36 @@ public class LuceneIndexer {
     }
 
 
+    /*--------------------------
+    -------- UTILS ----------
+    ------------------------- */
+    public void deleteNonEmptyDirectory(Path directory) throws IOException {
+        // Verifica se la directory esiste
+        if (Files.exists(directory) && Files.isDirectory(directory)) {
+            // Rimuove ricorsivamente i file e le sottocartelle
+            Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);  // Elimina il file
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);  // Elimina la directory dopo aver cancellato i suoi contenuti
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+            System.out.println("Directory and its contents deleted.");
+        } else {
+            System.out.println("Directory does not exist or is not a directory.");
+        }
+    }
+
+
+    /*--------------------------
+    -------- ARTICOLI ----------
+    ------------------------- */
     public void indexArticles(String Pathdir, Codec codec) throws IOException {
         Path path = Paths.get(Pathdir);
         Directory dir = FSDirectory.open(path);
@@ -81,7 +111,7 @@ public class LuceneIndexer {
             Document doc = new Document();
             String date = article.getPublicationDate();
             
-            // --- 1. Campi Generici e Testuali ---
+            // --- Campi Generici e Testuali ---
             doc.add(new StringField("id", article.getId(), Field.Store.YES));
             doc.add(new TextField("title", article.getTitle(), TextField.Store.YES));
             doc.add(new TextField("authors", String.join(" ", article.getAuthors()), TextField.Store.YES));
@@ -107,6 +137,9 @@ public class LuceneIndexer {
     }
 
 
+    /*--------------------------
+    -------- TABELLE ----------
+    ------------------------- */
     public void indexTables(String Pathdir, Codec codec) throws Exception {
         Path path = Paths.get(Pathdir);
         Directory dir = FSDirectory.open(path);
@@ -125,7 +158,6 @@ public class LuceneIndexer {
             doc.add(new TextField("body", table.getBodyCleaned(), Field.Store.YES)); 
             doc.add(new TextField("mentions", table.getMentionsString(), Field.Store.YES)); 
             doc.add(new TextField("context_paragraphs", table.getContext_paragraphsString(), Field.Store.YES)); 
-            doc.add(new TextField("terms", table.getTermsString(), Field.Store.YES));
             doc.add(new StringField("fileName", table.getFileName(), Field.Store.YES)); 
             writer.addDocument(doc);
         }
@@ -134,6 +166,9 @@ public class LuceneIndexer {
     }
 
 
+    /*--------------------------
+    -------- IMMAGINI ----------
+    ------------------------- */
     public void indexImages(String Pathdir, Codec codec) throws Exception {
         Path path = Paths.get(Pathdir);
         Directory dir = FSDirectory.open(path);
@@ -153,35 +188,12 @@ public class LuceneIndexer {
             doc.add(new StoredField("src_resolved", image.getSrcResolved()));
             doc.add(new StoredField("saved_path", image.getSavedPath()));
             doc.add(new StoredField("link_href", image.getLinkHref()));
+            doc.add(new TextField("mentions", image.getMentionsString(), Field.Store.YES));
             doc.add(new TextField("context_paragraphs", image.getContext_paragraphsString(), Field.Store.YES));
             doc.add(new StringField("fileName", image.getFileName(), Field.Store.YES));
             writer.addDocument(doc);
         }
         writer.commit();
         writer.close();
-    }
-
-
-    public void deleteNonEmptyDirectory(Path directory) throws IOException {
-        // Verifica se la directory esiste
-        if (Files.exists(directory) && Files.isDirectory(directory)) {
-            // Rimuove ricorsivamente i file e le sottocartelle
-            Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);  // Elimina il file
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    Files.delete(dir);  // Elimina la directory dopo aver cancellato i suoi contenuti
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-            System.out.println("Directory and its contents deleted.");
-        } else {
-            System.out.println("Directory does not exist or is not a directory.");
-        }
     }
 }

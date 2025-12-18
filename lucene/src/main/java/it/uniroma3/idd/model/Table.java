@@ -26,11 +26,9 @@ public class Table {
 
     private List<String> context_paragraphs;
 
-    private List<String> terms;   
-
     private String fileName;           
 
-    public Table(String id, String caption, String body, String bodyCleaned, List<String> mentions, List<String> context_paragraphs, List<String> terms, String fileName, String htmlBody) {
+    public Table(String id, String caption, String body, String bodyCleaned, List<String> mentions, List<String> context_paragraphs, String fileName, String htmlBody) {
         this.id = id;
         this.caption = caption;
         this.body = body;
@@ -38,7 +36,6 @@ public class Table {
         this.mentions = mentions;
         this.context_paragraphs = context_paragraphs;
         this.fileName = fileName;
-        this.terms = terms;
         this.htmlBody=htmlBody;
     }
 
@@ -90,14 +87,6 @@ public class Table {
         this.context_paragraphs = context_paragraphs;
     }
 
-    public List<String> getTerms() {
-        return terms;
-    }
-
-    public void setTerms(List<String> terms) {
-        this.terms = terms;
-    }
-
     public String getFileName() {
         return fileName;
     }
@@ -130,14 +119,6 @@ public class Table {
         return String.join(" ", context_paragraphs);
     }
 
-    //if terms is null, return empty string
-    public String getTermsString() {
-        if (terms == null) {
-            return "";
-        }
-        return String.join(" ", terms);
-    }
-
     @Override
     public String toString() {
         return "Table{" +
@@ -147,7 +128,6 @@ public class Table {
                 ", htmlBody='" + htmlBody + '\'' +
                 ", mentions=" + mentions +
                 ", context_paragraphs=" + context_paragraphs +
-                ", terms=" + terms +
                 '}';
     }
 }

@@ -37,23 +37,32 @@
             <div class="table-data-wrapper" th:utext="${document.results.get('HTML Tabella')}"></div>
         </div>
 
-        <div th:if="${document.results.containsKey('Contesto')}" class="content-section table-context">
+        <div class="content-section table-context"
+            th:if="${document.results.containsKey('Menzioni') 
+                or document.results.containsKey('Contesto')}">
+
             <h2>Paragrafi di Contesto</h2>
-            <p th:text="${document.results.get('Contesto')}">Paragrafi che circondavano la tabella nell'articolo.</p>
-        </div>
-        
-        <div class="content-section extraction-info" th:if="${document.results.containsKey('Menzioni') or document.results.containsKey('Termini Chiave')}">
-            <h2>Dati di Estrazione</h2>
-            
-            <p th:if="${document.results.containsKey('Menzioni')}">
-                <strong>Menzioni Rilevate:</strong> 
-                <span th:text="${document.results.get('Menzioni')}"></span>
-            </p>
-            
-            <p th:if="${document.results.containsKey('Termini Chiave')}">
-                <strong>Termini Chiave:</strong> 
-                <span th:text="${document.results.get('Termini Chiave')}"></span>
-            </p>
+
+            <!-- MENTIONS -->
+            <div th:if="${document.results.containsKey('Menzioni')}">
+                <h3>Menzioni della Figura</h3>
+                <ul>
+                    <li th:each="p : ${document.results.get('Menzioni')}"
+                        th:text="${p}">
+                    </li>
+                </ul>
+            </div>
+
+            <!-- CONTEXT_PARAGRAPHS -->
+            <div th:if="${document.results.containsKey('Contesto')}">
+                <h3>Paragrafi correlati alla Caption</h3>
+                <ul>
+                    <li th:each="p : ${document.results.get('Contesto')}"
+                        th:text="${p}">
+                    </li>
+                </ul>
+            </div>
+
         </div>
 
         <hr>

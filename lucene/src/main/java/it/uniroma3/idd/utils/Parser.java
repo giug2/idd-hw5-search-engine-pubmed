@@ -33,25 +33,27 @@ public class Parser {
         this.luceneConfig = luceneConfig;
     }
 
-
+    /* ----------------------------
+    ------------ UTILS ------------
+    -------------------------------*/
     private String extractPublicationDate(Document document) {
-        // 1. epub
+        // epub
         Element pubDate = document.selectFirst("pub-date[pub-type=epub]");
-        // 2. ppub
+        // ppub
         if (pubDate == null) {
             pubDate = document.selectFirst("pub-date[pub-type=ppub]");
         }
-        // 3. qualsiasi pub-date
+        // qualsiasi pub-date
         if (pubDate == null) {
             pubDate = document.selectFirst("pub-date");
         }
         if (pubDate == null) return "Unknown Date";
-        // 4. string-date
+        // string-date
         Element stringDate = pubDate.selectFirst("string-date");
         if (stringDate != null) {
             return normalizeStringDate(stringDate.text());
         }
-        // 5. anno / mese / giorno
+        // anno / mese / giorno
         String year = pubDate.select("year").text();
         String month = normalizeMonth(pubDate.select("month").text());
         String day = pubDate.select("day").text();
@@ -110,6 +112,41 @@ public class Parser {
     }
 
 
+    private List<String> extractStringList(JsonNode parentNode, String fieldName) {
+        List<String> resultList = new ArrayList<>();
+        if (parentNode.has(fieldName) && parentNode.get(fieldName).isArray()) {
+            parentNode.get(fieldName).forEach(element -> {
+                String text = element.asText("");
+                if (!text.isEmpty() && text.length() >= 20) {
+                    resultList.add(text);
+                }
+            });
+        }
+        return resultList;
+    }
+
+
+    public String cleanHtml(String htmlContent) {
+        Document doc = Jsoup.parse(htmlContent);
+        return doc.text();
+    }
+    
+
+    //Verifica se un'immagine è un'icona/logo/asset del sito da escludere.
+    private boolean isJunkImage(String src) {
+        if (src == null) return true;
+        String lower = src.toLowerCase();
+        return lower.contains("icon") || 
+               lower.contains("logo") || 
+               lower.contains("flag") || 
+               lower.contains("spinner") || 
+               lower.contains("loader") ||
+               lower.endsWith(".svg");
+    }
+
+    /* -----------------------------
+    ---------- ARTICLES ------------
+    -------------------------------*/
     public List<Article> articleParser() {
         File dir = new File(luceneConfig.getArticlesPath());
         if (!dir.exists() || !dir.isDirectory()) {
@@ -217,13 +254,9 @@ public class Parser {
                     publicationDate = extractPublicationDate(document);
                 }
 
-
                 // Paragrafi (Corpo)
                 List<String> paragraphs = new ArrayList<>();
                 if (isHtml) {
-                    // Per i file HTML, i paragrafi potrebbero trovarsi in contenitori diversi a seconda della struttura del sito
-                    // Prova i tag p standard, ma forse restringi al contenuto principale se possibile
-                    // L'HTML di PMC di solito ha il contenuto in .jig-ncbi-inp-strip o simile, ma 'body p' è un fallback sicuro
                     document.select("body p").forEach(paragraph -> {
                         String text = paragraph.text();
                         if (text.length() > 50) { // Filtra testo di navigazione breve
@@ -254,7 +287,9 @@ public class Parser {
         return articles;
     }
 
-
+    /* ----------------------------
+    ---------- TABLE --------------
+    -------------------------------*/
     public List<Table> tableParser() {
         File dir = new File(luceneConfig.getTablePath());
         if (!dir.exists() || !dir.isDirectory()) {
@@ -298,18 +333,11 @@ public class Parser {
                     // Gestisci i campi List<String>
                     List<String> mentions = extractStringList(tableEntry, "mentions");
                     List<String> context_paragraphs = extractStringList(tableEntry, "context_paragraphs");
-                    List<String> terms = extractStringList(tableEntry, "terms");
 
-                    Table table = new Table(id, caption, tableHtml, cleanHtml(tableHtml), mentions, context_paragraphs, terms, paperId, htmlBody);
+                    Table table = new Table(id, caption, tableHtml, cleanHtml(tableHtml), mentions, context_paragraphs, paperId, htmlBody);
                     tables.add(table);
                     tablesInFile++;
                 }
-                
-                if (tablesInFile == 0) {
-                     System.out.println("WARNING: File " + file.getName() + " was successfully read but contained 0 tables.");
-                }
-
-
             } catch (IOException e) {
                 System.err.println("CRITICAL JSON PARSING ERROR in file: " + file.getName() + ". Message: " + e.getMessage());
             }
@@ -319,6 +347,9 @@ public class Parser {
     }
 
 
+    /* ----------------------------
+    ---------- IMAGES -------------
+    -------------------------------*/
     public List<Image> imageParser() {
         File dir = new File(luceneConfig.getImgPath());
         if (!dir.exists() || !dir.isDirectory()) {
@@ -326,7 +357,7 @@ public class Parser {
             return new ArrayList<>();
         }
 
-        File[] files = dir.listFiles((dir1, name) -> name.endsWith(".json"));
+        File[] files = dir.listFiles((d, name) -> name.endsWith(".json"));
         if (files == null) {
             System.err.println("Error listing files in: " + dir.getAbsolutePath());
             return new ArrayList<>();
@@ -335,125 +366,67 @@ public class Parser {
         System.out.println("Number of image JSON files found: " + files.length);
         List<Image> images = new ArrayList<>();
 
+        ObjectMapper objectMapper = new ObjectMapper();
+
         for (File file : files) {
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(file);
 
-                if (jsonNode.isObject()) {
-                    // Nuovo formato: Map<String, Object>
-                    Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
-                    while (fields.hasNext()) {
-                        Map.Entry<String, JsonNode> entry = fields.next();
-                        String imageId = entry.getKey();
-                        JsonNode imgData = entry.getValue();
+                if (!jsonNode.isArray()) {
+                    System.err.println("ERROR PARSING JSON: File " + file.getName()
+                            + " is NOT a JSON Array. Skipping.");
+                    continue;
+                }
 
-                        String caption = imgData.has("caption") ? imgData.get("caption").asText("") : "";
-                        String src = imgData.has("image_url") ? imgData.get("image_url").asText("") : "";
-                        if (isJunkImage(src)) continue;
-                        String linkHref = imgData.has("link_href") ? imgData.get("link_href").asText("") : "";
-                        
-                        // Estrai ID articolo dal nome file (es. article_0001_12345678_figures.json -> article_0001_12345678)
-                        String fileName = file.getName().replace("_figures.json", "");
-                        
-                        // Paragrafi di contesto
-                        List<String> contextParagraphs = new ArrayList<>();
-                        
-                        // 1. Paragrafi citanti (stringhe semplici)
-                        if (imgData.has("citing_paragraphs") && imgData.get("citing_paragraphs").isArray()) {
-                            imgData.get("citing_paragraphs").forEach(p -> {
-                                String text = cleanHtml(p.asText());
-                                if (!text.isEmpty() && text.length() >= 20) {
-                                    contextParagraphs.add(text);
-                                }
-                            });
-                        }
-                        
-                        // 2. Paragrafi contestuali (oggetti con campo "html")
-                        if (imgData.has("contextual_paragraphs") && imgData.get("contextual_paragraphs").isArray()) {
-                            imgData.get("contextual_paragraphs").forEach(pObj -> {
-                                if (pObj.has("html")) {
-                                    String text = cleanHtml(pObj.get("html").asText());
-                                    if (!text.isEmpty() && text.length() >= 20) {
-                                        contextParagraphs.add(text);
-                                    }
-                                }
-                            });
-                        }
+                for (JsonNode imgEntry : jsonNode) {
 
-                        // ID: Usa direttamente la chiave dalla mappa JSON
-                        String id = imageId;
+                    // ---- ID ----
+                    String paperId = imgEntry.get("paper_id").asText("");
+                    paperId = paperId.replaceFirst("(?i)\\.html?$", "");
+                    String imageId = imgEntry.get("image_id").asText("");
+                    String id = paperId + "-" + imageId;
 
-                        // Crea oggetto Image
-                        Image image = new Image(id, caption, "", src, src, "", linkHref, contextParagraphs, fileName);
-                        images.add(image);
-                    }
-                } else if (jsonNode.isArray()) {
-                    // Vecchio formato: Array di Oggetti (mantenuto per retrocompatibilità se necessario)
-                    for (JsonNode imgEntry : jsonNode) {
-                        String paperId = imgEntry.get("paper_id").asText("");
-                        paperId = paperId.replaceFirst("(?i)\\.html?$", "");
-                        String imageId = imgEntry.get("image_id") != null ? imgEntry.get("image_id").asText() : "";
-                        String id = paperId + "-" + imageId;
+                    // ---- CAMPI SEMPLICI ----
+                    String caption = imgEntry.path("caption").asText("");
+                    String alt = imgEntry.path("alt").asText("");
+                    String src = imgEntry.path("src").asText("");
+                    if (isJunkImage(src)) continue;
 
-                        String caption = imgEntry.get("caption") != null ? imgEntry.get("caption").asText("") : "";
-                        String alt = imgEntry.get("alt") != null ? imgEntry.get("alt").asText("") : "";
-                        String src = imgEntry.get("src") != null ? imgEntry.get("src").asText("") : "";
-                        if (isJunkImage(src)) continue;
-                        String srcResolved = imgEntry.get("src_resolved") != null ? imgEntry.get("src_resolved").asText("") : "";
-                        String savedPath = imgEntry.get("saved_path") != null ? imgEntry.get("saved_path").asText("") : "";
-                        String linkHref = imgEntry.get("link_href") != null ? imgEntry.get("link_href").asText("") : "";
+                    String srcResolved = imgEntry.path("src_resolved").asText("");
+                    String savedPath = imgEntry.path("saved_path").asText("");
+                    String linkHref = imgEntry.path("link_href").asText("");
+                    String fileName = imgEntry.path("fileName").asText("");
 
-                        List<String> context_paragraphs = extractStringList(imgEntry, "context_paragraphs");
-                        String fileName = imgEntry.get("fileName") != null ? imgEntry.get("fileName").asText("") : "";
+                    // ---- LISTE ----
+                    List<String> mentions = extractStringList(imgEntry, "mentions");
+                    List<String> context_paragraphs =
+                            extractStringList(imgEntry, "context_paragraphs");
 
-                        Image image = new Image(id, caption, alt, src, srcResolved, savedPath, linkHref, context_paragraphs, fileName);
-                        images.add(image);
-                    }
-                } else {
-                    System.err.println("ERROR PARSING JSON: File " + file.getName() + " is neither Object nor Array. Skipping.");
+                    // ---- MODEL ----
+                    Image image = new Image(
+                            id,
+                            caption,
+                            alt,
+                            src,
+                            srcResolved,
+                            savedPath,
+                            linkHref,
+                            mentions,
+                            context_paragraphs,
+                            fileName
+                    );
+
+                    images.add(image);
                 }
 
             } catch (IOException e) {
-                System.err.println("CRITICAL JSON PARSING ERROR in file: " + file.getName() + ". Message: " + e.getMessage());
+                System.err.println("CRITICAL JSON PARSING ERROR in file: "
+                        + file.getName() + ". Message: " + e.getMessage());
             }
         }
 
         System.out.println("Successfully parsed a total of " + images.size() + " images.");
         return images;
     }
-    
-    
-    private List<String> extractStringList(JsonNode parentNode, String fieldName) {
-        List<String> resultList = new ArrayList<>();
-        if (parentNode.has(fieldName) && parentNode.get(fieldName).isArray()) {
-            parentNode.get(fieldName).forEach(element -> {
-                String text = element.asText("");
-                if (!text.isEmpty() && text.length() >= 20) {
-                    resultList.add(text);
-                }
-            });
-        }
-        return resultList;
-    }
 
-
-    public String cleanHtml(String htmlContent) {
-        Document doc = Jsoup.parse(htmlContent);
-        return doc.text();
-    }
-    
-    /**
-     * Verifica se un'immagine è un'icona/logo/asset del sito da escludere.
-     */
-    private boolean isJunkImage(String src) {
-        if (src == null) return true;
-        String lower = src.toLowerCase();
-        return lower.contains("icon") || 
-               lower.contains("logo") || 
-               lower.contains("flag") || 
-               lower.contains("spinner") || 
-               lower.contains("loader") ||
-               lower.endsWith(".svg");
-    }
 }

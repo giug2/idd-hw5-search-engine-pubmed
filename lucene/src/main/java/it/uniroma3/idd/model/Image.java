@@ -16,11 +16,11 @@ public class Image {
     private String srcResolved;
     private String savedPath;
     private String linkHref;
-
+    private List<String> mentions;
     private List<String> context_paragraphs;
     private String fileName;
 
-    public Image(String id, String caption, String alt, String src, String srcResolved, String savedPath, String linkHref, List<String> context_paragraphs, String fileName) {
+    public Image(String id, String caption, String alt, String src, String srcResolved, String savedPath, String linkHref, List<String> mentions, List<String> context_paragraphs, String fileName) {
         this.id = id;
         this.caption = caption;
         this.alt = alt;
@@ -28,6 +28,7 @@ public class Image {
         this.srcResolved = srcResolved;
         this.savedPath = savedPath;
         this.linkHref = linkHref;
+        this.mentions = mentions;
         this.context_paragraphs = context_paragraphs;
         this.fileName = fileName;
     }
@@ -53,6 +54,9 @@ public class Image {
     public String getLinkHref() { return linkHref; }
     public void setLinkHref(String linkHref) { this.linkHref = linkHref; }
 
+     public List<String> getMentions() { return mentions; }
+    public void setMentions(List<String> mentions) { this.mentions = mentions; }
+
     public List<String> getContext_paragraphs() { return context_paragraphs; }
     public void setContext_paragraphs(List<String> context_paragraphs) { this.context_paragraphs = context_paragraphs; }
 
@@ -62,6 +66,11 @@ public class Image {
     public String getContext_paragraphsString() {
         if (context_paragraphs == null) return "";
         return String.join(" ", context_paragraphs);
+    }
+
+    public String getMentionsString() {
+        if (mentions == null) return "";
+        return String.join(" ", mentions);
     }
 
     @Override

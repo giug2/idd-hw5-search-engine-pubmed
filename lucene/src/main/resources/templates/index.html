@@ -25,12 +25,12 @@
                                                 <li>
                                                         Ricerca Specifica (Campo:Valore): Utilizza i seguenti campi:
                                                         <div style="margin-left: 20px; margin-top: 5px;">
-                                                                <strong>Articoli (Testo):</strong> `title`, `authors`, `articleAbstract`, `paragraphs`<br>
-                                <strong>Articoli (Data/Anno):</strong> <code>publicationYear</code> (Numerico YYYY)<br>
-                                                                <strong>Tabelle:</strong> `caption`, `body`, `mentions`, `terms`, `context_paragraphs`<br>
-                                <strong>Immagini:</strong> `caption`, `alt`, `context_paragraphs`, `fileName`
+                                                                <strong>Articoli (Testo):</strong> `title`, `authors`, `articleAbstract`, `paragraphs`, `pubblicationDate`<br>
+                                                                <strong>Articoli (Intervallo Anno):</strong> <code>publicationYear:[2018 TO 2023]</code><br>
+                                                                <strong>Tabelle:</strong> `caption`, `body`, `mentions`, `context_paragraphs`<br>
+                                                                <strong>Immagini:</strong> `caption`, `alt`, `mentions`, `context_paragraphs`, `fileName`
                                                         </div>
-                                                        Esempio: `title:cancer AND authors:Smith`
+                                                        Esempio: `title:cancer`
                                                 </li>
                                                 <li>
                                                         Operatori Logici: Usa `AND`, `OR`, `NOT` (in maiuscolo).
@@ -40,13 +40,6 @@
                                                 </li>
                                                 <li>
                                                         Troncamento/Wildcard: Usa `*` per zero o più caratteri (es. `bio*`) e `?` per un singolo carattere (es. `te?t`).
-                                                </li>
-                                                <li>
-                                                        Ricerca per Intervallo di Data/Anno: Utilizza la sintassi `[min TO max]` sul campo.
-                                                        <div style="margin-left: 20px; margin-top: 5px; background-color: #eee; padding: 5px; border-left: 3px solid #007bff;">
-                                                                <strong>Esempio Anno:</strong> <code>publicationYear:[2018 TO 2023]</code><br>
-                                                        </div>
-                                                        **Attenzione:** I campi di data funzionano solo per l'indice "Articoli".
                                                 </li>
                                         </ul>
                                 </p>
