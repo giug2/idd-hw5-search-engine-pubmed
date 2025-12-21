@@ -2,9 +2,6 @@ package it.uniroma3.idd.service;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +13,6 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,23 +21,24 @@ import org.springframework.stereotype.Service;
 
 import it.uniroma3.idd.dto.SearchResultDTO;
 
-
 @Service
 public class Searcher {
 
     private final Analyzer analyzer;
     private final Map<String, IndexSearcher> searcherMap = new HashMap<>();
     private final Map<String, DirectoryReader> readerMap = new HashMap<>();
+    
+    // Servizio per il calcolo delle metriche di qualità della ricerca
+    private final MetricService metricService; 
 
     @Value("#{${lucene.indices.map}}")
     private Map<String, String> indexPaths;
 
-
     @Autowired
-    public Searcher(Analyzer perFieldAnalyzer) {
+    public Searcher(Analyzer perFieldAnalyzer, MetricService metricService) {
         this.analyzer = perFieldAnalyzer;
+        this.metricService = metricService;
     }
-
 
     @PostConstruct
     public void init() throws IOException {
@@ -62,7 +59,6 @@ public class Searcher {
         }
     }
 
-
     @PreDestroy
     public void destroy() {
         System.out.println("Chiusura di tutti i DirectoryReader...");
@@ -70,7 +66,6 @@ public class Searcher {
             try { reader.close(); } catch (IOException e) { System.err.println("Errore chiusura reader: " + e.getMessage()); }
         }
     }
-
 
     public Map<String, List<SearchResultDTO>> search(String queryText, List<String> indicesScelti, String campoScelto) throws Exception {
         Map<String, List<SearchResultDTO>> risultatiFinali = new HashMap<>();
@@ -83,12 +78,22 @@ public class Searcher {
             }
 
             Query query = buildQuery(queryText, indexKey, campoScelto);
+            
+            // --- Calcolo metriche e tempo ---
+            long startTime = System.currentTimeMillis();
+            
             TopDocs hits = currentSearcher.search(query, 50); // limitiamo a 50 risultati
+            
+            long endTime = System.currentTimeMillis();
+            long duration = endTime - startTime;
+
+            //stampo le metriche tramite l'apposito servizio
+            metricService.evaluateSearch(hits, queryText, indexKey, duration, currentSearcher);
+
             risultatiFinali.put(indexKey, mapHitsToDTO(hits, currentSearcher, indexKey));
         }
         return risultatiFinali;
     }
-
 
     private Query buildQuery(String testoRicerca, String indexKey, String campoScelto) throws ParseException {
         List<Query> queries = new ArrayList<>();
@@ -136,7 +141,6 @@ public class Searcher {
         return builder.build();
     }
 
-
     private List<SearchResultDTO> mapHitsToDTO(TopDocs hits, IndexSearcher searcher, String indexKey) throws IOException {
         List<SearchResultDTO> results = new ArrayList<>();
         for (ScoreDoc sd : hits.scoreDocs) {
@@ -177,7 +181,6 @@ public class Searcher {
         }
         return results;
     }
-
 
     public Document getDocumentById(String id, String indexKey) throws IOException {
         IndexSearcher targetSearcher = searcherMap.get(indexKey);
