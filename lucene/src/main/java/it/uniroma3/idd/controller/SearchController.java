@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Collections; // Utile per liste vuote
 
+
 @Controller
 public class SearchController {
         

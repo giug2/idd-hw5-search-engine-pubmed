@@ -4,6 +4,7 @@ import org.apache.lucene.document.Document;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 public class ResultRelevanceEvaluator {
 
     public enum RelevanceLevel {
@@ -17,6 +18,7 @@ public class ResultRelevanceEvaluator {
             this.value = value;
         }
     }
+
 
     /**
      * Valuta la rilevanza di un documento Lucene rispetto alla query.
@@ -65,10 +67,10 @@ public class ResultRelevanceEvaluator {
         return RelevanceLevel.NOT_RELEVANT;
     }
 
-    /* =======================
-       === Utility methods ===
-       ======================= */
 
+    /* =======================
+       ====== UTILS ==========
+       ======================= */
     private static Set<String> tokenize(String text) {
         if (text == null) return Set.of();
         // Tokenizza, rimuove caratteri speciali, converte in lowercase e filtra parole corte (<3 char)
@@ -79,11 +81,13 @@ public class ResultRelevanceEvaluator {
                 .collect(Collectors.toSet());
     }
 
+
     private static boolean containsAllTokens(String text, Set<String> tokens) {
         if (text == null || text.isEmpty() || tokens.isEmpty()) return false;
         Set<String> textTokens = tokenize(text);
         return textTokens.containsAll(tokens);
     }
+
 
     private static boolean partialMatch(String text, Set<String> tokens) {
         if (text == null || text.isEmpty() || tokens.isEmpty()) return false;

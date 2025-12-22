@@ -1,5 +1,6 @@
 package it.uniroma3.idd.service;
 
+import it.uniroma3.idd.dto.SearchResultDTO;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import it.uniroma3.idd.dto.SearchResultDTO;
 
 @Service
 public class Searcher {
@@ -34,11 +34,13 @@ public class Searcher {
     @Value("#{${lucene.indices.map}}")
     private Map<String, String> indexPaths;
 
+
     @Autowired
     public Searcher(Analyzer perFieldAnalyzer, MetricService metricService) {
         this.analyzer = perFieldAnalyzer;
         this.metricService = metricService;
     }
+
 
     @PostConstruct
     public void init() throws IOException {
@@ -59,6 +61,7 @@ public class Searcher {
         }
     }
 
+
     @PreDestroy
     public void destroy() {
         System.out.println("Chiusura di tutti i DirectoryReader...");
@@ -67,10 +70,11 @@ public class Searcher {
         }
     }
 
-    public Map<String, List<SearchResultDTO>> search(String queryText, List<String> indicesScelti, String campoScelto) throws Exception {
+
+    public Map<String, List<SearchResultDTO>> search(String queryText, List<String> indiceScelti, String campoScelto) throws Exception {
         Map<String, List<SearchResultDTO>> risultatiFinali = new HashMap<>();
 
-        for (String indexKey : indicesScelti) {
+        for (String indexKey : indiceScelti) {
             IndexSearcher currentSearcher = searcherMap.get(indexKey);
             if (currentSearcher == null) {
                 System.err.println("Indice non trovato o non caricato: " + indexKey);
@@ -94,6 +98,7 @@ public class Searcher {
         }
         return risultatiFinali;
     }
+
 
     private Query buildQuery(String testoRicerca, String indexKey, String campoScelto) throws ParseException {
         List<Query> queries = new ArrayList<>();
@@ -141,6 +146,7 @@ public class Searcher {
         return builder.build();
     }
 
+
     private List<SearchResultDTO> mapHitsToDTO(TopDocs hits, IndexSearcher searcher, String indexKey) throws IOException {
         List<SearchResultDTO> results = new ArrayList<>();
         for (ScoreDoc sd : hits.scoreDocs) {
@@ -181,6 +187,7 @@ public class Searcher {
         }
         return results;
     }
+
 
     public Document getDocumentById(String id, String indexKey) throws IOException {
         IndexSearcher targetSearcher = searcherMap.get(indexKey);

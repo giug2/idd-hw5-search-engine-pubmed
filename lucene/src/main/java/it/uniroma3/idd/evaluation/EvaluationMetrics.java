@@ -2,6 +2,7 @@ package it.uniroma3.idd.evaluation;
 
 import java.util.*;
 
+
 public class EvaluationMetrics {
 
     // Calcola il Reciprocal Rank per una singola lista di risultati
@@ -14,6 +15,7 @@ public class EvaluationMetrics {
         }
         return 0.0;
     }
+
 
     // Calcola la Precision@K
     public static double precisionAtK(List<String> rankedIds, Map<String, Integer> relevanceMap, int k) {
@@ -28,6 +30,7 @@ public class EvaluationMetrics {
         return (double) relevantCount / k;
     }
 
+
     public static double dcg(List<String> rankedIds, Map<String, Integer> relevanceMap, int k) {
         double dcg = 0.0;
         for (int i = 0; i < Math.min(k, rankedIds.size()); i++) {
@@ -36,6 +39,7 @@ public class EvaluationMetrics {
         }
         return dcg;
     }
+
 
     public static double idcg(Map<String, Integer> relevanceMap, int k) {
         List<Integer> rels = new ArrayList<>(relevanceMap.values());
@@ -48,6 +52,7 @@ public class EvaluationMetrics {
         }
         return idcg;
     }
+
 
     public static double ndcg(List<String> rankedIds, Map<String, Integer> relevanceMap, int k) {
         double dcgVal = dcg(rankedIds, relevanceMap, k);

@@ -7,9 +7,9 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.util.*;
+
 
 @Service
 public class MetricService {
