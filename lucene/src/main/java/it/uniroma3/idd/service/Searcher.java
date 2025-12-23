@@ -86,7 +86,7 @@ public class Searcher {
             // --- Calcolo metriche e tempo ---
             long startTime = System.currentTimeMillis();
             
-            TopDocs hits = currentSearcher.search(query, 50); // limitiamo a 50 risultati
+            TopDocs hits = currentSearcher.search(query, 10); // limitiamo a 50 risultati
             
             long endTime = System.currentTimeMillis();
             long duration = endTime - startTime;
