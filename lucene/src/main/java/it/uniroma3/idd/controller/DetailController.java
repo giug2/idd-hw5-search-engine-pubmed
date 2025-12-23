@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.File;
-import java.net.URI;
 
 
 @Controller
