@@ -21,6 +21,17 @@ METRICHE PRESTAZIONALI:
 
 ============================================================
 
+QUERY: 'date:2025-08-13'
+INDICI SELEZIONATI: articoli
+--------------------------------------------------
+RISULTATI:
+  > ARTICOLI (0 Trovati)
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 1ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+
+============================================================
+
 QUERY: 'authors:Kim'
 INDICI SELEZIONATI: articoli
 --------------------------------------------------
@@ -48,7 +59,28 @@ RISULTATI:
     - Modulation of Gut Microbiota by Whole Encapsulated Brown Seaweed (Himanthalia elongata) in Overweight Subjects: A Randomized Double-Blind Placebo-Controlled Trial (Score: 2,5335)
 
 METRICHE PRESTAZIONALI:
-  [ARTICOLI] -> Tempo: 20ms | Precision: 0.2 | RR: 1.0 | NDCG: 1.0
+  [ARTICOLI] -> Tempo: 0ms | Precision: 0.2 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'articleAbstract:Kidney OR authors:Kim'
+INDICI SELEZIONATI: articoli
+--------------------------------------------------
+RISULTATI:
+  > ARTICOLI (10 Trovati)
+    - Effect of Preoperative Inflammatory Diet on Clinical and Oncologic Outcomes Following Colorectal Cancer Surgery (Score: 3,1473)
+    - Sufficient Magnesium Intake Reduces Retinal Vein Occlusion Risk: National Health and Nutrition Examination Survey Analysis (Score: 3,0661)
+    - Lifestyle prescriptions for diabetes management in primary care: a narrative review (Score: 2,6858)
+    - Secular trends in dietary patterns among Korean adults: using data from the 2007–2022 Korea National health and nutrition examination survey (Score: 2,5429)
+    - Effects of Air Pollution on Dialysis and Kidney Transplantation: Clinical and Public Health Action (Score: 2,3986)
+    - Exploring the Role of Plant-Based Nutrition in Polycystic Kidney Disease (Score: 2,2501)
+    - Potential misclassification of ultra-processed foods across studies and the need for a unified classification system: a scoping review (Score: 2,0966)
+    - Planetary Health Diet and Body Mass Distribution in Relation to Kidney Health: Evidence from NHANES 2003–2018 (Score: 1,9855)
+    - Pathophysiology of chronic kidney disease–mineral bone disorder (CKD-MBD): from adaptive to maladaptive mineral homeostasis (Score: 1,9691)
+    - Gut Feelings: How Microbes, Diet, and Host Immunity Shape Disease (Score: 1,9275)
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 1ms | Precision: 0.9 | RR: 1.0 | NDCG: 0.9504206262110482
 
 ============================================================
 
@@ -71,6 +103,27 @@ METRICHE PRESTAZIONALI:
 
 ============================================================
 
+QUERY: 'caption:analysis of meal duration'
+INDICI SELEZIONATI: tabelle
+--------------------------------------------------
+RISULTATI:
+  > TABELLE (10 Trovati)
+    - Multivariate regression analysis of meal duration and other factors. (Score: 15,4776)
+    - Intake per meal, day, week and intervention period (g, kcal) (Score: 11,5944)
+    - Exercise and meal characteristics (mean values and standard deviation). (Score: 10,2410)
+    - Participant socio-demographic characteristics and meal kit subscription service use ( n = 25). (Score: 10,2333)
+    - Duration of biologic therapy in the study group. (Score: 9,0270)
+    - Disease duration in the study group. (Score: 8,9252)
+    - Plant food at every meal and a high-fiber diet (Score: 8,9049)
+    - Duration of use (<6 months, 6 months–<1 year, 1–5 years, >5 years) (Score: 8,1384)
+    - Meal Characteristics. (Score: 8,1275)
+    - Situations that may promote glycaemic variability (Score: 7,4666)
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 5ms | Precision: 0.3 | RR: 0.5 | NDCG: 0.7328286204777911
+
+============================================================
+
 QUERY: 'body:"confidence interval"'
 INDICI SELEZIONATI: tabelle
 --------------------------------------------------
@@ -84,7 +137,7 @@ RISULTATI:
     - Characteristics of studies conducted in school settings in Latin America, organized by country (from most to fewest articles) and by year of publication (most recent first). (Score: 1,5009)
 
 METRICHE PRESTAZIONALI:
-  [TABELLE] -> Tempo: 1ms | Precision: 0.6 | RR: 1.0 | NDCG: 1.0
+  [TABELLE] -> Tempo: 0ms | Precision: 0.6 | RR: 1.0 | NDCG: 1.0
 
 ============================================================
 
@@ -96,7 +149,28 @@ RISULTATI:
     - Outline of this experiment. On day 1, the body weight, BMI, body fat percentage, and skeletal muscle mass index (SMI) were calculated by dividing the skeletal muscle mass (kg) by the square of the height (m 2 ), average grip strength of both hands, and BDHQ (Brief-Type Self-Administered Diet History Questionnaire) responses. The metrics for the first test meal (pizza, 304 kcal), including the number of chews, chewing tempo, and number of bites, were measured. The meal duration was measured via video analysis. Four weeks later, the metrics were measured again when the participants ate a hamburger lunch meal. The meal duration, number of chews, number of chewing tempos, and number of bites were measured when the participants were instructed to eat vegetables first. Four weeks later, a third set of measurements was taken as the participants again ate the hamburger lunch meal. The meal duration, number of chews, number of chewing tempos, and number of bites were measured when the participants were instructed to eat the vegetables last. A slice of pizza (Microwave Mix Pizza, Maruha Nichiro, Tokyo, Japan; energy, 304 kcal; protein, 11.0 g; fat, 11.5 g; carbohydrate, 39.2 g. Hamburger steak bento (hamburger steak (60 g), rice (100 g), and broccoli (100 g)) (energy, 301 kcal; protein, 12.2 g; fat, 6.9 g; carbohydrate, 42.9 g). (Score: 3,4963)
 
 METRICHE PRESTAZIONALI:
-  [IMMAGINI] -> Tempo: 1ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+  [IMMAGINI] -> Tempo: 0ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+
+============================================================
+
+QUERY: 'caption:consumption of sweetened beverages'
+INDICI SELEZIONATI: immagini
+--------------------------------------------------
+RISULTATI:
+  > IMMAGINI (10 Trovati)
+    - Relative contribution (%) of each ultra-processed food subgroup of study participants by gender in Korean adult. ( a ) Men. ( b ) Women. The 12 subgroups are (1) cereals, breads, cakes, sandwiches, etc., (2) distilled alcoholic beverages, (3) sugar-sweetened beverages, (4) fish and meat processed foods, (5) instant noodles and dumplings, (6) traditional sauce, (7) sweetened milk and its products, (8) others (instant sauce, condiments, etc.), (9) cookies, chips, and snacks, (10) soft drinks, fruit and vegetable drinks, (11) instant cooked rice, soup, and other dishes, and (12) confectionary. (Score: 12,7330)
+    - Association of the consumption of sweetened beverages and sandwich cookies, sweets, and treats with the occurrence of sequelae of COVID-19, stratified by place of residence and the presence of hypercholesterolemia, in elderly people. Roraima, Brazil, 2020. Poisson regression with robust variance, p < 0.05. Adjustment for sex, age, place of residence, education level, skin color/race, hospitalization, smoking, hypertension, diabetes mellitus , hypercholesterolemia, obesity, and chronic kidney disease. (Score: 11,4136)
+    - Forest plot depicting the association of fried potato intake with HTN risk in five cohorts. Cox regression adjusting for age, sex, BMI, race, education, energy intake, smoking status, alcohol intake, physical activity, prevalent diabetes, fruits and vegetables, red/processed meat, whole grain, sugar-sweetened beverages, nuts/peanut butter, legumes, and trans fatty acids (when available). (Score: 10,2926)
+    - Forest plot depicting the association of total potato intake with the incidence of HTN in five cohorts; Cox regression adjusting for age, sex, BMI, race, education, energy intake, smoking status, alcohol intake, physical activity, prevalent diabetes, fruits and vegetables, red/processed meat, whole grain, sugar-sweetened beverages, nuts/peanut butter, legumes, and trans fatty acids (when available). (Score: 10,2799)
+    - Forest plot depicting the association of the total potato intake with the incidence of CVD in seven cohorts. Cox regression adjusting for age, sex, BMI, race, education, energy intake, smoking status, alcohol intake, physical activity, prevalent hypertension and diabetes, fruits and vegetables, red/processed meat, whole grain, sugar-sweetened beverages, nuts/peanut butter, legumes, and trans fatty acids (when available). (Score: 10,1519)
+    - The heatmap showing the correlation between visceral fat, dietary intake (fast food, sweets, bread, sweetened drinks, fruits, vegetables, fish, water consumption), and physical activity. Bright green indicates strong positive correlations (Spearman’s rho = 1), while bright orange signifies strong negative correlations (Spearman’s rho = −1). X = non-significant at p < 0.05. (Score: 10,0705)
+    - PCA of VF levels (VF_1, VF_2, and VF_3), dietary intake (fast food, sweets or pastries, bread, sweetened and carbonated drinks, and alcohol). Fast food (FF-4 and FF-5), sweets and pastries (Sw/patr-4 and Sw/patr-5), and sweetened drinks (SD-5 and SD-6) are linked with F2, while most variables are associated with F1. Legend: FF = fast food; Sw/patr = sweets and pastries; SD = sweetened/carbonated drinks; Alc = alcohol; Br = bread. (Score: 9,8594)
+    - Acceptable macronutrient distribution range of study population according to the third tertile of ultra-processed food consumption by gender in Korean adults. Study participants were divided into tertiles based on their ultra-processed food intake (T1, T2, and T3). ( a ) Carbohydrate. ( b ) Protein. ( c ) Fat. (Score: 8,7158)
+    - PCA of VF levels (VF_1, VF_2, and VF_3), healthy diet (vegetable products, fruits, water consumption, and fish), and physical activity. Fruits (Fr-1 and Fr-2), vegetables (Veg-1, Veg-2, and Veg-4), and water consumption (Wat-1) are linked with F2, while most variables are associated with F1. Legend: veg = vegetable products; fr = fruits; wat = water; fish = fish and seafood; ex = physical activity. (Score: 8,3324)
+    - University of North Carolina health lifestyle inventory questionnaire for eating patterns and physical activity. University of North Carolina (UNC) Health adapted the validated “Food Frequency Questionnaire” to Lifestyle Inventory Questionnaire to assess dietary habits, beverage and snack consumption, and physical activity in clinical settings. The tool prompts patients to self-report their typical eating behaviors for breakfast, lunch, and dinner, including the frequency of eating out, food choices, and patterns at restaurants. Additional sections capture the intake of common beverages (e.g., water, soda, coffee, alcohol, energy drinks) and snacks (e.g., fruits, chips, pastries), as well as details about regular physical activity, including type, duration, and frequency. This instrument is designed for practical use in identifying and quantifying Ultra-processed food (UPF) and Sugar sweetened beverages (SSB) so clinicians can offer personalized counseling. Reproduced with permission from © UNC Health. (Score: 8,1454)
+
+METRICHE PRESTAZIONALI:
+  [IMMAGINI] -> Tempo: 5ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
 
 ============================================================
 
@@ -148,8 +222,41 @@ RISULTATI:
     - Nutrition therapy in the era of automated insulin delivery (Score: 1,7439)
 
 METRICHE PRESTAZIONALI:
-  [TABELLE] -> Tempo: 9ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.9959548051864799
-  [ARTICOLI] -> Tempo: 1ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+  [TABELLE] -> Tempo: 1ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.9959548051864799
+  [ARTICOLI] -> Tempo: 0ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'Unhealthy Food Consumption'
+INDICI SELEZIONATI: articoli, tabelle
+--------------------------------------------------
+RISULTATI:
+  > TABELLE (10 Trovati)
+    - This study was done to determine the prevalence of unhealthy food consumption and associated factors among children aged 6–23 months. Accordingly, the prevalence of unhealthy food consumption was 52.8% (95% CI: 47.7%, 57.9%). Moreover, the age of the child, absence of postnatal care visits, history of bottle feeding, sub-optimal child dietary diversity, and insufficient maternal knowledge of child feeding practice were identified to be the predictors of unhealthy food consumption. (Score: 12,3944)
+    - Conceptualization, A.N., L.M., and T.N.; methodology, A.N., L.M., and T.N.; investigation, A.N., L.M., and T.N.; data curation, A.N. and L.M.; writing—original draft preparation, A.N., L.M., and T.N.; writing—review and editing, T.N.; supervision, T.N.; funding acquisition, T.N., A.N. and L.M. contributed equally to this work and should be considered joint first authors. All authors have read and agreed to the published version of the manuscript. (Score: 11,0652)
+    - In the current study, the prevalence of unhealthy food consumption among children aged 6–23 months was 52.8% (95% CI: 47.7, 57.9) ( Fig 2 ). (Score: 10,3260)
+    - Dietary patterns classification according to weekly consumption of food items/groups. (Score: 10,3002)
+    - Simple regression analysis for determinants of ultraprocessed and unprocessed/minimally processed food consumption in adolescents with obesity. (Score: 9,2284)
+    - C1: Unhealthy (21.4%), (Score: 9,0312)
+    - Main characteristics included studies on the health impact of plant-based diets. (Score: 9,0011)
+    - The sample size was determined using a single population proportion formula by considering the following assumptions: 95% two-sided level of confidence, 5% margin of error, and 63.7% proportion of unhealthy food consumption from the prior study conducted in Gondar [ 17 ]. (Score: 8,8249)
+    - Dietary patterns and factor loadings of food groups consumed by CUME Study participants at baseline ( n = 7560, 2016–2022). (Score: 8,5483)
+    - Anthropometric profile, binge eating symptoms, and annual consumption scores of food intake in adolescents with obesity according to tertiles of ultraprocessed and unprocessed/minimally processed food. (Score: 8,3278)
+  > ARTICOLI (10 Trovati)
+    - Prevalence and associated factors of unhealthy food consumption among 6–23-month-old children in South Ethiopia; A community–based cross-sectional study (Score: 8,9272)
+    - Unhealthy Food Consumption Is Associated with Post-Acute Sequelae of COVID-19 in Brazilian Elderly People (Score: 7,1433)
+    - Processed Food Consumption Based on the NOVA Classification Is Associated With Elevated Cardiometabolic Risk in Turkish Adults (Score: 5,1465)
+    - Ultra-Processed Food Consumption and Subclinical Cardiac Biomarkers: A Cross-Sectional Analysis of U.S. Adults in NHANES 2001–2004 (Score: 5,0503)
+    - Unfavourable food consumption is exacerbated by low socioeconomic status among children aged 1–5 years in Germany (Score: 4,9402)
+    - Gender Differences in Ultra-Processed Food Consumption and Its Association with Obesity Among Korean Adults (Score: 4,9364)
+    - Ultraprocessed Food Consumption and Obesity Development in Canadian Children (Score: 4,8355)
+    - Ultra-processed food consumption is linked to quality of life and mental distress among university students (Score: 4,6313)
+    - Association of remnant cholesterol with unhealthy lifestyle and risk of coronary heart disease: a population-based cohort study (Score: 4,5873)
+    - Association of ultra-processed food consumption and MRI-based carotid plaque characteristics: results from the Atherosclerosis Risk in Communities study (Score: 4,4746)
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 5ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.9283475590814002
+  [ARTICOLI] -> Tempo: 2ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
 
 ============================================================
 
@@ -182,12 +289,45 @@ RISULTATI:
 
 METRICHE PRESTAZIONALI:
   [ARTICOLI] -> Tempo: 1ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
-  [IMMAGINI] -> Tempo: 6ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+  [IMMAGINI] -> Tempo: 1ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'Overall dietary habits'
+INDICI SELEZIONATI: articoli, immagini
+--------------------------------------------------
+RISULTATI:
+  > ARTICOLI (10 Trovati)
+    - Culinary Habits and Health: Analyzing the Impact of Cooking Practices and Knowledge Among Spanish Young Adults (Score: 6,3139)
+    - Dietary Lipid Profile in Spanish Children with Overweight or Obesity: A Longitudinal Study on the Impact of Children’s Eating Behavior and Sedentary Habits (Score: 5,3186)
+    - Dietary habits and cognitive performance in primary school students: a cross-sectional study in Khemisset region in Morocco (Score: 5,3128)
+    - Association between dietary habits and emotional and behavioral problems in children: the mediating role of self-concept (Score: 5,2061)
+    - Cardiovascular Disease in Women’s Prisons: A Qualitative Study of Dietary Habits from the Perspective of Professionals (Score: 5,1258)
+    - Nutritional Habits in 8–11-Year-Old Spanish Children According to Their Gender (Score: 4,3796)
+    - Dietary Intake of Protein by Food Source and Incident Hypertension Among Diverse US Adults: The MESA Study (Score: 3,8844)
+    - Dietary Acrylamide Exposure and Its Correlation with Nutrition and Exercise Behaviours Among Turkish Adolescents (Score: 3,7462)
+    - Association between early dietary patterns and cardiometabolic health at age 8: a confirmatory analysis of the European Childhood Obesity Project (Score: 3,7446)
+    - Parent–Child Associations of Eating Habits According to Domains of Parental Physical Activity (EPI-Family Health Study) (Score: 3,7410)
+  > IMMAGINI (10 Trovati)
+    - Overall dietary habits of participants. This figure shows the percentage distribution of food consumption frequency among participants. The colours of the bar graph represent the five frequency categories: “never,” “1–3 times per month,” “1–3 days per week,” “4–6 days per week,” and “every day.” (Score: 8,4440)
+    - Proportion of children with healthy dietary habits. (Score: 8,0470)
+    - Correlation matrix for dietary habits and metabolic profiles. This figure displays the correlation strength between dietary habits and metabolic profiles. The colour of each square at the intersection of two variables represents the correlation strength, with bright red indicating a strong positive correlation and bright green indicating a strong negative correlation. * p < 0.05. TC, total cholesterol; TG, triglyceride; LDL-C, low-density lipoprotein cholesterol; HDL-C, high-density lipoprotein cholesterol; FPG, fasting plasma glucose; HbA1c, glycated haemoglobin; BMI, body mass index; WC, waist circumference; VAI, visceral adiposity index; PBF, percentage of body fat; VFA, visceral fat area. (Score: 6,6669)
+    - Multilevel logistic regression analysis of dietary habits associated with self-concept (A) and EBPs (B) . * p < 0.05, ** p < 0.01, *** p < 0.001. CI, confidence interval; EBPs, emotional and behavioral problems; d, day; w, week. Model was adjusted for child age, sex, residence, caregiver respondents, parental educational level, and existence of sibling. (Score: 6,6420)
+    - Mediation analysis of the role of self-concept in the relationship between dietary habits and emotional and behavioral problems. * p < 0.05, ** p < 0.01, *** p < 0.001. EBPs, emotional and behavioral problems. Model was adjusted for child age, sex, district, caregiver respondent, existence of sibling, parental educational levels, and family annual per capita income. Standardized regression coefficients β are displayed. (Score: 6,4583)
+    - Spearman’s correlation for each pair of nutritional, lifestyle, and culinary habits variables. Legend: White cell = no correlation (0.00–0.19); yellow cell = low correlation (0.20–0.39); orange cell = moderate correlation (0.40–0.59). (Score: 6,1412)
+    - Gaussian network diagram between culinary habits and socio-demographic variables. (NOTE: The thickness of the lines reflects the magnitude of the relationship (partial correlation), while the colour indicates the direction: green for positive relationships and red for negative relationships). (Score: 5,8637)
+    - RR (95% CI) of colorectal cancer incidence for the highest compared with the lowest level of alignment with culturally defined a priori dietary patterns—Mediterranean, plant-based (healthful, pro-/overall, unhealthful), and others, as ordered by pattern groups and RR for trend observation. The blue dotted horizontal reference lines indicate distinct dietary pattern groups. ∗Pooled estimates from subgroup RRs reported in the publications, calculated using a fixed-effect model before being presented in the forest plot. Note: Missing values in cases refer to studies with no available information. DCH, Danish Diet, Cancer and Health study; EPIC, European Prospective Investigation into Cancer and Nutrition; HPFS, Health Professionals Follow-up Study; JPHC, Japan Public Health Center-Based Prospective Study; NHS, Nurses’ Health Study; RR, relative risk; UKWCS, UK Women’s Cohort Study; WHI-OS, Women’s Health Initiative-Observational Study. (Score: 5,5689)
+    - Handout for individuals showing how strong relationships can reinforce healthy lifestyle habits. (Score: 5,5622)
+    - Tips and guidelines for maintaining good sleep habits for better management of diabetes and prediabetes. (Score: 5,5117)
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 2ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+  [IMMAGINI] -> Tempo: 2ms | Precision: 0.1 | RR: 1.0 | NDCG: 1.0
 
 ============================================================
 
 QUERY: 'accuracy'
-INDICI SELEZIONATI: tabelle, immagini
+INDICI SELEZIONATI: immagini, tabelle
 --------------------------------------------------
 RISULTATI:
   > TABELLE (10 Trovati)
@@ -214,8 +354,41 @@ RISULTATI:
     - Independent variable importance (normalized values). Note. BMI: body mass index. NP1: minerals and vitamins. NP2: carbohydrates. NP3: Fat and sodium. HOMA-IR: Homeostasis Model Assessment Insulin Resistance. IDF: International Diabetes Federation. (Score: 1,9563)
 
 METRICHE PRESTAZIONALI:
-  [TABELLE] -> Tempo: 5ms | Precision: 0.8 | RR: 1.0 | NDCG: 0.9462188766685263
-  [IMMAGINI] -> Tempo: 3ms | Precision: 0.4 | RR: 1.0 | NDCG: 0.9047172294870752
+  [TABELLE] -> Tempo: 1ms | Precision: 0.8 | RR: 1.0 | NDCG: 0.9462188766685263
+  [IMMAGINI] -> Tempo: 1ms | Precision: 0.4 | RR: 1.0 | NDCG: 0.9047172294870752
+
+============================================================
+
+QUERY: 'three dietary patterns'
+INDICI SELEZIONATI: immagini, tabelle
+--------------------------------------------------
+RISULTATI:
+  > TABELLE (10 Trovati)
+    - Basic characteristics of the participants according to the three dietary patterns. (Score: 10,5694)
+    - Evidence grades and main findings from the descriptive synthesis of dietary patterns and colorectal cancer risk/mortality. (Score: 10,3447)
+    - Overview of studies on dietary patterns and brain health in middle-aged and older adults (N = 18). (Score: 9,1369)
+    - Dietary patterns and their factor loading determined using factor analysis. a (Score: 8,4571)
+    - Baseline characteristics of participants according to tertiles of the three PVG dietary patterns in the European Eye Study (EUREYE) ( n = 597). (Score: 7,8359)
+    - Baseline characteristics of participants according to tertiles of the three PVG dietary patterns in the European Eye Study (EUREYE) ( n = 597). (Score: 7,8359)
+    - Baseline characteristics of participants according to tertiles of the three PVG dietary patterns in the European Eye Study (EUREYE) ( n = 597). (Score: 7,8352)
+    - Practical dietary recommendations for implementations based on common dietary patterns. (Score: 7,5953)
+    - Dietary patterns, from FFQ. (Score: 7,1497)
+    - Age at onset: “How old were you when you first started struggling with your weight?” (Score: 6,6994)
+  > IMMAGINI (10 Trovati)
+    - Dietary patterns. This figure presents the components of the three dietary patterns identified through factor analysis. (A) Traditional Cantonese dietary pattern. (B) Modern Cantonese dietary pattern. (C) Localised Western dietary pattern. This figure was drawn by Yifen Chen with Procreate.com . (Score: 8,4468)
+    - Overview of different dietary patterns and assumptive exposure scenarios. Definitions for dietary patterns were proposed by Hargreaves et al., 2023. 31 Three different assumptive exposure scenarios were calculated for a vegan diet, vegetarian diet, and flexitarian diet. Due to the lack of clear definitions, 31 it was assumed a vegan would consume 100% NPBFs (assigning average meat, fish, and cheese consumption to PB meat-, fish-, and cheese-alternatives) to substitute an animal-protein based diet. A vegetarian would consume 50% NPBFs (assigning average meat consumption to PB meat-alternatives) which are supplemented with a certain number of ABFs (like eggs and cheese), while a flexitarian would consume 10% NPBFs (assigning average meat consumption to PB meat-alternatives) in addition to ABFs. Created in BioRender. Poma, G. (2024) BioRender.com/x85v119. (Score: 5,5102)
+    - ( A ) Average value (CI 95%) for body mass index (Kg/m 2 ) and micronutrient intake (mg or µg/person/day) for the total sample (red line) and according to dietary patterns. ( B ) Average value (CI 95%) for micronutrient intake (mg or µg/person/day) for the total sample (red line) and according to dietary patterns. ( C ) Average value (CI 95%) for micronutrient intake (mg or µg/person/day) for the total sample (red line) and according to dietary patterns. (UDP: unhealthy dietary pattern; BDP: Brazilian dietary pattern; HDP: healthy dietary pattern; DDP: dairy dietary pattern). CUME Study, 2016–2022. (Score: 5,3720)
+    - Conceptual framework linking dietary patterns, dietary metabolites, and DNA methylation to chronic disease outcomes . This diagram illustrates the hypothesized relationships between subjective measures of diet (dietary patterns) and more objective biomarkers of intake and exposure (dietary metabolites and DNA methylation) in relation to health consequences such as coronary artery disease (CAD), type 2 diabetes (T2D), aging, and other chronic conditions. We hypothesize that dietary patterns may show weaker and less robust associations with outcomes due to recall bias and imprecision. In contrast, dietary metabolites, as more objective indicators of recent intake, may be more strongly and immediately associated with health outcomes. Finally, DNA methylation captures the long-term biological responses to exposure, potentially reflecting the cumulative effects of diet and other environmental factors. Arrows indicate hypothesized directions of influence, with DNA methylation and dietary metabolites acting as intermediates or biomarkers linking diet to disease. (Score: 5,2702)
+    - Secular trends of dietary patterns by sex using data from the 2007–2022 KNHANES. Proportions in 2022 were 31.9% for Traditional, 15.3% for Red meat & Alcohol, and 52.8% for Flour-based Foods & Sweets in the total population; 33.7%, 19.9%, and 46.3% among men; and 30.0%, 10.6%, and 59.3% among women (Score: 4,9156)
+    - Average value (CI 95%) of the environmental footprints (carbon footprint (gCO2e/person/day), water footprint (L/person/day), and ecological footprint (m 2 /person/day)) according to dietary patterns (UDP: unhealthy dietary pattern; BDP: Brazilian dietary pattern; HDP: healthy dietary pattern; DDP: dairy dietary pattern), with the red line indicating the overall mean of the sample. CUME Study, 2016–2022. (Score: 4,8171)
+    - Illustrates three weight loss surgical interventions. (Score: 4,7703)
+    - Temporal trends in quartile distributions of six dietary patterns among U.S. adults, NHANES 2005–2018. (Score: 4,7693)
+    - Secular trends of dietary patterns by age group using data from the 2007–2022 KNHANES. Proportions in 2022 were 18.4% for Traditional, 18.1% for Red meat & Alcohol, and 63.5% for Flour-based Foods & Sweets among adults aged 19–29 years; 22.2%, 18.9%, and 58.9% among those aged 30–49 years; 33.1%, 15.8%, and 51.1% among those aged 50–64 years; and 55.6%, 6.8%, and 37.6% among those aged 65 years or more (Score: 4,6667)
+    - Secular trends of dietary patterns by age group among men using data from the 2007–2022 KNHANES. Proportions in 2022 were 21.6% for Traditional, 21.0% for Red meat & Alcohol, and 57.3% for Flour-based Foods & Sweets among men aged 19–29 years; 24.2%, 23.8%, and 52.0% among those aged 30–49 years; 36.6%, 21.2%, and 42.2% among those aged 50–64 years; and 56.8%, 10.5%, and 32.7% among those aged 65 years or more (Score: 4,6298)
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 3ms | Precision: 0.9 | RR: 1.0 | NDCG: 0.8952418620953553
+  [IMMAGINI] -> Tempo: 5ms | Precision: 0.2 | RR: 1.0 | NDCG: 1.0
 
 ============================================================
 
@@ -258,9 +431,54 @@ RISULTATI:
     - Significance correlation dot map between diet and REE, body composition, cardiovascular risk, and alcohol history across the three groups. Spearman correlation dot map showing associations with body composition, REE, ASCVD risk, alcohol severity and intake and diet quality, added sugar intake and processed and ultraprocessed food consumption. Color of the dots indicate direction of Spearman correlation coefficient. Size of the dot indicates absolute Spearman coefficient. Open circles “O” indicates p < 0.05; asterisk *Indicates FDR < 25%. (Score: 4,4641)
 
 METRICHE PRESTAZIONALI:
-  [TABELLE] -> Tempo: 11ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.996976459590917
-  [ARTICOLI] -> Tempo: 4ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.9959548051864799
-  [IMMAGINI] -> Tempo: 8ms | Precision: 0.5 | RR: 1.0 | NDCG: 0.8352842211595156
+  [TABELLE] -> Tempo: 3ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.996976459590917
+  [ARTICOLI] -> Tempo: 1ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.9959548051864799
+  [IMMAGINI] -> Tempo: 1ms | Precision: 0.5 | RR: 1.0 | NDCG: 0.8352842211595156
+
+============================================================
+
+QUERY: 'Ultra-processed food and beverage consumption'
+INDICI SELEZIONATI: articoli, tabelle, immagini
+--------------------------------------------------
+RISULTATI:
+  > TABELLE (10 Trovati)
+    - Ultra-processed food and subgroup intake of study population by gender in Korean adults. (Score: 16,5070)
+    - The following supporting information can be downloaded at: https://www.mdpi.com/article/10.3390/nu17203294/s1 , Figure S1: Flow diagram for participant selection; Table S1: Characteristics of US adults according to quartiles of the percentage of daily energy intake from ultra-processed food, NHANES 2001–2004; Table S2: Characteristics of US Adults from NHANES 2001–2004 under different exclusion settings; Table S3: Individual ultra-processed food subgroups intake in %grams of total daily grams intake, as well as daily nutrient intake (added sugar, carbohydrate, total fat, saturated fat, fiber, protein, cholesterol, sodium, phosphorous, and potassium) across quartiles of ultra-processed food intake in %grams. Table S4: Individual ultra-processed food subgroups intake in %kcal of total daily grams intake, as well as daily nutrient intake (added sugar, carbohydrate, total fat, saturated fat, fiber, protein, cholesterol, sodium, phosphorous, and potassium) across quartiles of ultra-processed food intake in %kcal; Table S5: Odds ratios and 95% confidence intervals of elevated NT-proBNP based on quartiles of ultra-processed food intake (%grams) from unadjusted model and adjusted model with each individual covariate of Models 1, 2, and 3; Table S6: Interaction by sex and race on the association between ultra-processed food consumption and cardiac biomarkers; Table S7: Odds ratios (95% confidence intervals) of elevated hs-cTnI, hs-cTnT, and NT-proBNP according to quartiles of ultra-processed food intake in %grams assessed via day-1 dietary recall in NHANES 2001–2002 and the mean of day-1 and day-2 dietary recalls in NHANES 2003–2004; Table S8: Odds ratios (95% confidence intervals) of elevated hs-cTnI, hs-cTnT, and NT-proBNP according to quartiles of ultra-processed food intake in %kcal assessed via day-1 dietary recall in NHANES 2001–2002 and the mean of day-1 and day-2 dietary recalls in NHANES 2003–2004. (Score: 14,5815)
+    - Consumption of the Mediterranean diet score dietary components and the main types of ultra-processed foods, considering the contributions from each quartile of ultra-processed food consumption. (Score: 14,3019)
+    - Ordinal regression on the association between ultra‐processed food consumption and depression severity. (Score: 14,0616)
+    - Ordinal regression on the association between ultra‐processed food consumption and anxiety severity. (Score: 14,0616)
+    - Binary logistic regression on the association between ultra‐processed food consumption and sleep adequacy. (Score: 13,9324)
+    - Associations of measures of plaque characteristics with ultra-processed food consumption in either quartiles or servings/day ( n = 768) a. (Score: 13,6533)
+    - Distribution of dietary consumption according to NOVA food groups: results among consumers of ultra-processed foods from the South Asia Biobank, n = 37,781. (Score: 13,5947)
+    - Association between ultra-processed food intake and obesity of study population according to the tertile of ultra-processed food consumption by gender in Korean adults. (Score: 13,5282)
+    - Crude and adjusted analyses between energy contribution (%) of the consumption of ultra-processed food and obesity indicators. (Score: 13,3819)
+  > ARTICOLI (10 Trovati)
+    - Association of ultra-processed food consumption and MRI-based carotid plaque characteristics: results from the Atherosclerosis Risk in Communities study (Score: 12,7894)
+    - Ultra-Processed Food Consumption and Subclinical Cardiac Biomarkers: A Cross-Sectional Analysis of U.S. Adults in NHANES 2001–2004 (Score: 11,0010)
+    - Gender Differences in Ultra-Processed Food Consumption and Its Association with Obesity Among Korean Adults (Score: 10,6370)
+    - The link between ultra-processed food consumption, fecal microbiota, and metabolomic profiles in older mediterranean adults at high cardiovascular risk (Score: 10,1563)
+    - Quantification of regional variation in ultra-processed food consumption and its sociodemographic correlates across Bangladesh, India, Pakistan, and Sri Lanka: insights from the South Asia Biobank (Score: 9,2622)
+    - Processed Food Consumption Based on the NOVA Classification Is Associated With Elevated Cardiometabolic Risk in Turkish Adults (Score: 8,9836)
+    - Consumption of Ultra-Processed Foods and Metabolic Parameters in Type 2 Diabetes Mellitus: A Cross-Sectional Study (Score: 8,9231)
+    - Ultra-Processed Food Consumption and Metabolic-Dysfunction-Associated Steatotic Liver Disease (MASLD): A Longitudinal and Sustainable Analysis (Score: 8,4549)
+    - Ultra‐processed food intake and risk of obesity among schoolchildren aged 8–12 years living in Victoria, Australia (Score: 8,4021)
+    - The impact of ultra-processed foods on pediatric health (Score: 8,3743)
+  > IMMAGINI (10 Trovati)
+    - Associations between measures of plaque characteristics and ultra-processed food consumption in servings per day represented by restricted cubic splines. The model was adjusted for age, sex, total energy intake, drinking status, smoking status, physical activity score, education level, hypertension status, diabetes status and kidney function (two linear spline terms with one knot at 90 mL/min/1.73 m 2 ). The black solid line represented the changes in plaque characteristics measurements in response to changes in ultra-processed food consumption changes in servings per day. The black dashed lines represent the 95 % CI. The grey histogram represents the frequency of ultra-processed food consumption. The four knots were set at the 5th, 35th, 65th, and 95th percentiles (3.0, 5.5, 8.3, and 13.9 servings per day, respectively). (Score: 15,1911)
+    - Acceptable macronutrient distribution range of study population according to the third tertile of ultra-processed food consumption by gender in Korean adults. Study participants were divided into tertiles based on their ultra-processed food intake (T1, T2, and T3). ( a ) Carbohydrate. ( b ) Protein. ( c ) Fat. (Score: 15,1811)
+    - Proportion ( %) of each food group contributing to the frequency (servings/d) of ultra-processed food consumption in the Atherosclerosis Risk in Communities MRI Study. Dairy foods: Non-dairy coffee whitener, Frozen yogurt, sherbet, or non-fat ice cream; Ice cream, Flavored yogurt, without Nutrasweet; Yogurt, plain or with Nutrasweet; Cream cheese; Animal-based foods: Egg Beaters or egg whites only; Beef or pork hot dogs, Chicken or turkey hot dogs, Salami, bologna, or other processed meat sandwiches; Processed meats (e.g., sausage, kielbasa, etc.), Store brought breaded fish cakes, pieces, or fish sticks; Baked goods and grains: White bread (slice), including pita bread; Dark bread (slice), including wheat pita bread; Bagels, English muffins, or rolls; Muffins (regular) or biscuits, Pancakes or waffles, Crackers, Triskets, Wheat Thins; Pizza, Pretzels, Cookies, ready made; Brownies, Doughnuts, Cake, ready made; Pie, ready made; Sweet roll, coffee cake, or other pastry, ready made; Fried foods: French fried potatoes, Potato chips or corn chips, Fried food away from home or as takeout (e.g., french fries, fried chicken, fish, clams, shrimp, etc.) Ultra-processed drinks: Low calorie cola (e.g., Diet Coke with caffeine), Low-calorie caffeine-free cola, Other low calorie carbonated beverage (e.g., Diet 7-Up, Fresca, diet ginger ale), Coke, Pepsi, or other cola with sugar; Caffeine-Free Coke, Pepsi, or other cola with sugar; Other carbonated beverage with sugar (e.g., 7-Up), Hawaiian Punch, lemonade, or other non-carbonated fruit drinks; Sweet or savory snacks: Pure chocolate candy bar or packet (e.g., Hershey’s, M&M’s), Other mixed candy bars (e.g., Snickers, Milky Way, Reeses), Candy without chocolate, Jams, jellies, preserves, syrup, or honey, Popcorn; Ultra-processed condiments: Nutrasweet or Equal, Low fat mayonnaise/fat free mayonnaise, Regular mayonnaise, Salad dressing, Ketchup or red chili sauce (Score: 14,0380)
+    - Central illustration: Higher intake of ultra-processed food was associated with a greater burden of atherosclerotic plaque in the carotid artery. (Score: 13,5912)
+    - Contributors to Mediterranean diet and ultra-processed foods: food groups by ultra-processed food quartiles. (Score: 13,3966)
+    - Odds ratio of elevated NT-proBNP across energy-adjusted ultra-processed food percent grams intake (%grams) for Model 1, Model 2, and Model 3. The estimates are plotted at the medians of each quartile (i.e., medians of quartile 1 to 4 of ultra-processed food consumption in %grams). Quartile 1 was the reference group. Model 1 adjusted for age, sex, race category, and total energy intake; Model 2 adjusted for covariates from Model 1 and education category, smoking status, and physical activity status. Model 3 adjusted for covariates from Model 2 and hypertension status, diabetes status, and estimated glomerular filtration rate. NT-proBNP, N -terminal prohormone of brain natriuretic peptide; UPF, ultra-processed food; OR, odds Ratio; CI, confidence interval. (Score: 12,7140)
+    - Associations between measures of plaque characteristics and ultra-processed food consumption in quartiles. The model was adjusted for age, sex, total energy intake, drinking status, smoking status, physical activity score, education level, hypertension status, diabetes status and kidney function (two linear spline terms with one knot at 90 mL/min/1.73 m 2 ). Coefficients for total wall volume, total lipid core volume, maximum segmental wall thickness, and maximum lipid core area represent the standardized differences in plaque measurements when comparing quartile 4 to quartile 1 of ultra-processed food intake; coefficients for lipid core presence represent the odds ratio for the presence of a lipid core comparing quartile 4 to quartile 1, approximated using Poisson regression with robust standard errors. a Total wall volume (in mm 3 ) was computed by integrating area measurements over 8 slices. b Total lipid core volume (in mm 3 ) was computed by integrating lipid-rich core area measurements of the 8 slices. c Maximum segmental wall thickness (in mm) was defined as the maximum wall thickness of 12 segments at the slice with the largest lipid contour area. d Maximum lipid core area (in cm 2 ) was computed by integrating lipid-rich core area measurements of the 8 slices. (Score: 12,3102)
+    - Relative contribution (%) of each ultra-processed food subgroup of study participants by gender in Korean adult. ( a ) Men. ( b ) Women. The 12 subgroups are (1) cereals, breads, cakes, sandwiches, etc., (2) distilled alcoholic beverages, (3) sugar-sweetened beverages, (4) fish and meat processed foods, (5) instant noodles and dumplings, (6) traditional sauce, (7) sweetened milk and its products, (8) others (instant sauce, condiments, etc.), (9) cookies, chips, and snacks, (10) soft drinks, fruit and vegetable drinks, (11) instant cooked rice, soup, and other dishes, and (12) confectionary. (Score: 12,1923)
+    - Overall dietary habits of participants. This figure shows the percentage distribution of food consumption frequency among participants. The colours of the bar graph represent the five frequency categories: “never,” “1–3 times per month,” “1–3 days per week,” “4–6 days per week,” and “every day.” (Score: 11,8157)
+    - Relative contribution of ultra-processed foods to intake of critical nutrients. (Score: 11,0215)
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 4ms | Precision: 0.9 | RR: 1.0 | NDCG: 0.9971876401972103
+  [ARTICOLI] -> Tempo: 1ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+  [IMMAGINI] -> Tempo: 2ms | Precision: 0.1 | RR: 0.3333333333333333 | NDCG: 0.5
 
 ============================================================
 
@@ -273,7 +491,7 @@ RISULTATI:
   > IMMAGINI (0 Trovati)
 
 METRICHE PRESTAZIONALI:
-  [TABELLE] -> Tempo: 0ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+  [TABELLE] -> Tempo: 1ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
   [ARTICOLI] -> Tempo: 0ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
   [IMMAGINI] -> Tempo: 0ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
 

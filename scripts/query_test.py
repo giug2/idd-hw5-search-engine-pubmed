@@ -17,25 +17,31 @@ FILE_OUTPUT = "output/report_ricerca_completo.txt"
 TEST_CASES = [
     # ARTICOLI
     {"query": "title:Kidney", "filtri": ["articoli"]},
-    {"query": "date:2025-08-12", "filtri": ["articoli"]},
+    {"query": "date:2025-08-13", "filtri": ["articoli"]},
     {"query": "authors:Kim", "filtri": ["articoli"]},
     {"query": "articleAbstract:\"dietary fiber\"", "filtri": ["articoli"]},
     {"query": "articleAbstract:Kidney OR authors:Kim", "filtri": ["articoli"]},
     # TABELLE
     {"query": "caption:statistics", "filtri": ["tabelle"]},
+    {"query": "caption:analysis of meal duration", "filtri": ["tabelle"]},
     {"query": "body:\"confidence interval\"", "filtri": ["tabelle"]},
     # IMMAGINI
-    {"query": "caption:Hamburger", "filtri": ["figure"]},
-    {"query": "alt:europe", "filtri": ["figure"]},
+    {"query": "caption:Hamburger", "filtri": ["immagini"]},
+    {"query": "caption:consumption of sweetened beverages", "filtri": ["immagini"]},
+    {"query": "alt:europe", "filtri": ["immagini"]},
     # ARTICOLI E TABELLE
     {"query": "nutrition", "filtri": ["articoli", "tabelle"]},
+    {"query": "Unhealthy Food Consumption", "filtri": ["articoli", "tabelle"]},
     # ARTICOLI E IMMAGINI
-    {"query": "mortality", "filtri": ["articoli", "figure"]},
+    {"query": "mortality", "filtri": ["articoli", "immagini"]},
+    {"query": "Overall dietary habits", "filtri": ["articoli", "immagini"]},
     # TABELLE E IMMAGINI
-    {"query": "accuracy", "filtri": ["figure", "tabelle"]},
+    {"query": "accuracy", "filtri": ["immagini", "tabelle"]},
+    {"query": "three dietary patterns", "filtri": ["immagini", "tabelle"]},
     # ARTICOLI, TABELLE E IMMAGINI
-    {"query": "diet quality", "filtri": ["articoli", "tabelle", "figure"]},
-    {"query": "sdfgbhsfdhbwrghbrfgbrfbrbr", "filtri": ["articoli", "tabelle", "figure"]}
+    {"query": "diet quality", "filtri": ["articoli", "tabelle", "immagini"]},
+    {"query": "Ultra-processed food and beverage consumption", "filtri": ["articoli", "tabelle", "immagini"]},
+    {"query": "sdfgbhsfdhbwrghbrfgbrfbrbr", "filtri": ["articoli", "tabelle", "immagini"]}
 ]
 
 
@@ -57,7 +63,7 @@ def esegui_test():
                 f.write(f"INDICI SELEZIONATI: {', '.join(filtri)}\n")
                 f.write("-" * 50 + "\n")
                 
-                # 1. Gestione Checkbox (basata sull'attributo value dell'HTML)
+                # Gestione Checkbox (basata sull'attributo value dell'HTML)
                 for tipo in ["articoli", "tabelle", "immagini"]:
                     checkbox = driver.find_element(By.XPATH, f"//input[@value='{tipo}']")
                     if tipo in filtri and not checkbox.is_selected():
@@ -65,7 +71,7 @@ def esegui_test():
                     elif tipo not in filtri and checkbox.is_selected():
                         checkbox.click()
 
-                # 2. Inserimento Query e Invio
+                # Inserimento Query e Invio
                 input_query = driver.find_element(By.ID, "query")
                 input_query.clear()
                 input_query.send_keys(query)
@@ -75,7 +81,7 @@ def esegui_test():
                 wait = WebDriverWait(driver, 10)
                 wait.until(EC.presence_of_element_located((By.CLASS_NAME, "results-container")))
 
-                # 3. Estrazione Risultati
+                # Estrazione Risultati
                 f.write("RISULTATI:\n")
                 colonne = driver.find_elements(By.CLASS_NAME, "result-list-column")
                 for colonna in colonne:
@@ -88,7 +94,7 @@ def esegui_test():
                         score = item.find_element(By.CLASS_NAME, "score").text
                         f.write(f"    - {titolo} {score}\n")
 
-                # 4. Estrazione Metriche (dal div nascosto #metrics-container)
+                # Estrazione Metriche (dal div nascosto #metrics-container)
                 f.write("\nMETRICHE PRESTAZIONALI:\n")
                 # Cerchiamo tutti i blocchi dentro metrics-container
                 metrics_blocks = driver.find_elements(By.CSS_SELECTOR, "#metrics-container > div")
@@ -115,7 +121,7 @@ def esegui_test():
         finally:
             driver.quit()
 
-    print(f"\n✅ Tutto dade! Report generato: {FILE_OUTPUT}")
+    print(f"\nTutto dade! Report generato: {FILE_OUTPUT}")
 
 if __name__ == "__main__":
     esegui_test()
