@@ -100,6 +100,7 @@ public class DetailController {
             case "tabelle":
                 title = "Tabella: " + doc.get("caption");
                 results.put("HTML Tabella", doc.get("html_table")); 
+                results.put("Caption", doc.get("caption"));
                 results.put("Contesto", doc.get("context_paragraphs"));
                 results.put("ID Articolo Padre", doc.get("fileName")); 
                 results.put("Menzioni", doc.get("mentions")); 

@@ -17,6 +17,10 @@
         <div class="metadata">
             <p><strong>ID Tabella:</strong> <span th:text="${document.id}"></span></p>
             
+            <div class="caption-container" th:if="${document.results['Caption'] != null}">
+                <p><strong>Caption:</strong> <span th:text="${document.results['Caption']}">Contenuto Didascalia</span></p>
+            </div>
+
             <p>
                 <strong>Articolo Collegato:</strong>
                 <span th:if="${document.results.containsKey('ID Articolo Padre')}">
@@ -31,8 +35,8 @@
         
         <hr>
 
-        <div th:if="${document.results.containsKey('HTML Tabella')}" class="table-view content-section">
-            <h2>Struttura Tabella Originale</h2>
+        <h2>Struttura Tabella Originale</h2>
+        <div th:if="${document.results.containsKey('HTML Tabella')}" class="table-view">
             <div class="table-data-wrapper" th:utext="${document.results.get('HTML Tabella')}"></div>
         </div>
 
@@ -43,8 +47,8 @@
             <h2>Paragrafi di Contesto</h2>
 
             <!-- MENTIONS -->
+            <h3>Menzioni della Figura</h3>
             <div th:if="${document.results.containsKey('Menzioni')}">
-                <h3>Menzioni della Figura</h3>
                 <ul>
                     <li th:each="p : ${document.results.get('Menzioni')}"
                         th:text="${p}">
@@ -53,8 +57,8 @@
             </div>
 
             <!-- CONTEXT_PARAGRAPHS -->
+            <h3>Paragrafi correlati alla Caption</h3>
             <div th:if="${document.results.containsKey('Contesto')}">
-                <h3>Paragrafi correlati alla Caption</h3>
                 <ul>
                     <li th:each="p : ${document.results.get('Contesto')}"
                         th:text="${p}">

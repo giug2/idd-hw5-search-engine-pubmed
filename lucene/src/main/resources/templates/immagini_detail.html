@@ -29,27 +29,27 @@
 
         <hr>
 
+        <h2>Anteprima Immagine</h2>
         <div class="content-section">
-            <h2>Anteprima Immagine</h2>
                 <div th:if="${document.results.get('image_url') != ''}">
                     <img th:src="@{${document.results.get('image_url')}}"
                         alt="Anteprima immagine"
                         style="max-width: 80%; height: auto; border: 1px solid #ccc; padding: 6px;"/>
 
-                    <p th:if="${document.results.get('image_external_url') != ''}">
-                        <a th:href="${document.results.get('image_external_url')}"
-                        target="_blank">
-                        Apri immagine in nuova scheda
-                        </a>
-                    </p>
                 </div>
             <div th:if="${document.results.get('Percorso salvato') == ''}">
                 <p><em>Nessuna immagine salvata disponibile per l'anteprima.</em></p>
             </div>
+            <p th:if="${document.results.get('image_external_url') != ''}">
+                    <a th:href="${document.results.get('image_external_url')}"
+                    target="_blank" class="btn-pill">
+                    Apri immagine in nuova scheda
+                    </a>
+            </p>
         </div>
 
-        <div class="content-section">
-            <h2>Metadati</h2>
+        <h2>Metadati</h2>
+        <div class="metadata">
             <p th:if="${document.results.containsKey('Link Href') and document.results.get('Link Href') != ''}">
                 <strong>Link Originale:</strong> 
                 <a th:href="${document.results.get('Link Href')}" th:text="${document.results.get('Link Href')}" target="_blank"></a>
@@ -66,8 +66,8 @@
             <h2>Paragrafi di Contesto</h2>
 
             <!-- MENTIONS -->
+            <h3>Menzioni della Figura</h3>
             <div th:if="${document.results.containsKey('Menzioni')}">
-                <h3>Menzioni della Figura</h3>
                 <ul>
                     <li th:each="p : ${document.results.get('Menzioni')}"
                         th:text="${p}">
@@ -76,8 +76,8 @@
             </div>
 
             <!-- CONTEXT_PARAGRAPHS -->
+            <h3>Paragrafi correlati alla Caption</h3>
             <div th:if="${document.results.containsKey('Contesto')}">
-                <h3>Paragrafi correlati alla Caption</h3>
                 <ul>
                     <li th:each="p : ${document.results.get('Contesto')}"
                         th:text="${p}">

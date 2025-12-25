@@ -1,192 +1,155 @@
-/* Stile base */
-body { 
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f8f9fa;
-    color: #343a40;
-    line-height: 1.6;
+/* =====================
+   THEME & PALETTE VERDE
+===================== */
+:root {
+    --forest-green: #064e3b;
+    --emerald-green: #10b981;
+    --border-gray: #d1d5db;
 }
 
-.container { 
-    max-width: 1100px; /* Più ampio per i contenuti di dettaglio */
-    margin: 40px auto;
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+body {
+    background-color: #f4f7f6 !important;
+    font-family: 'Inter', sans-serif !important;
 }
 
-/* Header e Navigazione */
-.back-link {
-    display: block;
-    margin-bottom: 20px;
-    color: #007bff;
-    text-decoration: none;
-    font-weight: 600;
+.container {
+    max-width: 900px !important;
+    margin: 40px auto !important;
 }
 
-.back-link:hover {
-    text-decoration: underline;
+h1 { color: var(--forest-green) !important; text-align: center !important; }
+
+/* =====================
+   BOX UNICO METADATI (Articoli, Immagini, Tabelle)
+===================== */
+.metadata, 
+.container > p:has(strong):not(:last-child) {
+    background: white !important;
+    border: 1px solid var(--border-gray) !important;
+    border-left: 10px solid var(--forest-green) !important;
+    border-radius: 12px !important;
+    padding: 10px 20px !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+    height: auto !important; /* Altezza adattabile */
 }
 
-h1 { 
-    color: #004085; /* Blu scuro */
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    font-weight: 700;
-    font-size: 1.8em;
+.metadata p, .container > p:has(strong) {
+    margin: 5px 0 !important;
+    display: block !important;
 }
 
-/* Informazioni Metadati (Autori, ID) */
-.metadata {
-    font-size: 0.95em;
-    margin-bottom: 25px;
+/* =====================
+   BOX TESTI LUNGHI (Abstract, Testo, Menzioni)
+===================== */
+.section, 
+.content-section > div:not(.table-view):not(:has(img)) {
+    background: white !important;
+    border: 1px solid var(--border-gray) !important;
+    border-left: 10px solid var(--forest-green) !important;
+    border-radius: 12px !important;
+    padding: 10px 20px 20px 20px !important;
+    margin-bottom: 25px !important;
+    height: 300px !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+}
+
+/* =====================
+   ELEMENTI FUORI DAI BOX (Immagini e Tabelle)
+===================== */
+.table-view, 
+.table-data-wrapper,
+.content-section:has(img),
+.content-section > h2 + div:has(img) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    height: auto !important;
+    margin: 20px 0 40px 0 !important;
+    text-align: center !important;
+}
+
+img {
+    max-width: 500px !important;
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+    background: white;
     padding: 10px;
-    border-left: 5px solid #007bff;
-    background-color: #e9ecef;
-    border-radius: 4px;
-}
-
-.metadata strong {
-    color: #495057;
-}
-
-/* Sezioni di Contenuto (Abstract, Testo, Contesto) */
-.content-section {
-    margin-top: 30px;
-    padding: 20px;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    background-color: #fcfcfc;
-}
-
-.content-section h2 {
-    color: #218838; /* Verde per le sezioni chiave */
-    margin-top: 0;
-    border-bottom: 1px dashed #ced4da;
-    padding-bottom: 8px;
-    margin-bottom: 15px;
-    font-size: 1.4em;
-}
-
-.content-section p {
-    text-align: justify;
-    margin-bottom: 15px;
-}
-
-/* ================================================= */
-/* STILI SPECIFICI PER LE TABELLE */
-/* ================================================= */
-
-.table-view {
-    margin-top: 30px;
-}
-
-.table-view h2 {
-    color: #d85f00; /* Arancione per le tabelle */
-}
-
-/* Stile per l'HTML della Tabella (Output grezzo Lucene) */
-.table-data-wrapper {
-    overflow-x: auto; /* Permette lo scroll orizzontale se la tabella è troppo larga */
-    padding: 15px;
-    border: 1px solid #e9ecef;
-    background-color: #ffffff;
-    border-radius: 4px;
 }
 
 .table-data-wrapper table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 0;
+    width: 100% !important;
+    background: white !important;
+    border-collapse: collapse !important;
+    border: 1px solid var(--border-gray) !important;
 }
 
-.table-data-wrapper th, .table-data-wrapper td {
-    border: 1px solid #dee2e6;
-    padding: 8px 12px;
-    text-align: left;
-    font-size: 0.9em;
+/* =====================
+   BOTTONI (Solo Link HTML e Torna Indietro)
+===================== */
+.container > a[href="/"],
+.back-link,
+a[title*="Apri"],
+a[title*="Visualizza"],
+.metadata a 
+.content-section p a{
+    display: inline-block !important;
+    background-color: var(--emerald-green) !important;
+    color: white !important;
+    padding: 8px 22px !important;
+    border-radius: 50px !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    margin: 10px 0 !important;
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2) !important;
 }
 
-.table-data-wrapper th {
-    background-color: #f1f1f1;
-    font-weight: 600;
-    color: #495057;
+.back-link:hover, a:hover {
+    background-color: var(--forest-green) !important;
 }
 
-/* Sezione Contesto Tabella */
-.table-context {
-    margin-top: 25px;
-    padding: 15px;
-    background-color: #fff3cd; /* Sfondo giallo chiaro per evidenziare il contesto */
-    border: 1px solid #ffeeba;
-    border-radius: 4px;
+.btn-pill {
+    display: inline-block !important;
+    background-color: var(--emerald-green) !important;
+    color: white !important;
+    padding: 8px 22px !important;
+    border-radius: 50px !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    margin: 10px 0 !important;
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2) !important;
+    transition: transform 0.2s;
 }
 
-.table-context h2 {
-    color: #856404;
-    border-bottom: none;
-    margin-bottom: 10px;
+.btn-pill:hover {
+    background-color: var(--forest-green) !important;
+    transform: translateY(-2px);
 }
 
-/* Stile errore */
-.error-container {
-    color: #721c24;
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 30px;
-    text-align: center;
+/* =====================
+   TITOLI E FOOTER
+===================== */
+h2, h3 {
+    color: var(--forest-green) !important;
+    text-transform: uppercase !important;
+    margin: 30px 0 10px 0 !important;
 }
 
-/* ================================================= */
-/* STILI PER LA TABELLA RENDERIZZATA (HTML grezzo) */
-/* ================================================= */
+hr { border: 0; border-top: 1px solid var(--border-gray); margin: 40px 0 20px; }
 
-/* Contenitore della tabella */
-.table-data-wrapper {
-    overflow-x: auto; /* Permette lo scroll orizzontale se la tabella è grande */
-    padding: 15px;
-    border: 1px solid #dee2e6;
-    background-color: #ffffff;
-    border-radius: 6px;
-    margin-top: 15px;
+/* Footer semplice */
+.container > p:last-child {
+    background: transparent !important;
+    border: none !important;
+    text-align: right !important;
+    color: var(--forest-green) !important;
+    font-weight: 600 !important;
 }
 
-/* Stile applicato alla tabella effettiva (tag <table>) */
-.table-data-wrapper table {
-    width: 100%;
-    border-collapse: collapse; /* Bordi uniti */
-    margin-bottom: 0;
-    font-size: 0.9em;
-}
-
-/* Stile delle celle */
-.table-data-wrapper th, 
-.table-data-wrapper td {
-    border: 1px solid #adb5bd; /* Bordo grigio medio */
-    padding: 10px 15px;
-    text-align: left;
-    vertical-align: top;
-}
-
-/* Stile per l'intestazione della tabella */
-.table-data-wrapper th {
-    background-color: #e9ecef; /* Sfondo chiaro per le intestazioni */
-    font-weight: 600;
-    color: #495057;
-}
-
-/* Righe pari/dispari per leggibilità (striping) */
-.table-data-wrapper tr:nth-child(even) {
-    background-color: #f8f9fa;
-}
-
-/* Rimuovi la sottolineatura dai link all'interno della tabella (se presenti) */
-.table-data-wrapper a {
-    text-decoration: none;
-    color: #007bff;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--emerald-green); border-radius: 10px; }

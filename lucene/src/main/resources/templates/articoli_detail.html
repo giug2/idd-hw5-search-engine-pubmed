@@ -12,11 +12,12 @@
         <a href="/">← Torna alla Ricerca</a>
         
         <h1 th:text="${document.title}">Titolo Articolo</h1>
-        <p><strong>Autori:</strong> <span th:text="${document.authors}"></span></p>
-        <p><strong>ID:</strong> <span th:text="${document.id}"></span></p>
-
-        <div th:if="${document.results.containsKey('Data di Pubblicazione')}">
-             <p><strong>Data di Pubblicazione:</strong> <span th:text="${document.results.get('Data di Pubblicazione')}"></span></p>
+        <div class="metadata">            
+            <p><strong>Autori:</strong> <span th:text="${document.authors}"></span></p>
+            <p><strong>ID:</strong> <span th:text="${document.id}"></span></p>
+            <div th:if="${document.results.containsKey('Data di Pubblicazione')}">
+                <p><strong>Data di Pubblicazione:</strong> <span th:text="${document.results.get('Data di Pubblicazione')}"></span></p>
+            </div>
         </div>
 
         <div class="metadata">
@@ -30,13 +31,13 @@
         </p>
         </div>
 
+        <h3>Abstract</h3>
         <div th:if="${document.results.containsKey('Abstract')}" class="section">
-            <h3>Abstract</h3>
             <p th:text="${document.results.get('Abstract')}">Contenuto dell'abstract...</p>
         </div>
 
+        <h3>Testo dell'Articolo</h3>
         <div th:if="${document.results.containsKey('Testo')}" class="section">
-            <h3>Testo dell'Articolo</h3>
             <p th:text="${document.results.get('Testo')}">Testo completo...</p>
         </div>
 
