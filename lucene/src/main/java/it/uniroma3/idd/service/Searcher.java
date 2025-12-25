@@ -1,6 +1,6 @@
 package it.uniroma3.idd.service;
 
-import it.uniroma3.idd.dto.SearchResultDTO;
+import it.uniroma3.idd.dto.*;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
@@ -71,8 +71,10 @@ public class Searcher {
     }
 
 
-    public Map<String, List<SearchResultDTO>> search(String queryText, List<String> indiceScelti, String campoScelto) throws Exception {
-        Map<String, List<SearchResultDTO>> risultatiFinali = new HashMap<>();
+    public SearchResponse search(String queryText, List<String> indiceScelti, String campoScelto) throws Exception {
+        SearchResponse response = new SearchResponse();
+        Map<String, List<SearchResult>> risultatiFinali = new HashMap<>();
+
 
         for (String indexKey : indiceScelti) {
             IndexSearcher currentSearcher = searcherMap.get(indexKey);
@@ -91,12 +93,18 @@ public class Searcher {
             long endTime = System.currentTimeMillis();
             long duration = endTime - startTime;
 
-            //stampo le metriche tramite l'apposito servizio
-            metricService.evaluateSearch(hits, queryText, indexKey, duration, currentSearcher);
+             // Chiamata singola al servizio metriche: salva il risultato nell'oggetto m
+            SearchMetrics m = metricService.evaluateSearch(hits, queryText, indexKey, duration, currentSearcher);
+            
+            // Aggiungi le metriche alla risposta
+            response.getMetrichePerIndice().put(indexKey, m);
 
-            risultatiFinali.put(indexKey, mapHitsToDTO(hits, currentSearcher, indexKey));
+            // Mappa i risultati
+            List<SearchResult> currentResults = mapHitsToDTO(hits, currentSearcher, indexKey);
+            risultatiFinali.put(indexKey, currentResults);
         }
-        return risultatiFinali;
+        response.setRisultati(risultatiFinali);
+        return response;
     }
 
 
@@ -147,8 +155,8 @@ public class Searcher {
     }
 
 
-    private List<SearchResultDTO> mapHitsToDTO(TopDocs hits, IndexSearcher searcher, String indexKey) throws IOException {
-        List<SearchResultDTO> results = new ArrayList<>();
+    private List<SearchResult> mapHitsToDTO(TopDocs hits, IndexSearcher searcher, String indexKey) throws IOException {
+        List<SearchResult> results = new ArrayList<>();
         for (ScoreDoc sd : hits.scoreDocs) {
             Document doc = searcher.storedFields().document(sd.doc);
             String id = doc.get("id");
@@ -183,7 +191,7 @@ public class Searcher {
                     break;
             }
 
-            results.add(new SearchResultDTO(indexKey.toUpperCase(), id, titolo, snippet, score, urlDettaglio));
+            results.add(new SearchResult(indexKey.toUpperCase(), id, titolo, snippet, score, urlDettaglio));
         }
         return results;
     }

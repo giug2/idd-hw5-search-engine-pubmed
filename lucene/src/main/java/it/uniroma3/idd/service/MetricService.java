@@ -2,6 +2,7 @@ package it.uniroma3.idd.service;
 
 import it.uniroma3.idd.evaluation.EvaluationMetrics;
 import it.uniroma3.idd.evaluation.ResultRelevanceEvaluator;
+import it.uniroma3.idd.dto.*;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
@@ -14,13 +15,13 @@ import java.util.*;
 @Service
 public class MetricService {
 
-    /*Valuta la ricerca usando le classi di supporto esterne*/
-    public void evaluateSearch(TopDocs topDocs, String query, String indexName, long searchTimeMs, IndexSearcher searcher) {
+    /* Valuta la ricerca usando le classi di supporto esterne */
+    public SearchMetrics evaluateSearch(TopDocs topDocs, String query, String indexName, long searchTimeMs, IndexSearcher searcher) {
         
         // Controllo compatibile con tutte le versioni di Lucene
         if (topDocs.scoreDocs.length == 0) {
             System.out.println("METRICS [" + indexName + "]: Nessun risultato per '" + query + "'");
-            return;
+            return new SearchMetrics(indexName, 0.0, 0.0, 0.0, searchTimeMs, 0L);
         }
 
         List<String> rankedIds = new ArrayList<>();
@@ -62,5 +63,15 @@ public class MetricService {
         System.out.printf(" RR:      %.3f%n", rr);
         System.out.printf(" P@%d:    %.3f%n", k, precision);
         System.out.println("=====================================");
+
+        SearchMetrics metrics = new SearchMetrics();
+        metrics.setIndex(indexName);
+        metrics.setNdcg(ndcg);
+        metrics.setRr(rr);
+        metrics.setPrecision(precision);
+        metrics.setTime(searchTimeMs);
+        metrics.setTotalHits(topDocs.totalHits.value());
+
+        return metrics;
     }
 }

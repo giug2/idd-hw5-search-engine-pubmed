@@ -5,6 +5,7 @@
         <title>Ricerca Lucene Scalabile PubM-IDD</title>
         <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
         <div class="container">
@@ -49,13 +50,13 @@
                                 <h4>Scegli Indice/i da consultare:</h4>
                                 
                                 <label style="margin-right: 15px;"><input type="checkbox" name="indices" value="articoli" 
-                                                             th:checked="${#lists.contains(indicesScelti, 'articoli')}"> Articoli </label>
+                                                             th:checked="${#lists.contains(indiceScelti, 'articoli')}"> Articoli </label>
                                 
                                 <label style="margin-right: 15px;"><input type="checkbox" name="indices" value="tabelle" 
-                                                             th:checked="${#lists.contains(indicesScelti, 'tabelle')}"> Tabelle </label>
+                                                             th:checked="${#lists.contains(indiceScelti, 'tabelle')}"> Tabelle </label>
                                 
                                 <label><input type="checkbox" name="indices" value="immagini" 
-                                                             th:checked="${#lists.contains(indicesScelti, 'immagini')}"> Immagini </label>
+                                                             th:checked="${#lists.contains(indiceScelti, 'immagini')}"> Immagini </label>
                         </div>
 
                         <div class="form-group" style="margin-top: 20px; text-align: center;">
@@ -92,13 +93,19 @@
 
                                                 <p th:text="${result.snippet}">Snippet: Anteprima del contenuto...</p>
                                         </div>
-                                        
                                 </div>
-                                
                         </div>
-                        
                 </div>
-        </div>
+                <div id="metrics-container" style="display:none;">
+                        <div th:each="entry : ${metriche}">
+                                <span class="metric-index" th:text="${entry.key}"></span>
+                                <span th:class="'time-' + ${entry.key}" th:text="${entry.value.time}"></span>
+                                <span th:class="'precision-' + ${entry.key}" th:text="${entry.value.precision}"></span>
+                                <span th:class="'rr-' + ${entry.key}" th:text="${entry.value.rr}"></span>
+                                <span th:class="'ndcg-' + ${entry.key}" th:text="${entry.value.ndcg}"></span>
+                        </div>
+                </div>
 
+        </div>
 </body>
 </html>

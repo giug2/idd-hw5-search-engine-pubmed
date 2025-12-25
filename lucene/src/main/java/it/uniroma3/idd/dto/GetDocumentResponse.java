@@ -13,8 +13,6 @@ public class GetDocumentResponse {
     private String title;
     private String authors;
     
-    /**
-     * Contiene i campi specifici del documento (articoli, tabelle e img)
-     */
+    /* Contiene i campi specifici del documento (articoli, tabelle e img) */
     private Map<String, String> results; 
 }

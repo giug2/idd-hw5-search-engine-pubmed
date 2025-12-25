@@ -6,6 +6,7 @@ import time
 import os
 from time import time as now
 
+
 # ==================================================
 # CONFIGURAZIONE
 # ==================================================
@@ -22,6 +23,7 @@ HEADERS = {
 
 os.makedirs(OUT_DIR, exist_ok=True)
 
+
 # ==================================================
 # STATISTICHE
 # ==================================================
@@ -29,8 +31,9 @@ start_time = now()
 downloaded = 0
 errors = 0
 
+
 # ==================================================
-# STEP 1 – Ricerca DIRETTA su PMC
+# Ricerca DIRETTA su PMC
 # ==================================================
 print("Ricerca articoli su PubMed Central (PMC)...")
 handle = Entrez.esearch(
@@ -44,8 +47,9 @@ handle.close()
 pmcids = record["IdList"]
 print(f"Articoli PMC trovati: {len(pmcids)}")
 
+
 # ==================================================
-# Helper – URL relativi → assoluti
+# Helper 
 # ==================================================
 def make_absolute_urls(soup):
     for tag in soup.find_all(["img", "a", "link", "script"]):
@@ -53,8 +57,9 @@ def make_absolute_urls(soup):
         if tag.get(attr) and tag[attr].startswith("/"):
             tag[attr] = BASE_URL + tag[attr]
 
+
 # ==================================================
-# STEP 2 – Download HTML full-text da PMC
+# Download HTML full-text da PMC
 # ==================================================
 print("Download HTML da PMC...")
 for pmcid in tqdm(pmcids[:MAX_ARTICLES]):
@@ -80,6 +85,7 @@ for pmcid in tqdm(pmcids[:MAX_ARTICLES]):
     except Exception as e:
         errors += 1
         print(f"Errore PMC{pmcid}: {e}")
+
 
 # ==================================================
 # STATISTICHE FINALI

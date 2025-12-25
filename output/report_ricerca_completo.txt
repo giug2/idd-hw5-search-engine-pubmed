@@ -1,0 +1,281 @@
+=== REPORT TEST LUCENE: RISULTATI E METRICHE ===
+
+QUERY: 'title:Kidney'
+INDICI SELEZIONATI: articoli
+--------------------------------------------------
+RISULTATI:
+  > ARTICOLI (10 Trovati)
+    - The Exposome and the Kidney: A Silent Dialogue Shaping Chronic Kidney Disease (Score: 2,0682)
+    - Chrononutrition in Chronic Kidney Disease (Score: 1,9432)
+    - The true cost of phosphate control in chronic kidney disease (Score: 1,6548)
+    - Whole Grains, Refined Grains, and Diet Quality in Chronic Kidney Disease (Score: 1,6070)
+    - Plasma Proteomic Profile of Dietary Potassium and Incident Chronic Kidney Disease (Score: 1,6070)
+    - Exploring the Role of Plant-Based Nutrition in Polycystic Kidney Disease (Score: 1,6070)
+    - Hyperphosphatemia in Kidney Failure: Pathophysiology, Challenges, and Critical Role of Phosphorus Management (Score: 1,5620)
+    - Cardiorenal Syndrome: Molecular Pathways Linking Cardiovascular Dysfunction and Chronic Kidney Disease Progression (Score: 1,5620)
+    - Stress Pathways in Chronic Kidney Disease: Linking Cortisol, Oxidative Stress, and Inflammation (Score: 1,5620)
+    - Nutritional Status Evaluation and Intervention in Chronic Kidney Disease Patients: Practical Approach (Score: 1,5620)
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 0ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'authors:Kim'
+INDICI SELEZIONATI: articoli
+--------------------------------------------------
+RISULTATI:
+  > ARTICOLI (7 Trovati)
+    - Effect of Preoperative Inflammatory Diet on Clinical and Oncologic Outcomes Following Colorectal Cancer Surgery (Score: 3,1473)
+    - Sufficient Magnesium Intake Reduces Retinal Vein Occlusion Risk: National Health and Nutrition Examination Survey Analysis (Score: 3,0661)
+    - Lifestyle prescriptions for diabetes management in primary care: a narrative review (Score: 2,6858)
+    - Secular trends in dietary patterns among Korean adults: using data from the 2007–2022 Korea National health and nutrition examination survey (Score: 2,5429)
+    - Potential misclassification of ultra-processed foods across studies and the need for a unified classification system: a scoping review (Score: 2,0966)
+    - Gut Feelings: How Microbes, Diet, and Host Immunity Shape Disease (Score: 1,9275)
+    - Potato Consumption and Risk of Cardiovascular Disease in a Harmonized Analysis of Seven Prospective Cohorts (Score: 1,6314)
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 0ms | Precision: 0.6 | RR: 1.0 | NDCG: 0.9495662644168644
+
+============================================================
+
+QUERY: 'articleAbstract:"dietary fiber"'
+INDICI SELEZIONATI: articoli
+--------------------------------------------------
+RISULTATI:
+  > ARTICOLI (2 Trovati)
+    - Dietary Fiber Intake and Weight Status in Young Austrian Adults (Score: 3,6080)
+    - Modulation of Gut Microbiota by Whole Encapsulated Brown Seaweed (Himanthalia elongata) in Overweight Subjects: A Randomized Double-Blind Placebo-Controlled Trial (Score: 2,5335)
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 20ms | Precision: 0.2 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'caption:statistics'
+INDICI SELEZIONATI: tabelle
+--------------------------------------------------
+RISULTATI:
+  > TABELLE (8 Trovati)
+    - Descriptive statistics of meat and PBM products (Score: 3,4329)
+    - Daily food consumption in KiESEL children ( n 887) 1–5 years of age stratified by SES (original sample descriptive statistics and age- and sex-adjusted bootstrap Welch ANOVA test statistics) (Mean values and standard deviations; percentile values) (Score: 2,9782)
+    - Descriptive statistics for frequency of dietary outcomes 1 from a 7 d recall period among postpartum women ( n = 5064). (Score: 2,8064)
+    - Descriptive statistics for distance to nearest food vendor and density of food vendors for households enrolled in Protein Plus trial ( n = 5064). (Score: 2,5481)
+    - Descriptive summary statistics, percentiles and extremes, and distribution shape parameters of sodium intake among children (ages 5–17) and adults (ages 18 and older) stratified by sex and in adults based on health conditions, pooled across eight NHANES cycles (2003–2018). (Score: 1,9967)
+    - Descriptive statistics were used to characterize the study population at baseline. Continuous variables are presented as means and standard deviations (SDs), and group differences were assessed using independent-samples t -tests. Categorical variables are presented as percentages, and comparisons were made using chi-square tests. (Score: 1,7901)
+    - All analyses were performed using SPSS version 25. Descriptive statistics summarized the distribution of MedLife adherence categories across MC and NMC regions, with results expressed as respondents number as well as percentages of respondents within each region. A chi-square test of independence (χ 2 ) was performed to assess the overall associations between regional and each categorical variable. Then, to assess whether the proportion of participants in each categorical variable differed significantly between regions, a Z-test for two proportions was conducted using the following pooled variance formula: (Score: 1,1797)
+    - The following supporting information can be downloaded at: https://www.mdpi.com/article/10.3390/metabo15110730/s1 , Figure S1: Study Flowchart; Table S1: Participant characteristics by sex in training (70% of data) and test (30% of data) datasets in the Coronary Artery Risk Development in Young Adults Study, 2005–2006 (N = 2169); Table S2: Fit statistics and model predictive ability in sex-stratified samples for each clinical lipid measure using test data (30% of full dataset); Figure S2: Predicted vs. observed ability of the 7522 metabolite peaks to predict each clinical lipid measure using the test data (30% of full dataset); Table S3: a–d: Unstratified model results for metabolic pathways differentially associated with lipid measures by sex in the Coronary Artery Risk Development in Young Adults Study, 2005–2006 (N = 2169) using the full dataset; Figure S3: Unstratified model 1 (basic demographic model) a results for statistically significant metabolic pathways (FET < 0.05) differentially associated with at least one clinical lipid measure by sex in the Coronary Artery Risk Development in Young Adults Study, 2005–2006 using the full dataset; Figure S4: Unstratified model 2 (lifestyle-adjusted model) a results of significant metabolic pathways (FET < 0.05) differentially associated with at least one clinical lipid measure by sex in the Coronary Artery Risk Development in Young Adults Study, 2005–2006 using the full dataset; Figure S5: Unstratified model 3 (clinical-adjusted model) a results of significant metabolic pathways (FET < 0.05) differentially associated with at least one clinical lipid measure by sex in the Coronary Artery Risk Development in Young Adults Study, 2005–2006 using the full dataset; Table S4: a–d: Stratified model results in men and women (by menopausal status) for metabolic pathways significant associated (FET < 0.05) with at least one clinical lipid measure by sex in the Coronary Artery Risk Development in Young Adults Study, 2005–2006 using the full dataset; Table S5: a–d: Unstratified and stratified OPLS-R metabolic pathway enrichment results of pathways significantly associated (VIP score > 1.5, FET < 0.05) with at least one clinical lipid measure in the Coronary Artery Risk Development in Young Adults Study, 2005–2006 using the full dataset; Table S6: Unstratified fully adjusted linear regression results of metabolite peak features associated with each clinical lipid measure in the Coronary Artery Risk Development in Young Adults Study, 2005–2006; Table S7: a–d: Unstratified and stratified OPLS-R results of metabolite peak features and VIP scores associated with each clinical lipid measure in the Coronary Artery Risk Development in Young Adults Study, 2005–2006; Table S8: Metabolic pathways identified from 7488 metabolite peaks (excluding metabolites peaks with >80% missingness) associated with each clinical lipid measure with differential metabolic activity by sex in the Coronary Artery Risk Development in Young Adults Study, 2005–2006 (N = 2169); Figure S6: Principal components analysis of all study samples, study pools, NIST reference samples, and blanks using all 7522 metabolomics features used in the Coronary Artery Risk Development in Young Adults Study, 2005–2006; Supplemental Methods. (Score: 0,2924)
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 0ms | Precision: 0.1 | RR: 0.2 | NDCG: 0.38685280723454163
+
+============================================================
+
+QUERY: 'body:"confidence interval"'
+INDICI SELEZIONATI: tabelle
+--------------------------------------------------
+RISULTATI:
+  > TABELLE (6 Trovati)
+    - Multivariable linear regression models examining the effect of processed food consumption on Framingham risk percentage. (Score: 6,7021)
+    - The following supporting information can be downloaded at: https://www.mdpi.com/article/10.3390/nu17071244/s1 , Figure S1: Classification of plant-based diets applied to the calculation of PBD indices; Figure S2: Directed acyclic graph, representing the relations between variables of interest (PDIs and UPFs) and covariates; Table S1: STROBE-nut: An extension of the STROBE statement for nutritional epidemiology; Table S2: Plant-based diet indices (PDI, hPDI, uPDI) scoring system; Table S3: Component scores for PDI, hPDI and uPDI according to quintiles of UPF contribution in Australian adults from the 2011–2012 NNPAS; Table S4: Associations between the proportion of energy intake from UPFs and three diet quality indices (PDI, hPDI and uPDI) adjusted for sociodemographic variables (sex, age, education, country of birth, rurality, and area-level disadvantage) and energy misreporting (total energy intake to basal metabolic rate ratio) in Australian adults from NNPAS 2011–2012 according to age, sex and education ( n = 9111). (Score: 6,5653)
+    - Multivariable linear regression model of determinants of processed food consumption. (Score: 5,7790)
+    - Primary outcome: 6‐month variation of BMI and cholesterol (Score: 4,4068)
+    - Summary of behavior change (study effectiveness) findings by study. (Score: 1,6259)
+    - Characteristics of studies conducted in school settings in Latin America, organized by country (from most to fewest articles) and by year of publication (most recent first). (Score: 1,5009)
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 1ms | Precision: 0.6 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'caption:Hamburger'
+INDICI SELEZIONATI: immagini
+--------------------------------------------------
+RISULTATI:
+  > IMMAGINI (1 Trovati)
+    - Outline of this experiment. On day 1, the body weight, BMI, body fat percentage, and skeletal muscle mass index (SMI) were calculated by dividing the skeletal muscle mass (kg) by the square of the height (m 2 ), average grip strength of both hands, and BDHQ (Brief-Type Self-Administered Diet History Questionnaire) responses. The metrics for the first test meal (pizza, 304 kcal), including the number of chews, chewing tempo, and number of bites, were measured. The meal duration was measured via video analysis. Four weeks later, the metrics were measured again when the participants ate a hamburger lunch meal. The meal duration, number of chews, number of chewing tempos, and number of bites were measured when the participants were instructed to eat vegetables first. Four weeks later, a third set of measurements was taken as the participants again ate the hamburger lunch meal. The meal duration, number of chews, number of chewing tempos, and number of bites were measured when the participants were instructed to eat the vegetables last. A slice of pizza (Microwave Mix Pizza, Maruha Nichiro, Tokyo, Japan; energy, 304 kcal; protein, 11.0 g; fat, 11.5 g; carbohydrate, 39.2 g. Hamburger steak bento (hamburger steak (60 g), rice (100 g), and broccoli (100 g)) (energy, 301 kcal; protein, 12.2 g; fat, 6.9 g; carbohydrate, 42.9 g). (Score: 3,4963)
+
+METRICHE PRESTAZIONALI:
+  [IMMAGINI] -> Tempo: 1ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+
+============================================================
+
+QUERY: 'alt:europe'
+INDICI SELEZIONATI: immagini
+--------------------------------------------------
+RISULTATI:
+  > IMMAGINI (9 Trovati)
+    - Location of studies 1989–2021. (Score: 1,4083)
+    - Frequency of main LCT/MCM6 allele −13,910C > T (rs4988235) in different populations across the world, data taken from UCL’s LP database – GLAD ( https://www.ucl.ac.uk/biosciences/gee/molecular-and-cultural-evolution-lab/global-lactase-persistence-association-database-glad ), and additional allele frequency estimation of Arctic groups from ( 162 ) data. Each circle represents a population, and the color of the circle indicates a gradient of color from low (blue) to high (red; i.e., 0–100%) occurrence of average allele frequencies. Global distribution map was generated using Tableau ( https://www.tableau.com ). (Score: 0,8509)
+    - Age-standardized mortality rate (ASMR) caused by inadequate F&V intake in 17 GBD regions from 1990 to 2021. (A) AA, (C) PAD, (E) IHD, (G) HHD, attributed to insufficient intake of vegetables; (B) AA, (D) PAD, (F) IHD, (H) HHD, attributed to insufficient intake of fruits. (Score: 0,6200)
+    - Thirteen dietary risks contributing to deaths and DALYs attributable to CVD in 2021. These included diets (A) high in sodium, (B) low in fruits, (C) low in whole grains, (D) low in polyunsaturated fatty acids, (E) low in vegetables, (F) low in nuts and seeds, (G) low in seafood-derived omega-3 fatty acids, (H) low in fiber, (I) high in processed meat, (J) low in legumes, (K) high in trans fatty acids, (L) high in red meat, and (M) high in sugar-sweetened beverages. CVD-DR, cardiovascular disease due to dietary risks; DALYs, disability-adjusted life years. (Score: 0,5627)
+    - Projected global burden of CVD from 2020 to 2030, by locations. (A) ASIR (B) ASDR (C) Age-standardized DALY rate. DALY, disability adjusted life-year; ASIR, age standardized incidence rate. ASDR, age standardized death rate. (Score: 0,5010)
+    - Global EAPCs of CVD-DR in 204 countries or territories from 1990 to 2021. (A) EAPC of ASMR; (B) EAPC of ASDR. CVD-DR, cardiovascular disease due to dietary risks; EAPCs, estimated annual percentage changes; ASMR, age-standardized mortality rate; ASDR, age-standardized disability-adjusted life years rate. (Score: 0,4750)
+    - Age-standardized rates of CVD-DR in 204 countries or territories in 2021. (A) ASMR; (B) ASDR. CVD-DR, cardiovascular disease due to dietary risks; ASMR, age-standardized mortality rate; ASDR, age-standardized disability-adjusted life years rate. (Score: 0,4750)
+    - Sex percentage of global burden of CVD in 2030, by locations and sex. (A) ASIR (B) ASDR (C) Age-standardized DALY rate. DALY, disability adjusted life-year; ASIR, age standardized incidence rate; ASDR, age standardized death rate; ASRs, age standardized rates. (Score: 0,4515)
+    - Different dietary, genetic, and environmental features that distinctly characterize the Arctic and South Asian populations. AMY1A , amylase alpha 1A gene; LCT , lactase gene; MCM6 , minichromosome maintenance complex component 6; FADS1 , fatty acid desaturase 1; FADS2 , fatty acid desaturase 2; CPT1A , carnitine palmitoyl transferase 1A; TBC1D4 , TBC1 domain family member 4; and UCP1 , uncoupling protein 1. (Score: 0,3932)
+
+METRICHE PRESTAZIONALI:
+  [IMMAGINI] -> Tempo: 1ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+
+============================================================
+
+QUERY: 'nutrition'
+INDICI SELEZIONATI: articoli, tabelle
+--------------------------------------------------
+RISULTATI:
+  > TABELLE (10 Trovati)
+    - Key research studies on policy measures to safeguard adolescent nutrition and health (Score: 6,2338)
+    - The 5As Framework a Applied to Support Nutrition and Lifestyle for Obesity Care Using GLP-1 Therapy. (Score: 5,9523)
+    - Modify the school curriculum to include healthy eating and nutrition topics, for example: sources of nutrients and types of food. (Score: 5,8979)
+    - Key research studies on opportunities to enhance adolescent nutrition and health (Score: 5,7632)
+    - Telehealth and Digital Platform Support for Nutrition During GLP-1 Treatment. (Score: 5,4262)
+    - Recommendations for medical nutrition therapy in diabetes (Score: 5,2138)
+    - Considerations for developing the nutrition prescription and related therapies for an adult with overweight or obesity. (Score: 4,6629)
+    - PICOS Criteria for Inclusion and Exclusion of Studies. (Score: 4,4315)
+    - Partial Enteral Nutrition in IBD. CD, Crohn’s disease; CDED, Crohn’s disease exclusion diet; EEN, exclusive enteral nutrition; PEN, partial enteral nutrition. (Score: 4,2131)
+    - Evidence on Diet, Nutrition and Gynecologic Health. ↓: worse ↑: improve. (Score: 3,9990)
+  > ARTICOLI (10 Trovati)
+    - Nutrition education and its public health impact in Saudi Arabia: a systematic review (Score: 3,4949)
+    - Evolution of multidisciplinary obesity treatments: past, present, and future role of nutrition (Score: 3,0428)
+    - Age-Stratified Trends in Nutrition and Lifestyle Transitions in Korea: Findings from KNHANES 2013–2022 (Score: 2,9903)
+    - Mediterranean diet research trajectories in China (2006–2025): a scoping review and scientometric analysis to localize global nutrition models (Score: 2,8953)
+    - A Comprehensive Scoping Review on Diet and Nutrition in Relation to Long COVID-19 Symptoms and Recovery (Score: 2,8768)
+    - A Scoping Review of School-Based Nutrition and Physical Activity Interventions Conducted in Mexico (Score: 2,8733)
+    - Adolescent Nutrition and Health: a Critical Period for Nutritional Intervention to Prevent Long Term Health Consequences (Score: 2,8480)
+    - Nutrition Education Among Community-Dwelling Polish Seniors—A Pilot Study of Diet Quality, Health Status, and Public Health Interventions (Score: 2,7609)
+    - Cardiometabolic Phenotypes and Dietary Patterns in Albanian University-Enrolled Young Adults: Cross-Sectional Findings from the Nutrition Synergies WHO-Aligned Sentinel Platform (Score: 2,7056)
+    - Nutrition therapy in the era of automated insulin delivery (Score: 1,7439)
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 9ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.9959548051864799
+  [ARTICOLI] -> Tempo: 1ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'mortality'
+INDICI SELEZIONATI: articoli, immagini
+--------------------------------------------------
+RISULTATI:
+  > ARTICOLI (10 Trovati)
+    - Associations of dietary indices with risk of all-cause and cardiovascular mortality in hypertensive adults (Score: 4,2107)
+    - A Rising Crisis: Escalating Burden of Diabetes Mellitus and Hypertension‐Related Mortality Trends in the United States, 2000–2023 (Score: 4,1439)
+    - Trends and Disparities in Heart Failure Mortality Among Hypertensive Older Adults in the United States: A 22‐Year Retrospective Study (Score: 4,0744)
+    - A systematic review of prospective evidence linking non-alcoholic fermented food consumption with lower mortality risk (Score: 3,6848)
+    - Pro-vegetarian dietary patterns and mortality by all-cause and specific causes in an older Mediterranean population (Score: 3,6377)
+    - Dietary inflammatory index and cardiovascular risk and mortality: an updated systematic review and meta-analysis (Score: 2,3862)
+    - The portfolio dietary pattern and risk of cardiovascular disease mortality during 1988–2019 in US adults: a prospective cohort study (Score: 2,2550)
+    - Associations Between Inflammatory Potential of Diet with the Risk of All-Cause Mortality and Greenhouse Gas Emissions in Chinese Adults (Score: 2,1706)
+    - The impact of dietary interventions on cardiometabolic health (Score: 1,8526)
+    - Molecular connections between inflammation and social determinants of health (Score: 1,8465)
+  > IMMAGINI (10 Trovati)
+    - Concentration-dependent mortality of Danio rerio at 96 hpf and E3 (negative control), ±SEM, n = 20. (Score: 5,5492)
+    - Plot of the dependence of mortality (Fa) on quinoline yellow (QY) concentration (dose). (Score: 3,7100)
+    - Risk of mortality (A) myocardial infarction (B) and stroke (C) in different age groups in individuals with T2DM as compared to individuals without diabetes from the same age group. Reproduced with permission from ( 8 ), under a Creative Commons 4.0 license. (Score: 3,6814)
+    - Sensitivity analysis of DII and CVDs mortality. (Score: 3,6021)
+    - Trends in the overall age‐adjusted mortality rates (AAMRs) related to heart failure in hypertensive older adults in the United States, 1999–2020. (Score: 3,5982)
+    - Trends in sex‐stratified age‐adjusted mortality rates (AAMRs) related to heart failure in hypertensive older adults in the United States, 1999–2020. (Score: 3,5982)
+    - Race and ethnicity‐stratified trends in age‐adjusted mortality rates (AAMRs) related to heart failure in hypertensive older adults in the United States, 1999–2020. (Score: 3,5576)
+    - Trends in age‐adjusted mortality rates (AAMRs) related to heart failure in hypertensive older adults stratified by census regions in the United States, 1999–2020. (Score: 3,5576)
+    - Diabetes mellitus and hypertension‐related age‐adjusted mortality rates (AAMRs) per 100,000 individuals stratified by state in the United States, 2000–2023. (Score: 3,5470)
+    - Diabetes mellitus and hypertension‐related age‐adjusted mortality rates (AAMRs) per 100,000 individuals stratified by race in the United States, 2000–2023. (Score: 3,5466)
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 1ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+  [IMMAGINI] -> Tempo: 6ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'accuracy'
+INDICI SELEZIONATI: tabelle, immagini
+--------------------------------------------------
+RISULTATI:
+  > TABELLE (10 Trovati)
+    - Comparison of diagnostic accuracy between variables. (Score: 6,9886)
+    - Non-invasive tests for assessing liver fibrosis in MASLD: pros and cons. (Score: 6,8950)
+    - Comparative diagnostic accuracy of clinical decision trees. (Score: 6,8876)
+    - Assessment of the accuracy of the neural predictive models. (Score: 6,1245)
+    - The accuracy for total energy, crude protein, crude fat, saturated fat, total carbohydrates, and sodium estimated results from five AI chatbots and dietitians against the actual nutrition labels of the eight commercial meals. (Score: 5,3881)
+    - Methods to assess urinary phosphate (P) excretion. (Score: 3,5386)
+    - Affected by fluid shifts during and after dialysis (Score: 3,2648)
+    - Association between respondents’ dietary intakes and test d2R variables. (Score: 3,2032)
+    - Distribution and relative significance of consumed food groups among students. (Score: 3,1988)
+    - Distribution of meal frequency, breakfast consumption, and snacking habits according to gender, BMI, health status, vision problems, learning difficulties, and psychological stress. (Score: 3,1599)
+  > IMMAGINI (10 Trovati)
+    - Radar plot comparing the accuracy of nutrient estimations for total energy, crude protein, crude fat, saturated fat, total carbohydrates, and sodium across five AI chatbots (ChatGPT, Claude, Grok, Gemini, Copilot) and dietitians. Values (dash lines) represent percentage deviation relative to labeled nutrient values. (Score: 5,0686)
+    - Cognitive performance profiles based on d2R test results. (Score: 3,8770)
+    - Assessment of the capacity of the neural predictive models. Note. The x-axis refers to the predictions generated by the neural models (for 1 = MUO positive versus 0 = MUO negative). The Y-axis refers to the values of the accuracy indexes (Se, Sp, FPR, FDR, PV+ and PV−) in percentage. Dash line in each graph is plotted in he predicted pseudo-probability 0.50. HOMA-IR: Homeostasis Model Assessment Insulin Resistance. IDF: International Diabetes Federation. Sp: specificity; Se: sensitivity. PV−: predictive value for a negative score. PV+: predictive value for a positive score. FPR: false positive rate. FDR: false discovery rate. (Score: 3,8767)
+    - Values are means ± SDs for the sets of metabolites consistently selected 10 times after 10 iterations of the elastic net regression procedure with 10-fold cross-validation using the best set of alpha (0.6) and lambda (0.045) values that returned the best model accuracy across all cross-validated results employing the training data of the 400 participants. Metabolites with negative coefficients, associated with the reference group are plotted on the left, whereas those with positive coefficients, related to the depression group are plotted on the right. 20-Carboxy-LTB4 20-Carboxy-leukotriene B4, C16 Sphinganine 16-carbon Sphinganine, CE 20:4 20-carbon tetra-unsaturated cholesterol ester, TG 54:1 54-carbon monounsaturated triglyceride. (Score: 3,7275)
+    - Integrative data‐driven approach for obesity risk prediction. The schematic represents a multisource data integration framework for obesity risk prediction. Various data sources, including genetic (DNA/RNA), environmental factors, wearable device metrics, dietary information, and social media data, are processed using Group Factor Analysis (GFA). Machine learning models such as Logistic Regression, XGBoost, and Random Forest are applied for predictive modeling. The results section highlights performance metrics (accuracy, sensitivity, specificity) and the predicted obesity risk, demonstrating the effectiveness of this integrative approach. (Score: 3,1060)
+    - Prevalence and types of learning difficulties among primary school students. (Score: 2,2891)
+    - The study area. (Score: 2,2373)
+    - The number of images in each class of our collected dataset. (Score: 1,9717)
+    - The number of images in each class selected for the experiments of the original training set of ( Jeanray et al., 2015 ) (Score: 1,9666)
+    - Independent variable importance (normalized values). Note. BMI: body mass index. NP1: minerals and vitamins. NP2: carbohydrates. NP3: Fat and sodium. HOMA-IR: Homeostasis Model Assessment Insulin Resistance. IDF: International Diabetes Federation. (Score: 1,9563)
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 5ms | Precision: 0.8 | RR: 1.0 | NDCG: 0.9462188766685263
+  [IMMAGINI] -> Tempo: 3ms | Precision: 0.4 | RR: 1.0 | NDCG: 0.9047172294870752
+
+============================================================
+
+QUERY: 'diet quality'
+INDICI SELEZIONATI: articoli, tabelle, immagini
+--------------------------------------------------
+RISULTATI:
+  > TABELLE (10 Trovati)
+    - The main characteristics of the studies included in the systematic review reporting on the association between adherence to the Mediterranean diet and quality of life among the patient population. (Score: 8,4727)
+    - The main characteristics of the studies included in the systematic review reporting on the association between adherence to the Mediterranean diet and quality of life among the general population. (Score: 8,1052)
+    - Diet quality and percent of energy from Nova groups. (Score: 7,7339)
+    - Key: BQI, breakfast quality index; BQS, breakfast quality score; DQI, diet quality index; FBDGs, food-based dietary guidelines; FFQ, food frequency questionnaire; HEI, Healthy eating Index; HELENA, Healthy Lifestyle in Europe by Nutrition in Adolescence; inc. increased; IBRI, International Breakfast Research Initiative; NA, not applicable; NHANES, National Health and Nutrition Examination Survey; RCT, randomised controlled trial; RTE, ready-to-eat; Sig. significant/ly; SR, systematic review; US, United States. (Score: 7,7246)
+    - Characteristics of males by plant-based diet quality trajectory groups at baseline ( n = 216) (Score: 7,2240)
+    - Characteristics of females by plant-based diet quality trajectory groups at baseline ( n = 201) (Score: 7,1648)
+    - Keyword clusters in Mediterranean-diet research in China (2006–2025). (Score: 7,0404)
+    - Pattern of Identified Associations Between NOVA and Dietary Quality (“Healthfulness”) Indicators: Diet Level (Score: 6,8970)
+    - Correlation matrix of dietary influence, disease impact, emotional state, sleep quality, and quality of life. (Score: 6,8291)
+    - Correlation matrix between quality of life, social relations, emotional state, sleep quality, physical activity, and dietary influence. (Score: 6,7621)
+  > ARTICOLI (10 Trovati)
+    - Development and validation of an online tool for assessing dietary intake, diet quality, and environmental impact in Mexico (Score: 4,6581)
+    - Ultra-Processed Food Consumption Is Associated With Poor Diet Quality and Nutrient Intake Among Adolescents in Urban Slums, Kenya (Score: 4,2906)
+    - Nutrition Education Among Community-Dwelling Polish Seniors—A Pilot Study of Diet Quality, Health Status, and Public Health Interventions (Score: 4,2894)
+    - Mediterranean Diet and Quality of Life in Adults: A Systematic Review (Score: 4,0125)
+    - Low-Carbohydrate Diet Patterns That Favor High-Quality Carbohydrates Are Associated with Beneficial Long-Term Changes in Biomarkers of Inflammation and Oxidative Stress in the Framingham Offspring Cohort (Score: 3,9665)
+    - Diet, Lifestyle Factors, and Quality of Life in Patients with Rheumatic Diseases: A Cross-Sectional Study (Score: 3,7525)
+    - Not All Plants Are Equal: Diet Quality and Inflammation in Vegans and Vegetarians in Urban Poland (Score: 3,7206)
+    - Ultra-processed foods and plant-based alternatives impair nutritional quality of omnivorous and plant-forward dietary patterns in college students (Score: 3,6980)
+    - Higher Consumption of Ultra-Processed Foods Is Associated with Lower Plant-Based Diet Quality in Australian Adults (Score: 3,6357)
+    - Association of Dietary Sodium-to-Potassium Ratio with Nutritional Composition, Micronutrient Intake, and Diet Quality in Brazilian Industrial Workers (Score: 3,1066)
+  > IMMAGINI (10 Trovati)
+    - Plant-based diet quality trajectory groups from Gen2-14 to Gen2-27 year follow-ups. ( a ) Females and PDI; ( b ) Females and hPDI; ( c ) Females and uPDI; ( d ) Males and PDI; ( e ) Males and hPDI; ( f ) Males and uPDI (Score: 5,1301)
+    - Keyword overlay map of Mediterranean-diet research in China (2006–2025). Node size, keyword frequency; node color, average publication year (blue, earlier, yellow, recent). (Score: 4,9835)
+    - Keyword co-occurrence network of Mediterranean-diet research in China (2006–2025). (Score: 4,9080)
+    - Diet quality, added sugars and proportion of energy from the four Nova categories across the three groups. Diet quality measured by (A) HEI‐2015 across the three groups is not significantly different ( p = 0.522, p = 0.175, respectively). (B) Percent of energy from added sugars by total sugars (g) across the three groups is not significantly different ( p = 0.395). (C) Percent of energy for each Nova category 1–4 across three groups (AB, CD, HC). No significant differences were observed within any of the four Nova categories across the three groups ( p > 0.05). Participants consumed most of their energy from Nova 4: Ultraprocessed foods (UPFs). (Score: 4,7812)
+    - Quality-of-life scores (SF-12) in physical (PCS-12) and mental (MCS-12) dimensions according to categories of Mediterranean diet adherence (MEDAS). Legend: PCS-12 (Physical Score) 0–100 points with higher scores indicating better physical health; MCS-12 (Mental Score) 0–100 points, with higher scores indicating better mental health. MEDAS: Mediterranean Diet Adherence. Weak adherence, 0–5 points; moderate to fair adherence, 6–9 points; good adherence, 10–14 points. (Score: 4,7757)
+    - Association between number of abstinent days with dietary intake measures within AB group. Bivariate associations with dietary intake measures ( y ‐axis). Diet quality (A), percent of energy from added sugars (B) and (C) percent of energy from UPFs with number of days abstinent ( x ‐axis) within Abstinent individuals. (Score: 4,5573)
+    - Quality assessment of RCT studies. (Score: 4,5546)
+    - Quality assessment of observational studies. (Score: 4,5546)
+    - Quality assessment of reviewed studies. (Score: 4,4846)
+    - Significance correlation dot map between diet and REE, body composition, cardiovascular risk, and alcohol history across the three groups. Spearman correlation dot map showing associations with body composition, REE, ASCVD risk, alcohol severity and intake and diet quality, added sugar intake and processed and ultraprocessed food consumption. Color of the dots indicate direction of Spearman correlation coefficient. Size of the dot indicates absolute Spearman coefficient. Open circles “O” indicates p < 0.05; asterisk *Indicates FDR < 25%. (Score: 4,4641)
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 11ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.996976459590917
+  [ARTICOLI] -> Tempo: 4ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.9959548051864799
+  [IMMAGINI] -> Tempo: 8ms | Precision: 0.5 | RR: 1.0 | NDCG: 0.8352842211595156
+
+============================================================
+
+QUERY: 'sdfgbhsfdhbwrghbrfgbrfbrbr'
+INDICI SELEZIONATI: articoli, tabelle, immagini
+--------------------------------------------------
+RISULTATI:
+  > TABELLE (0 Trovati)
+  > ARTICOLI (0 Trovati)
+  > IMMAGINI (0 Trovati)
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 0ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+  [ARTICOLI] -> Tempo: 0ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+  [IMMAGINI] -> Tempo: 0ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+
+============================================================
+

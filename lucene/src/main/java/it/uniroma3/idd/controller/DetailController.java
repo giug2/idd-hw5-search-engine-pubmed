@@ -35,7 +35,7 @@ public class DetailController {
     /**
      * Gestisce la visualizzazione dei dettagli per Articoli, Tabelle, Immagini, ecc.
      * URL: /dettaglio/{indexKey}/{id} (Esempio: /dettaglio/articoli/12345)
-     * * @param indexKey Identificatore dell'indice ("articoli", "tabelle", ecc.)
+     * @param indexKey Identificatore dell'indice ("articoli", "tabelle", ecc.)
      * @param id ID univoco del documento (campo "id" in Lucene)
      */
     @GetMapping("/dettaglio/{indexKey}/{id}")
@@ -110,9 +110,7 @@ public class DetailController {
                         ? doc.get("caption")
                         : doc.get("id"));
 
-                /* =========================================================
-                * 1. URL SERVITO LOCALMENTE (per <img>)
-                * ========================================================= */
+                // URL SERVITO LOCALMENTE (per <img>)
                 String imageUrl = "";
 
                 String savedPath = doc.get("saved_path");
@@ -129,9 +127,7 @@ public class DetailController {
                     }
                 }
 
-                /* =========================================================
-                * 2. URL ORIGINALE / ESTERNO (per <a>)
-                * ========================================================= */
+                // URL ORIGINALE / ESTERNO (per <a>)
                 String externalUrl = "";
                 String srcResolved = doc.get("src_resolved");
 
@@ -143,26 +139,19 @@ public class DetailController {
                     }
                 }
 
-                /* =========================================================
-                * 3. RISULTATI
-                * ========================================================= */
+                // RISULTATI
                 results.put("image_url", previewUrl);
                 results.put("image_external_url", externalUrl);
-
                 results.put("Caption", doc.get("caption"));
                 results.put("Alt", doc.get("alt"));
                 results.put("Src (original)", doc.get("src"));
                 results.put("Menzioni", doc.get("mentions"));
                 results.put("Contesto", doc.get("context_paragraphs"));
                 results.put("ID Articolo Padre", doc.get("fileName"));
-
                 break;
-
-    
             default:
                 results.put("Raw Data", doc.toString()); 
         }   
-
         return new GetDocumentResponse(id, title, authors, results);
     }
 

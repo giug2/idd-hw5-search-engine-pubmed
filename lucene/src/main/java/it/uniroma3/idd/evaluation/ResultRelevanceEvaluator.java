@@ -20,9 +20,7 @@ public class ResultRelevanceEvaluator {
     }
 
 
-    /**
-     * Valuta la rilevanza di un documento Lucene rispetto alla query.
-     */
+    /* Valuta la rilevanza di un documento Lucene rispetto alla query. */
     public static RelevanceLevel evaluate(String query, Document doc, String indexKey) {
         Set<String> queryTokens = tokenize(query);
         String tipo = indexKey.toLowerCase();

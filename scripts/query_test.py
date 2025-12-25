@@ -1,4 +1,3 @@
-import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -7,172 +6,116 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
+# pip install selenium
+# pip install webdriver-manager
+
+
 # --- CONFIGURAZIONE ---
-URL_PAGINA = "http://localhost:8080/" 
-FILE_OUTPUT = "report_test.txt"
+URL_PAGINA = "http://localhost:8080" 
+FILE_OUTPUT = "output/report_ricerca_completo.txt"
 
-# --- DEFINIZIONE TEST CASES BASATI SUL FILE "CHRONIC KIDNEY DISEASE" ---
 TEST_CASES = [
-# ---------------------------------------------------------
-    # 1 ricerche su articoli
-    # ---------------------------------------------------------
-    {
-        "query": "title:Kidney", 
-        "filtri": ["articoli"], 
-        "desc": "[Articoli] Ricerca nel Titolo (Aggiornato)"
-    },
-    {
-        "query": "authors:Kim", 
-        "filtri": ["articoli"], 
-        "desc": "[Articoli] Ricerca per Autore"
-    },
-    {
-        "query": "articleAbstract:\"dietary fiber\"", 
-        "filtri": ["articoli"], 
-        "desc": "[Articoli] Ricerca Frase Esatta nell'Abstract (Aggiornato)"
-    },
-
-    # ---------------------------------------------------------
-    # 2 ricerche su tabelle
-    # ---------------------------------------------------------
-    {
-        "query": "caption:statistics", 
-        "filtri": ["tabelle"], 
-        "desc": "[Tabelle] Ricerca nella Caption"
-    },
-    {
-        "query": "body:\"confidence interval\"", 
-        "filtri": ["tabelle"], 
-        "desc": "[Tabelle] Ricerca nel Body"
-    },
-
-    # ---------------------------------------------------------
-    # 3 ricerche su immagini
-    # ---------------------------------------------------------
-    {
-        "query": "caption:Hamburger", 
-        "filtri": ["immagini"], 
-        "desc": "[Immagini] Ricerca nella Caption"
-    },
-    {
-        "query": "alt:europe", 
-        "filtri": ["immagini"], 
-        "desc": "[immagini] alt"
-    },
-
-    # ---------------------------------------------------------
-    # 4 ricerche combinate
-    # ---------------------------------------------------------
-    {
-        "query": "nutrition",
-        "filtri": ["articoli", "tabelle"], 
-        "desc": "[Combo] Articoli + Tabelle (nutrition)"
-    },
-    {
-        "query": "mortality",
-        "filtri": ["articoli", "immagini"], 
-        "desc": "[Combo] Articoli + Immagini (mortality)"
-    },
-    {
-        "query": "accuracy", 
-        "filtri": ["tabelle", "immagini"], 
-        "desc": "Ricerca Combinata (Tabelle + Immagini)"
-    },
-    {
-        "query": "diet quality", 
-        "filtri": ["articoli", "tabelle", "immagini"], 
-        "desc": "[Full] Tutti gli indici (diet quality)"
-    },
-
-    # ---------------------------------------------------------
-    # 5 casi particolari
-    # ---------------------------------------------------------
-    {
-        "query": "sdfgbhsfdhbwrghbrfgbrfbrbr", 
-        "filtri": ["articoli", "tabelle", "immagini"], 
-        "desc": "Ricerca Zero Risultati (Controllo gestione vuoto)"
-    },
+    # ARTICOLI
+    {"query": "title:Kidney", "filtri": ["articoli"]},
+    {"query": "date:2025-08-12", "filtri": ["articoli"]},
+    {"query": "authors:Kim", "filtri": ["articoli"]},
+    {"query": "articleAbstract:\"dietary fiber\"", "filtri": ["articoli"]},
+    {"query": "articleAbstract:Kidney OR authors:Kim", "filtri": ["articoli"]},
+    # TABELLE
+    {"query": "caption:statistics", "filtri": ["tabelle"]},
+    {"query": "body:\"confidence interval\"", "filtri": ["tabelle"]},
+    # IMMAGINI
+    {"query": "caption:Hamburger", "filtri": ["figure"]},
+    {"query": "alt:europe", "filtri": ["figure"]},
+    # ARTICOLI E TABELLE
+    {"query": "nutrition", "filtri": ["articoli", "tabelle"]},
+    # ARTICOLI E IMMAGINI
+    {"query": "mortality", "filtri": ["articoli", "figure"]},
+    # TABELLE E IMMAGINI
+    {"query": "accuracy", "filtri": ["figure", "tabelle"]},
+    # ARTICOLI, TABELLE E IMMAGINI
+    {"query": "diet quality", "filtri": ["articoli", "tabelle", "figure"]},
+    {"query": "sdfgbhsfdhbwrghbrfgbrfbrbr", "filtri": ["articoli", "tabelle", "figure"]}
 ]
 
-def esegui_test():
-    if not os.path.exists(os.path.dirname(FILE_OUTPUT)) and os.path.dirname(FILE_OUTPUT) != "":
-        os.makedirs(os.path.dirname(FILE_OUTPUT))
 
+def esegui_test():
     options = webdriver.ChromeOptions()
-    # options.add_argument("--headless") 
-    
-    print("Avvio Browser con i nuovi Test Case...")
+    # options.add_argument("--headless") # Togli il commento se non vuoi vedere il browser
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     
     with open(FILE_OUTPUT, "w", encoding="utf-8") as f:
-        f.write("=== REPORT TEST AGGIORNATO (DATI KIDNEY DISEASE) ===\n\n")
+        f.write("=== REPORT TEST LUCENE: RISULTATI E METRICHE ===\n\n")
 
         try:
-            for i, test in enumerate(TEST_CASES):
-                print(f"[{i+1}/{len(TEST_CASES)}] Eseguo: {test['desc']}")
-                
+            for test in TEST_CASES:
                 driver.get(URL_PAGINA)
                 query = test["query"]
                 filtri = test["filtri"]
 
-                f.write(f"TEST #{i+1}: {test['desc']}\n")
                 f.write(f"QUERY: '{query}'\n")
-                f.write(f"INDICI: {', '.join(filtri)}\n")
-                f.write("-" * 40 + "\n")
+                f.write(f"INDICI SELEZIONATI: {', '.join(filtri)}\n")
+                f.write("-" * 50 + "\n")
                 
-                # 1. Imposta Filtri
+                # 1. Gestione Checkbox (basata sull'attributo value dell'HTML)
                 for tipo in ["articoli", "tabelle", "immagini"]:
-                    try:
-                        checkbox = driver.find_element(By.CSS_SELECTOR, f"input[type='checkbox'][value='{tipo}']")
-                        is_selected = checkbox.is_selected()
-                        should_be_selected = tipo in filtri
-                        
-                        if should_be_selected != is_selected:
-                            checkbox.click()
-                    except:
-                        pass # Ignora errori checkbox se non critici
+                    checkbox = driver.find_element(By.XPATH, f"//input[@value='{tipo}']")
+                    if tipo in filtri and not checkbox.is_selected():
+                        checkbox.click()
+                    elif tipo not in filtri and checkbox.is_selected():
+                        checkbox.click()
 
-                # 2. Esegui Ricerca
-                try:
-                    input_query = driver.find_element(By.NAME, "query")
-                    input_query.clear()
-                    input_query.send_keys(query)
-                    driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-                except Exception as e:
-                    f.write(f" [Errore] Submit: {e}\n")
-                    continue
+                # 2. Inserimento Query e Invio
+                input_query = driver.find_element(By.ID, "query")
+                input_query.clear()
+                input_query.send_keys(query)
+                driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
                 
-                # 3. Attesa Risultati
-                try:
-                    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-                except:
-                    f.write(" [Warn] Timeout.\n")
+                # Attesa che i risultati siano visibili
+                wait = WebDriverWait(driver, 10)
+                wait.until(EC.presence_of_element_located((By.CLASS_NAME, "results-container")))
 
-                # 4. Analisi Risultati
+                # 3. Estrazione Risultati
                 f.write("RISULTATI:\n")
-                try:
-                    result_links = driver.find_elements(By.CSS_SELECTOR, "a[href*='/dettaglio/']")
+                colonne = driver.find_elements(By.CLASS_NAME, "result-list-column")
+                for colonna in colonne:
+                    intestazione = colonna.find_element(By.TAG_NAME, "h3").text
+                    f.write(f"  > {intestazione}\n")
                     
-                    if not result_links:
-                        f.write(" > Nessun risultato trovato.\n")
-                    else:
-                        for idx, link in enumerate(result_links):
-                            if idx >= 5: break 
-                            f.write(f"  - {link.text.strip()}\n")
-                        f.write(f" (Totale: {len(result_links)})\n")
-                        
-                except Exception as e:
-                    f.write(f" [Errore] Lettura risultati: {e}\n")
+                    items = colonna.find_elements(By.CLASS_NAME, "result-item")
+                    for item in items:
+                        titolo = item.find_element(By.TAG_NAME, "a").text
+                        score = item.find_element(By.CLASS_NAME, "score").text
+                        f.write(f"    - {titolo} {score}\n")
 
-                f.write("\n" + "="*40 + "\n\n")
-                time.sleep(0.5)
+                # 4. Estrazione Metriche (dal div nascosto #metrics-container)
+                f.write("\nMETRICHE PRESTAZIONALI:\n")
+                # Cerchiamo tutti i blocchi dentro metrics-container
+                metrics_blocks = driver.find_elements(By.CSS_SELECTOR, "#metrics-container > div")
+                
+                if not metrics_blocks:
+                    f.write("  [!] Nessuna metrica disponibile per questa query.\n")
+                else:
+                    for block in metrics_blocks:
+                        # Usiamo textContent perché gli elementi sono display:none
+                        idx_name = block.find_element(By.CLASS_NAME, "metric-index").get_attribute("textContent")
+                        m_time = block.find_element(By.CLASS_NAME, f"time-{idx_name}").get_attribute("textContent")
+                        m_prec = block.find_element(By.CLASS_NAME, f"precision-{idx_name}").get_attribute("textContent")
+                        m_rr = block.find_element(By.CLASS_NAME, f"rr-{idx_name}").get_attribute("textContent")
+                        m_ndcg = block.find_element(By.CLASS_NAME, f"ndcg-{idx_name}").get_attribute("textContent")
+                        
+                        f.write(f"  [{idx_name.upper()}] -> Tempo: {m_time}ms | Precision: {m_prec} | RR: {m_rr} | NDCG: {m_ndcg}\n")
+
+                f.write("\n" + "="*60 + "\n\n")
+                print(f"Test completato con metriche per: {query}")
 
         except Exception as e:
-            f.write(f"\nERRORE: {str(e)}\n")
+            f.write(f"ERRORE DURANTE L'ESECUZIONE: {str(e)}\n")
+            print(f"Errore: {e}")
         finally:
             driver.quit()
 
-    print(f"\n Test completati. Report: {FILE_OUTPUT}")
+    print(f"\n✅ Tutto dade! Report generato: {FILE_OUTPUT}")
 
 if __name__ == "__main__":
     esegui_test()

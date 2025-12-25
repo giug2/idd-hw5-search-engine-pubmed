@@ -54,7 +54,7 @@ public class Image {
     public String getLinkHref() { return linkHref; }
     public void setLinkHref(String linkHref) { this.linkHref = linkHref; }
 
-     public List<String> getMentions() { return mentions; }
+    public List<String> getMentions() { return mentions; }
     public void setMentions(List<String> mentions) { this.mentions = mentions; }
 
     public List<String> getContext_paragraphs() { return context_paragraphs; }

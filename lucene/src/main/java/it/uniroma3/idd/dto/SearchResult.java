@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchResultDTO {
-    
+public class SearchResult {
+
     private String tipo; 
     private String idUnivoco; 
     private String titolo; 

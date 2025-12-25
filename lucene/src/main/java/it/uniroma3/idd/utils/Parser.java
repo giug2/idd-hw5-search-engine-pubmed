@@ -131,7 +131,7 @@ public class Parser {
     }
     
 
-    //Verifica se un'immagine è un'icona/logo/asset del sito da escludere.
+    // Verifica se un'immagine è un'icona/logo/asset del sito da escludere.
     private boolean isJunkImage(String src) {
         if (src == null) return true;
         String lower = src.toLowerCase();
