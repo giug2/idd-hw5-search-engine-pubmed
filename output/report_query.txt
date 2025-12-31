@@ -1,0 +1,194 @@
+=== REPORT TEST LUCENE: RISULTATI E METRICHE ===
+
+QUERY: 'title:Kidney'
+INDICI SELEZIONATI: articoli
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 25ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'date:2025-08-13'
+INDICI SELEZIONATI: articoli
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 1ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+
+============================================================
+
+QUERY: 'authors:Kim'
+INDICI SELEZIONATI: articoli
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 0ms | Precision: 0.6 | RR: 1.0 | NDCG: 0.9495662644168644
+
+============================================================
+
+QUERY: 'articleAbstract:"dietary fiber"'
+INDICI SELEZIONATI: articoli
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 17ms | Precision: 0.2 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'articleAbstract:Kidney OR authors:Kim'
+INDICI SELEZIONATI: articoli
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 20ms | Precision: 0.9 | RR: 1.0 | NDCG: 0.9504206262110482
+
+============================================================
+
+QUERY: 'caption:statistics'
+INDICI SELEZIONATI: tabelle
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 1ms | Precision: 0.1 | RR: 0.2 | NDCG: 0.38685280723454163
+
+============================================================
+
+QUERY: 'caption:analysis of meal duration'
+INDICI SELEZIONATI: tabelle
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 14ms | Precision: 0.3 | RR: 0.5 | NDCG: 0.7328286204777911
+
+============================================================
+
+QUERY: 'body:"confidence interval"'
+INDICI SELEZIONATI: tabelle
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 1ms | Precision: 0.6 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'caption:Hamburger'
+INDICI SELEZIONATI: immagini
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [IMMAGINI] -> Tempo: 1ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+
+============================================================
+
+QUERY: 'caption:consumption of sweetened beverages'
+INDICI SELEZIONATI: immagini
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [IMMAGINI] -> Tempo: 8ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+
+============================================================
+
+QUERY: 'alt:europe'
+INDICI SELEZIONATI: immagini
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [IMMAGINI] -> Tempo: 0ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+
+============================================================
+
+QUERY: 'nutrition'
+INDICI SELEZIONATI: articoli, tabelle
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 5ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.9959548051864799
+  [ARTICOLI] -> Tempo: 2ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'Unhealthy Food Consumption'
+INDICI SELEZIONATI: articoli, tabelle
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 5ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.9283475590814002
+  [ARTICOLI] -> Tempo: 3ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'mortality'
+INDICI SELEZIONATI: articoli, immagini
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 1ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+  [IMMAGINI] -> Tempo: 2ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'Overall dietary habits'
+INDICI SELEZIONATI: articoli, immagini
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [ARTICOLI] -> Tempo: 2ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+  [IMMAGINI] -> Tempo: 8ms | Precision: 0.1 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'accuracy'
+INDICI SELEZIONATI: immagini, tabelle
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 2ms | Precision: 0.8 | RR: 1.0 | NDCG: 0.9462188766685263
+  [IMMAGINI] -> Tempo: 3ms | Precision: 0.4 | RR: 1.0 | NDCG: 0.9047172294870752
+
+============================================================
+
+QUERY: 'three dietary patterns'
+INDICI SELEZIONATI: immagini, tabelle
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 5ms | Precision: 0.9 | RR: 1.0 | NDCG: 0.8952418620953553
+  [IMMAGINI] -> Tempo: 7ms | Precision: 0.2 | RR: 1.0 | NDCG: 1.0
+
+============================================================
+
+QUERY: 'diet quality'
+INDICI SELEZIONATI: articoli, tabelle, immagini
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 3ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.996976459590917
+  [ARTICOLI] -> Tempo: 1ms | Precision: 1.0 | RR: 1.0 | NDCG: 0.9959548051864799
+  [IMMAGINI] -> Tempo: 4ms | Precision: 0.5 | RR: 1.0 | NDCG: 0.8352842211595156
+
+============================================================
+
+QUERY: 'Ultra-processed food and beverage consumption'
+INDICI SELEZIONATI: articoli, tabelle, immagini
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 12ms | Precision: 0.9 | RR: 1.0 | NDCG: 0.9971876401972103
+  [ARTICOLI] -> Tempo: 0ms | Precision: 1.0 | RR: 1.0 | NDCG: 1.0
+  [IMMAGINI] -> Tempo: 9ms | Precision: 0.1 | RR: 0.3333333333333333 | NDCG: 0.5
+
+============================================================
+
+QUERY: 'sdfgbhsfdhbwrghbrfgbrfbrbr'
+INDICI SELEZIONATI: articoli, tabelle, immagini
+--------------------------------------------------
+
+METRICHE PRESTAZIONALI:
+  [TABELLE] -> Tempo: 1ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+  [ARTICOLI] -> Tempo: 1ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+  [IMMAGINI] -> Tempo: 0ms | Precision: 0.0 | RR: 0.0 | NDCG: 0.0
+
+============================================================
+
