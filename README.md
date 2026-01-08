@@ -8,6 +8,8 @@ L’obiettivo del progetto è:
 - Scaricare automaticamente articoli da pubmed.gov che soddisfano una query predefinita.
 - Estrarre e normalizzare i contenuti rilevanti da ciascun documento.
 - Organizzare il tutto in un corpus pronto per essere indicizzato.
+- Indicizzare adeguatamente gli elementi al fine di permettere la loro ricerca tramite una pagina web.
+- Valutare le prestazioni del sistema.
 
 ## 🛠️ Tecnologie
 Il progetto è sviluppato con:
